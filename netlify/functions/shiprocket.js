@@ -31,30 +31,6 @@ async function loginToShiprocket() {
   return shiprocketToken;
 }
 
-// VALIDATE PAYLOAD FOR CREATE ORDER
-function validateCreateOrderPayload(payload) {
-  const requiredFields = [
-    "order_id",
-    "order_date",
-    "pickup_location",
-    "billing_customer_name",
-    "billing_customer_email",
-    "billing_customer_phone",
-    "billing_address",
-    "billing_city",
-    "billing_pincode",
-    "billing_state",
-    "billing_country",
-    "order_items",
-    "payment_method",
-  ];
-
-  for (const field of requiredFields) {
-    if (!payload[field]) {
-      throw new Error(`Missing required field: ${field}`);
-    }
-  }
-}
 
 export async function handler(event) {
   try {
