@@ -13,56 +13,11 @@ import { Order } from "../services/orderService";
 import { createShiprocketOrder } from "../services/shiprocketService";
 
 const OrderDetailsPage: React.FC = () => {
-  const handleShipOrder = async () => {
-    if (!order) return;
-
-    try {
-      const response = await fetch("/.netlify/functions/shiprocket", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          order_id: order.id,
-          order_date: new Date().toISOString(),
-          pickup_location: "Primary",
-          billing_customer_name: order.customerInfo?.firstName || "",
-          billing_last_name: order.customerInfo?.lastName || "",
-          billing_address: order.customerInfo?.address || "",
-          billing_city: order.customerInfo?.city || "",
-          billing_pincode: order.customerInfo?.pincode || "000000",
-          billing_state: order.customerInfo?.state || "",
-          billing_country: "India",
-          billing_email: order.customerInfo?.email || "",
-          billing_phone: order.customerInfo?.phone || "",
-          order_items: order.items.map((item) => ({
-            name: item.name,
-            sku: item.id,
-            units: item.quantity,
-            selling_price: item.price,
-          })),
-          payment_method:
-            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
-          sub_total: order.total,
-          length: 10,
-          breadth: 10,
-          height: 10,
-          weight: 0.5,
-        }),
-      }).then((res) => res.json());
-
-      console.log("🚚 Shiprocket Order Created:", response);
-      alert("Shiprocket order created successfully!");
-    } catch (error) {
-      console.error("Shiprocket error:", error);
-      alert("Failed to create Shiprocket order.");
-    }
-  };
-
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { orders, updateOrderStatus, deleteOrder } = useOrders();
 
   const order = orders.find((o) => o.id === id);
-
   const [status, setStatus] = useState<Order["status"]>(
     order?.status || "pending"
   );
@@ -81,31 +36,29 @@ const OrderDetailsPage: React.FC = () => {
   }
 
   const handleStatusChange = async () => {
-  try {
-    // 1️⃣ Update local order status
-    updateOrderStatus(order.id, status);
+    try {
+      // 1️⃣ Update local order status
+      updateOrderStatus(order.id, status);
 
-    // 2️⃣ If status is shipped → send to Shiprocket
-    if (status === "shipped") {
-      try {
-        const shiprocketResponse = await createShiprocketOrder(order);
-        console.log("🚚 Shiprocket order created:", shiprocketResponse);
-        alert("Shiprocket order created successfully!");
-      } catch (err) {
-        console.error("❌ Shiprocket error:", err);
-        alert("Failed to create Shiprocket order.");
+      // 2️⃣ If status is shipped → send to Shiprocket
+      if (status === "shipped") {
+        try {
+          const shiprocketResponse = await createShiprocketOrder(order);
+          console.log("🚚 Shiprocket order created:", shiprocketResponse);
+          alert("Shiprocket order created successfully!");
+        } catch (err) {
+          console.error("❌ Shiprocket error:", err);
+          alert("Failed to create Shiprocket order.");
+        }
       }
+
+      // 3️⃣ Navigate back to orders
+      navigate("/orders");
+    } catch (error) {
+      console.error("Error updating order:", error);
+      alert("Failed to update order.");
     }
-
-    // 3️⃣ Navigate back to orders
-    navigate("/orders");
-  } catch (error) {
-    console.error("Error updating order:", error);
-    alert("Failed to update order.");
-  }
-};
-
-
+  };
 
   return (
     <div className="min-h-screen bg-cream py-8">
