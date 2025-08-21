@@ -15,8 +15,8 @@ async function loginToShiprocket() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: "ajha55172@gmail.com", // replace with env variable for security
-      password: "Anand@raj98",
+      email: "cafeatonce@gmail.com", // replace with env variable for security
+      password: "H7cJ33rk*0$p23c7",
     }),
   });
 
