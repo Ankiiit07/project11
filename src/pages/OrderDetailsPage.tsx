@@ -88,19 +88,7 @@ const OrderDetailsPage: React.FC = () => {
     // 2️⃣ If status is shipped → send to Shiprocket
     if (status === "shipped") {
       try {
-        const shiprocketResponse = await createShiprocketOrder({
-          ...order,
-          billing_customer_name: order.customerInfo?.firstName,
-          billing_last_name: order.customerInfo?.lastName,
-          billing_address: order.customerInfo?.address,
-          billing_city: order.customerInfo?.city,
-          billing_pincode: order.customerInfo?.zipCode,
-          billing_state: order.customerInfo?.state,
-          billing_email: order.customerInfo?.email,
-          billing_phone: order.customerInfo?.phone,
-          items: order.items,
-        });
-
+        const shiprocketResponse = await createShiprocketOrder(order);
         console.log("🚚 Shiprocket order created:", shiprocketResponse);
         alert("Shiprocket order created successfully!");
       } catch (err) {
@@ -116,6 +104,7 @@ const OrderDetailsPage: React.FC = () => {
     alert("Failed to update order.");
   }
 };
+
 
 
   return (
