@@ -139,7 +139,84 @@ const CheckoutPage: React.FC = () => {
   
         setOrderDetails(newOrder);
         setPaymentSuccess(true);
-  
+  const sendToShiprocket = async (order: any) => {
+      try {
+        const shiprocketPayload = {
+          action: "createOrder",
+          payload: {
+            order_id: order.id,
+            order_date: new Date().toISOString().slice(0, 19).replace("T", " "),
+            pickup_location: "Home",
+            comment: "",
+            reseller_name: "ABC Reseller",
+            company_name: "ABC Pvt Ltd",
+            billing_customer_name: formData.firstName,
+            billing_last_name: formData.lastName,
+            billing_address: formData.address,
+            billing_address_2: "",
+            billing_isd_code: "+91",
+            billing_city: formData.city,
+            billing_pincode: formData.zipCode,
+            billing_state: formData.state,
+            billing_country: "India",
+            billing_customer_email: formData.email,
+            billing_phone: formData.phone,
+            billing_alternate_phone: "",
+            shipping_is_billing: true,
+            shipping_customer_name: formData.firstName,
+            shipping_last_name: formData.lastName,
+            shipping_address: formData.address,
+            shipping_address_2: "",
+            shipping_city: formData.city,
+            shipping_pincode: formData.zipCode,
+            shipping_country: "India",
+            shipping_state: formData.state,
+            shipping_email: formData.email,
+            shipping_phone: formData.phone,
+            order_items: order.items.map((item: any) => ({
+              name: item.name,
+              sku: item.sku || item.id,
+              units: item.quantity,
+              selling_price: item.price,
+              discount: 0,
+              tax: 0,
+              hsn: item.hsn || "NA",
+            })),
+            payment_method: paymentMethod === "cod" ? "COD" : "Prepaid",
+            shipping_charges: shipping,
+            giftwrap_charges: 0,
+            transaction_charges: 0,
+            total_discount: 0,
+            sub_total: order.total,
+            length: 10,
+            breadth: 5,
+            height: 5,
+            weight: 0.3,
+            ewaybill_no: "",
+            customer_gstin: "",
+            invoice_number: order.invoiceNumber || `INV${Date.now()}`,
+            order_type: "ESSENTIALS",
+          },
+        };
+
+        const res = await fetch(
+          "https://astonishing-mousse-c693a6.netlify.app/.netlify/functions/shiprocket",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(shiprocketPayload),
+          }
+        );
+
+        const data = await res.json();
+        console.log("✅ Shiprocket response:", data);
+      } catch (err) {
+        console.error("❌ Shiprocket error:", err);
+      }
+    };
+
+    // Call the Shiprocket function
+    sendToShiprocket(newOrder);
         await updateProfile({
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
