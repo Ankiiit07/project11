@@ -81,51 +81,42 @@ const OrderDetailsPage: React.FC = () => {
   }
 
   const handleStatusChange = async () => {
-    try {
-      // 1️⃣ Update order status in your local system
-      updateOrderStatus(order.id, status);
+  try {
+    // 1️⃣ Update local order status
+    updateOrderStatus(order.id, status);
 
-      // 2️⃣ If status is shipped → also create Shiprocket order
-      if (status === "shipped") {
-        const response = await createShiprocketOrder({
-          order_id: order.id,
-          order_date: new Date().toISOString(),
-          pickup_location: "Primary", // must match pickup location in Shiprocket panel
-          billing_customer_name: order.customerInfo?.firstName || "",
-          billing_last_name: order.customerInfo?.lastName || "",
-          billing_address: order.customerInfo?.address || "",
-          billing_city: order.customerInfo?.city || "",
-          billing_pincode: order.customerInfo?.pincode || "000000",
-          billing_state: order.customerInfo?.state || "",
-          billing_country: "India",
-          billing_email: order.customerInfo?.email || "",
-          billing_phone: order.customerInfo?.phone || "",
-          order_items: order.items.map((item) => ({
-            name: item.name,
-            sku: item.id,
-            units: item.quantity,
-            selling_price: item.price,
-          })),
-          payment_method:
-            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
-          sub_total: order.total,
-          length: 10,
-          breadth: 10,
-          height: 10,
-          weight: 0.5,
+    // 2️⃣ If status is shipped → send to Shiprocket
+    if (status === "shipped") {
+      try {
+        const shiprocketResponse = await createShiprocketOrder({
+          ...order,
+          billing_customer_name: order.customerInfo?.firstName,
+          billing_last_name: order.customerInfo?.lastName,
+          billing_address: order.customerInfo?.address,
+          billing_city: order.customerInfo?.city,
+          billing_pincode: order.customerInfo?.zipCode,
+          billing_state: order.customerInfo?.state,
+          billing_email: order.customerInfo?.email,
+          billing_phone: order.customerInfo?.phone,
+          items: order.items,
         });
 
-        console.log("🚚 Shiprocket order created:", response);
+        console.log("🚚 Shiprocket order created:", shiprocketResponse);
         alert("Shiprocket order created successfully!");
+      } catch (err) {
+        console.error("❌ Shiprocket error:", err);
+        alert("Failed to create Shiprocket order.");
       }
-
-      // 3️⃣ Navigate back to orders list
-      navigate("/orders");
-    } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Failed to update order.");
     }
-  };
+
+    // 3️⃣ Navigate back to orders
+    navigate("/orders");
+  } catch (error) {
+    console.error("Error updating order:", error);
+    alert("Failed to update order.");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-cream py-8">
