@@ -5,7 +5,7 @@
  * Create a shipping order (calls your backend)
  */
 export async function createShiprocketOrder(order: any) {
-  const res = await fetch("/api/shiprocket/order", {
+  const res = await fetch("/.netlify/functions/shiprocket", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(order),
