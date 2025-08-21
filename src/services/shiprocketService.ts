@@ -1,126 +1,89 @@
-type OrderItem = {
-  name: string;
-  sku?: string;
-  id?: string;
-  units?: number;
-  quantity?: number;
-  selling_price?: number;
-  price?: number;
-  discount?: number;
-  tax?: number;
-  hsn?: string;
-};
-
-type Order = {
-  id: string;
-  customerInfo?: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    phone?: string;
-    address?: string;
-    zipCode?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-  };
-  items: OrderItem[];
-  paymentInfo?: {
-    method?: string;
-  };
-  total?: number;
-  shipping_charges?: number;
-  giftwrap_charges?: number;
-  transaction_charges?: number;
-  total_discount?: number;
+// services/shiprocketService.ts
+export interface ShiprocketOrderPayload {
+  order_id: string;
+  order_date: string;
+  pickup_location: string;
+  billing_customer_name: string;
+  billing_last_name?: string;
+  billing_address: string;
+  billing_city: string;
+  billing_pincode: string;
+  billing_state: string;
+  billing_country: string;
+  billing_email: string;
+  billing_phone: string;
+  shipping_customer_name?: string;
+  shipping_last_name?: string;
+  shipping_address?: string;
+  shipping_city?: string;
+  shipping_pincode?: string;
+  shipping_state?: string;
+  shipping_country?: string;
+  shipping_email?: string;
+  shipping_phone?: string;
+  order_items: {
+    name: string;
+    sku: string;
+    units: number;
+    selling_price: number;
+  }[];
+  payment_method: "Prepaid" | "COD";
+  sub_total: number;
   length?: number;
   breadth?: number;
   height?: number;
   weight?: number;
-  order_type?: string;
-  comment?: string;
-  reseller_name?: string;
-  company_name?: string;
-};
+}
 
-export const createShiprocketOrder = async (order: Order) => {
-  const customer = order.customerInfo || {};
-  
-  const payload = {
-    action: "createOrder",
-    payload: {
-      order_id: order.id,
-      order_date: new Date().toISOString().slice(0, 19).replace("T", " "),
-      pickup_location: "Primary",
-      comment: order.comment || "",
-      reseller_name: order.reseller_name || "ABC Reseller",
-      company_name: order.company_name || "ABC Pvt Ltd",
-
-      // Billing info
-      billing_customer_name: customer.firstName || "NA",
-      billing_last_name: customer.lastName || "NA",
-      billing_address: customer.address || "NA",
-      billing_address_2: "",
-      billing_isd_code: "+91",
-      billing_city: customer.city || "NA",
-      billing_pincode: customer.zipCode || "000000",
-      billing_state: customer.state || "NA",
-      billing_country: customer.country || "India",
-      billing_customer_email: customer.email || "test@example.com",
-      billing_phone: customer.phone || "9999999999",
-      billing_alternate_phone: "",
-
-      // Shipping info (use billing as default)
-      shipping_is_billing: true,
-      shipping_customer_name: customer.firstName || "NA",
-      shipping_last_name: customer.lastName || "NA",
-      shipping_address: customer.address || "NA",
-      shipping_address_2: "",
-      shipping_city: customer.city || "NA",
-      shipping_pincode: customer.zipCode || "000000",
-      shipping_country: customer.country || "India",
-      shipping_state: customer.state || "NA",
-      shipping_email: customer.email || "test@example.com",
-      shipping_phone: customer.phone || "9999999999",
-
-      // Items
-      order_items: order.items.map((i) => ({
-        name: i.name,
-        sku: i.sku || i.id || "NA",
-        units: i.units || i.quantity || 1,
-        selling_price: i.selling_price || i.price || 0,
-        discount: i.discount || 0,
-        tax: i.tax || 0,
-        hsn: i.hsn || "NA",
-      })),
-
-      payment_method: order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
-      shipping_charges: order.shipping_charges || 0,
-      giftwrap_charges: order.giftwrap_charges || 0,
-      transaction_charges: order.transaction_charges || 0,
-      total_discount: order.total_discount || 0,
-      sub_total: order.total || 0,
-      length: order.length || 10,
-      breadth: order.breadth || 10,
-      height: order.height || 10,
-      weight: order.weight || 0.5,
-      ewaybill_no: "",
-      customer_gstin: "",
-      invoice_number: `INV${Date.now()}`,
-      order_type: order.order_type || "ESSENTIALS",
-    },
+export const createShiprocketOrder = async (order: any) => {
+  // Prepare payload
+  const payload: ShiprocketOrderPayload = {
+    order_id: order.id,
+    order_date: new Date().toISOString(),
+    pickup_location: "Primary", // Must match Shiprocket panel
+    billing_customer_name: order.customerInfo?.firstName || "",
+    billing_last_name: order.customerInfo?.lastName || "",
+    billing_address: order.customerInfo?.address || "",
+    billing_city: order.customerInfo?.city || "",
+    billing_pincode: order.customerInfo?.zipCode || "000000",
+    billing_state: order.customerInfo?.state || "",
+    billing_country: "India",
+    billing_email: order.customerInfo?.email || "",
+    billing_phone: order.customerInfo?.phone || "",
+    // Shipping same as billing if not specified
+    shipping_customer_name: order.shippingInfo?.firstName || order.customerInfo?.firstName,
+    shipping_last_name: order.shippingInfo?.lastName || order.customerInfo?.lastName,
+    shipping_address: order.shippingInfo?.address || order.customerInfo?.address,
+    shipping_city: order.shippingInfo?.city || order.customerInfo?.city,
+    shipping_pincode: order.shippingInfo?.zipCode || order.customerInfo?.zipCode || "000000",
+    shipping_state: order.shippingInfo?.state || order.customerInfo?.state,
+    shipping_country: order.shippingInfo?.country || "India",
+    shipping_email: order.shippingInfo?.email || order.customerInfo?.email,
+    shipping_phone: order.shippingInfo?.phone || order.customerInfo?.phone,
+    order_items: order.items.map((item: any) => ({
+      name: item.name,
+      sku: item.id,
+      units: item.quantity,
+      selling_price: item.price,
+    })),
+    payment_method: order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
+    sub_total: order.total,
+    length: 10,
+    breadth: 10,
+    height: 10,
+    weight: 0.5,
   };
 
-  const res = await fetch(
-    "https://astonishing-mousse-c693a6.netlify.app/.netlify/functions/shiprocket",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }
-  );
+  // Call your Netlify function
+  const response = await fetch("/.netlify/functions/shiprocket", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(JSON.stringify(data));
-  return data;
+  if (!response.ok) {
+    throw new Error(`Shiprocket API error: ${response.statusText}`);
+  }
+
+  return response.json();
 };
