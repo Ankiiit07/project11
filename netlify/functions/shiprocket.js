@@ -20,7 +20,13 @@ async function loginToShiprocket() {
   });
 
   const data = await res.json();
-
+if (!res.ok) {
+  console.error("Shiprocket error:", data); // log the error
+  return {
+    statusCode: 400,
+    body: JSON.stringify({ error: data }),
+  };
+}
   console.log("Shiprocket Response:", data);
 
 
