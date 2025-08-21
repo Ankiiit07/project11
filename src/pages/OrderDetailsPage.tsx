@@ -17,7 +17,7 @@ const OrderDetailsPage: React.FC = () => {
     if (!order) return;
 
     try {
-      const response = await fetch("/api/shiprocket/order", {
+      const response = await fetch("/.netlify/functions/shiprocket", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
