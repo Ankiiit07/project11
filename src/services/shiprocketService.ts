@@ -81,9 +81,17 @@ export const createShiprocketOrder = async (order: any) => {
     body: JSON.stringify(payload),
   });
 
+  const text = await response.text(); // Get raw response
+  console.log("Shiprocket raw response:", text); // Logs exact API error
+
   if (!response.ok) {
-    throw new Error(`Shiprocket API error: ${response.statusText}`);
+    let errorMessage = `Shiprocket API error: ${response.status}`;
+    try {
+      const json = JSON.parse(text);
+      errorMessage += ` - ${JSON.stringify(json)}`; // Include API error details
+    } catch {}
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  return JSON.parse(text);
 };
