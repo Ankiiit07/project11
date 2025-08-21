@@ -1,0 +1,264 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Smooth scrolling and performance optimizations */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    /* Prevent zoom on input focus */
+    font-size: 16px;
+  }
+  
+  /* Prevent viewport jumping on mobile */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    /* Prevent horizontal scroll */
+    position: relative;
+    /* Improve touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent horizontal scroll on mobile */
+  * {
+    box-sizing: border-box;
+    /* Prevent text selection on mobile */
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Allow text selection for inputs and textareas */
+  input, textarea, select {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-tap-highlight-color: auto;
+  }
+  
+  /* Accessibility improvements */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  
+  /* Focus styles for better accessibility */
+  *:focus {
+    outline: 2px solid #8B7355;
+    outline-offset: 2px;
+  }
+  
+  /* Skip link styles */
+  .skip-link:focus {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    padding: 8px 16px;
+    background-color: #8B7355;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    * {
+      border-color: currentColor !important;
+    }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* Animation keyframes */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Dark mode transitions */
+  * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: manipulation;
+    scroll-behavior: smooth;
+  }
+  
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Optimize scrollable containers */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+  }
+  
+  /* Mobile-specific optimizations */
+  @media (max-width: 768px) {
+    /* Prevent zoom on input focus */
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    
+    /* Ensure proper touch targets */
+    input, select, textarea, button, a, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* Prevent double-tap zoom on buttons */
+    button, a, [role="button"] {
+      touch-action: manipulation;
+    }
+    
+    /* Fix mobile navigation */
+    .mobile-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+    
+    #mobile-menu {
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+    
+    /* Product card touch improvements */
+    .product-card {
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    /* Product image gallery touch improvements */
+    .product-image-gallery {
+      touch-action: pan-y pinch-zoom;
+      overflow-x: hidden;
+    }
+    
+    /* Page-specific padding fixes */
+    .product-grid, .checkout-form, .payment-options, .cart-page, .product-detail-page, .contact-page, .about-page, .testimonials-page, .insights-page, .orders-page, .account-page, .admin-panel {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      gap: 1rem;
+    }
+    
+    /* Fixed positioning for floating elements */
+    .notification-system, .performance-monitor, .loading-system, .error-boundary, .chat-bot, .whatsapp-button, .cart-badge {
+      position: fixed;
+      z-index: 1000;
+    }
+    
+    /* Skip link positioning for mobile */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      padding: 8px 16px;
+      background-color: #8B7355;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      outline: none;
+    }
+    
+    /* General mobile fixes */
+    table, form, modal, dropdown, tooltip, popover, carousel, accordion, tabs, stepper, progress-bar, slider, rating, search, filter, sort, pagination, breadcrumb, navigation, sidebar, drawer, overlay, backdrop, spinner, skeleton, loading, error, success, warning, info, alert, badge, chip, avatar, icon, logo, button-group, input-group, card-group, list-group, media-object, panel, well, jumbotron, hero, banner, section, container, row, col, grid, flex {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    
+    /* Typewriter effect mobile fixes */
+    .typewriter, [data-animation="typewriter"] {
+      word-break: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      max-width: 100%;
+    overflow: hidden;
+      white-space: pre-wrap;
+    }
+    
+    /* Thank you page icon fixes */
+    .thank-you-page .success-header {
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    
+    .thank-you-page .icon-container {
+    position: relative;
+      z-index: 1;
+    }
+    
+    /* Image aspect ratio fixes */
+    img {
+      aspect-ratio: attr(width) / attr(height);
+    }
+  }
+  
+  /* Tablet-specific optimizations */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet-specific fixes */
+    .tablet-optimized {
+      /* Ensure proper spacing on tablet */
+      padding: 1.5rem;
+    }
+  }
+  
+  /* Large screen optimizations */
+  @media (min-width: 1025px) {
+    /* Large screen-specific fixes */
+    .large-screen-optimized {
+      /* Ensure proper spacing on large screens */
+      padding: 2rem;
+    }
+  }
+}
