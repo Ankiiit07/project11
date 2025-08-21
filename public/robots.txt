@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://tranquil-bonbon-7645e7.netlify.app/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /products
+Allow: /about
+Allow: /contact
+Allow: /insights
+Allow: /testimonials
+
+# Crawl delay (optional)
+Crawl-delay: 1 

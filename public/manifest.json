@@ -1,0 +1,21 @@
+{
+  "name": "@once Business - Premium Coffee Concentrates",
+  "short_name": "@once Coffee",
+  "description": "Experience premium coffee in 5 seconds with @once Business coffee concentrates",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F1EB",
+  "theme_color": "#8B7355",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "shopping"],
+  "lang": "en",
+  "dir": "ltr"
+} 
