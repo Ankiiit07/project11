@@ -1,4 +1,3 @@
-// netlify/functions/shiprocket.js
 import fetch from "node-fetch";
 
 let shiprocketToken = null;
@@ -33,13 +32,15 @@ async function loginToShiprocket() {
 
 export async function handler(event) {
   try {
-    const { action, payload } = JSON.parse(event.body);
+    // If body is empty, default to empty object
+    const body = event.body ? JSON.parse(event.body) : {};
+    const { action, payload } = body;
 
     const token = await loginToShiprocket();
-    let res, data;
+    let data = {};
 
     if (action === "createOrder") {
-      res = await fetch(`${SHIPROCKET_BASE_URL}/orders/create/adhoc`, {
+      const res = await fetch(`${SHIPROCKET_BASE_URL}/orders/create/adhoc`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,16 +49,16 @@ export async function handler(event) {
         body: JSON.stringify(payload),
       });
       data = await res.json();
-    }
-
-    if (action === "track") {
-      res = await fetch(
-        `${SHIPROCKET_BASE_URL}/courier/track/awb/${payload.awb}`,
+    } else if (action === "track") {
+      const res = await fetch(
+        `${SHIPROCKET_BASE_URL}/courier/track/awb/${payload?.awb}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       data = await res.json();
+    } else {
+      data = { message: "Send an action: createOrder or track" };
     }
 
     return {
@@ -65,6 +66,7 @@ export async function handler(event) {
       body: JSON.stringify(data),
     };
   } catch (err) {
+    console.error(err);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),
