@@ -31,7 +31,6 @@ async function loginToShiprocket() {
   return shiprocketToken;
 }
 
-
 export async function handler(event) {
   try {
     const body = event.body ? JSON.parse(event.body) : {};
@@ -48,8 +47,6 @@ export async function handler(event) {
     let data;
 
     if (action === "createOrder") {
-      validateCreateOrderPayload(payload);
-
       const res = await fetch(`${SHIPROCKET_BASE_URL}/orders/create/adhoc`, {
         method: "POST",
         headers: {
