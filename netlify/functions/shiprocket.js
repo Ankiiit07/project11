@@ -21,6 +21,9 @@ async function loginToShiprocket() {
 
   const data = await res.json();
 
+  console.log("Shiprocket Response:", data);
+
+
   if (!res.ok) {
     throw new Error(`Login failed: ${data.message}`);
   }
