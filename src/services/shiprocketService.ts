@@ -36,38 +36,45 @@ export interface ShiprocketOrderPayload {
 }
 
 export const createShiprocketOrder = async (order: any) => {
-  // Prepare payload
+  const customer = order.customer_info || {};
+  const payment = order.payment_info || {};
+
+  // Calculate sub_total (sum of all items)
+  const sub_total = order.items.reduce(
+    (sum: number, item: any) => sum + item.price * item.quantity,
+    0
+  );
+
   const payload: ShiprocketOrderPayload = {
     order_id: order.id,
     order_date: new Date().toISOString(),
     pickup_location: "Home", // Must match Shiprocket panel
-    billing_customer_name: order.customer_info?.firstName || "",
-billing_last_name: order.customer_info?.lastName || "",
-billing_address: order.customer_info?.address || "",
-billing_city: order.customer_info?.city || "",
-billing_pincode: order.customer_info?.zipCode || "000000",
-billing_state: order.customer_info?.state || "",
-billing_country: "India",
-billing_email: order.customer_info?.email || "",
-billing_phone: order.customer_info?.phone || "",
-    shipping_is_billing: true,
-    shipping_customer_name: order.customer_info?.firstName,
-shipping_last_name: order.customer_info?.lastName,
-shipping_address: order.customer_info?.address,
-shipping_city: order.customer_info?.city,
-shipping_pincode: order.customer_info?.zipCode,
-shipping_state: order.customer_info?.state,
-shipping_country: order.customer_info?.country || "India",
-shipping_email: order.customer_info?.email,
-shipping_phone: order.customer_info?.phone,
+    billing_customer_name: customer.firstName || "",
+    billing_last_name: customer.lastName || "",
+    billing_address: customer.address || "",
+    billing_city: customer.city || "",
+    billing_pincode: customer.zipCode || "000000",
+    billing_state: customer.state || "",
+    billing_country: "India",
+    billing_email: customer.email || "",
+    billing_phone: customer.phone || "",
+    shipping_customer_name: customer.firstName,
+    shipping_last_name: customer.lastName,
+    shipping_address: customer.address,
+    shipping_city: customer.city,
+    shipping_pincode: customer.zipCode || "000000",
+    shipping_state: customer.state,
+    shipping_country: "India",
+    shipping_email: customer.email,
+    shipping_phone: customer.phone,
     order_items: order.items.map((item: any) => ({
       name: item.name,
       sku: item.id,
       units: item.quantity,
       selling_price: item.price,
     })),
-    payment_method: order.payment_info?.method === "razorpay" ? "Prepaid" : "COD",
-    sub_total: order.total,
+    payment_method: payment.method === "razorpay" ? "Prepaid" : "COD",
+    sub_total,
     length: 10,
     breadth: 10,
     height: 10,
@@ -79,19 +86,19 @@ shipping_phone: order.customer_info?.phone,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      action: "createOrder",  // ✅ required
-      payload
+      action: "createOrder",
+      payload,
     }),
   });
 
-  const text = await response.text(); // Get raw response
-  console.log("Shiprocket raw response:", text); // Logs exact API error
+  const text = await response.text();
+  console.log("Shiprocket raw response:", text);
 
   if (!response.ok) {
     let errorMessage = `Shiprocket API error: ${response.status}`;
     try {
       const json = JSON.parse(text);
-      errorMessage += ` - ${JSON.stringify(json)}`; // Include API error details
+      errorMessage += ` - ${JSON.stringify(json)}`;
     } catch {}
     throw new Error(errorMessage);
   }
