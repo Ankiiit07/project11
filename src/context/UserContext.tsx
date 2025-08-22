@@ -101,53 +101,38 @@ const refreshUser = async () => {
 };
 
   // ✅ Load user session + profile on mount
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        // Handle email verification redirect with hash
-        if (window.location.hash.includes("access_token")) {
-          const { error } = await supabase.auth.getSessionFromUrl({
-            storeSession: true,
-          });
-          if (error) {
-            console.error("Error restoring session:", error);
-          }
-          await refreshUser();
+ useEffect(() => {
+  console.log("UserContext useEffect running");
+  
+  const initUser = async () => {
+    try {
+      await refreshUser();
+    } catch (error) {
+      console.error("Error loading user:", error);
+      setStoreUser(null);
+      setStoreAuthenticated(false);
+      setLoading(false);
+    }
+  };
 
-          // Clear hash from URL so it doesn’t trigger again
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
-        } else {
-          await refreshUser();
-        }
-      } catch (error) {
-        console.error("Error loading user:", error);
-        setStoreUser(null);
-        setStoreAuthenticated(false);
-      }
-    };
-
-    loadUser();
+  initUser();
 
   const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-  console.log("Auth state change:", event); // Add this
-  // Don't call loadUser here, just refresh
-  if (session) {
-    await refreshUser();
-  } else {
-    setStoreUser(null);
-    setStoreAuthenticated(false);
+    console.log("Auth state change:", event, session?.user?.id);
+    if (session?.user) {
+      setStoreUser({ id: session.user.id, email: session.user.email || "", name: "" });
+      setStoreAuthenticated(true);
+    } else {
+      setStoreUser(null);
+      setStoreAuthenticated(false);
+    }
     setLoading(false);
-  }
-});
+  });
 
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, [setStoreUser, setStoreAuthenticated]);
+  return () => {
+    listener?.subscription.unsubscribe();
+  };
+}, []); // Changed from [refreshUser, setStoreUser, setStoreAuthenticated] to []
 
   const login = async (email: string, password: string) => {
     setLoading(true);
