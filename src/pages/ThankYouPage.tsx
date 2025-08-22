@@ -36,6 +36,7 @@ interface OrderDetails {
 
 
 const ThankYouPage: React.FC = () => {
+  console.log("ThankYouPage rendered");
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
