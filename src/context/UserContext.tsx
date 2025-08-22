@@ -43,7 +43,7 @@ console.log("UserContext render - user:", user); // Add this
 
   // ✅ refresh user and ensure profile row exists
   const refreshUser = async () => {
-    console.log("refreshUser called"); 
+    console.log("refreshUser START - setting loading to true"); 
     setLoading(true);
     try {
       const {
@@ -78,15 +78,18 @@ console.log("UserContext render - user:", user); // Add this
         }
 
         setStoreAuthenticated(true);
+        console.log("User found, setting authenticated to true");
       } else {
         setStoreUser(null);
         setStoreAuthenticated(false);
+        console.log("No user found, setting authenticated to false");
       }
     } catch (error) {
       console.error("Refresh user error:", error);
       setStoreUser(null);
       setStoreAuthenticated(false);
     } finally {
+      console.log("refreshUser END - setting loading to false");
       setLoading(false);
     }
   };
