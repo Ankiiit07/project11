@@ -121,11 +121,7 @@ const ThankYouPage: React.FC = () => {
             Thank You for Your Order!
           </h1>
           <p className="text-xl text-gray-600">
-  Your {orderDetails.paymentInfo?.method === "razorpay"
-    ? "online payment"
-    : orderDetails.paymentInfo?.method === "cod"
-      ? "Cash on Delivery (COD)"
-      : "Prepaid"} order has been confirmed and will be delivered soon.
+  Your order has been confirmed and will be delivered soon.
           </p>
         </motion.div>
 
