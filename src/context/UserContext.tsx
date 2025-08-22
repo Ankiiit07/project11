@@ -48,7 +48,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .single();
+          .maybeSingle()
 
         if (!profile) {
           // 🔹 create a profile row if it doesn't exist
