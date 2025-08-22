@@ -39,37 +39,33 @@ const ThankYouPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  console.log("🔥 ThankYouPage orderDetails:", orderDetails);
+
   useEffect(() => {
     const loadOrder = async () => {
-      // 1. Try from location.state
+      // 1. Try to get from state
       let details = location.state?.orderDetails;
 
-      // 2. Fallback to localStorage
-      if (!details) {
-        details = JSON.parse(localStorage.getItem("codOrderDetails") || "null");
-      }
-
-      // 3. Fallback to Supabase (Netlify-safe)
+      // 2. Fallback to email query param
       if (!details) {
         const params = new URLSearchParams(location.search);
-        const orderId = params.get("orderId");
-
-        if (orderId) {
+        const email = params.get("email");
+        if (email) {
           const { data, error } = await supabase
             .from("orders")
             .select("*")
-            .eq("id", orderId)
+            .eq("customer_info->>email", email) // query by email in JSON field
+            .order("created_at", { ascending: false })
+            .limit(1)
             .single();
 
-          if (!error && data) {
+          if (data && !error) {
             details = {
               orderNumber: data.id,
-              customerName: data.customer_info?.name,
-              customerEmail: data.customer_info?.email,
-              customerPhone: data.customer_info?.phone,
-              total: data.total,
-              items: data.items,
+              customerName: data.customer_info?.name || "",
+              customerEmail: data.customer_info?.email || "",
+              customerPhone: data.customer_info?.phone || "",
+              total: data.total || 0,
+              items: data.items || [],
               shippingAddress: data.customer_info?.address || {
                 street: "",
                 city: "",
@@ -79,6 +75,7 @@ const ThankYouPage: React.FC = () => {
               estimatedDelivery: new Date(
                 Date.now() + 3 * 24 * 60 * 60 * 1000
               ).toISOString(),
+              paymentMethod: data.payment_info?.method || "cod",
             };
           }
         }
