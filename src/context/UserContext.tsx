@@ -33,6 +33,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   setLoading: state.setLoading,
   setAuthenticated: state.setAuthenticated,
 }));
+  console.log("UserContext render - isLoading:", isLoading); // Add this
+console.log("UserContext render - user:", user); // Add this
   const {
     setUser: setStoreUser,
     setAuthenticated: setStoreAuthenticated,
