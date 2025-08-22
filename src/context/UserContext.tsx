@@ -43,57 +43,62 @@ console.log("UserContext render - user:", user); // Add this
   } = useAppActions();
 
   // ✅ refresh user and ensure profile row exists
-  const refreshUser = async () => {
-    console.log("refreshUser START - setting loading to true"); 
-    setLoading(true);
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  // Around line 35, replace the entire refreshUser function:
+const refreshUser = async () => {
+  console.log("refreshUser START"); // Add this
+  setLoading(true);
+  
+  // Add timeout to prevent infinite loading
+  const timeoutId = setTimeout(() => {
+    console.log("refreshUser TIMEOUT - forcing loading to false");
+    setLoading(false);
+  }, 5000); // 5 second timeout
+  
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    console.log("supabase user:", user); // Add this
 
-      if (user) {
-        // check if profile exists
-        const { data: profile } = await supabase
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      console.log("profile data:", profile); // Add this
+
+      if (!profile) {
+        const { data: newProfile, error: insertError } = await supabase
           .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .maybeSingle();
+          .insert([{ id: user.id, email: user.email, role: "customer" }])
+          .select()
+          .single();
 
-        if (!profile) {
-          // 🔹 create a profile row if it doesn't exist
-          const { data: newProfile, error: insertError } = await supabase
-            .from("profiles")
-            .insert([{ id: user.id, email: user.email, role: "customer" }])
-            .select()
-            .single();
-
-          if (insertError) {
-            console.error("Profile insert error:", insertError);
-            // fallback: set minimal user
-            setStoreUser({ id: user.id, email: user.email, name: "" });
-          } else {
-            setStoreUser(newProfile);
-          }
+        if (insertError) {
+          console.error("Profile insert error:", insertError);
+          setStoreUser({ id: user.id, email: user.email, name: "" });
         } else {
-          setStoreUser(profile);
+          setStoreUser(newProfile);
         }
-
-        setStoreAuthenticated(true);
-        console.log("User found, setting authenticated to true");
       } else {
-        setStoreUser(null);
-        setStoreAuthenticated(false);
-        console.log("No user found, setting authenticated to false");
+        setStoreUser(profile);
       }
-    } catch (error) {
-      console.error("Refresh user error:", error);
+
+      setStoreAuthenticated(true);
+    } else {
       setStoreUser(null);
       setStoreAuthenticated(false);
-    } finally {
-      console.log("refreshUser END - setting loading to false");
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Refresh user error:", error);
+    setStoreUser(null);
+    setStoreAuthenticated(false);
+  } finally {
+    clearTimeout(timeoutId); // Clear timeout if completed normally
+    console.log("refreshUser END - setting loading to false"); // Add this
+    setLoading(false);
+  }
+};
 
   // ✅ Load user session + profile on mount
   useEffect(() => {
