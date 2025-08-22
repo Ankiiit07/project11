@@ -26,9 +26,13 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const user = useAppStore((state) => state.user);
-const isLoading = useAppStore((state) => state.isLoading);
-const { setUser, setLoading, setAuthenticated } = useAppActions();
+  const { user, isLoading, setUser, setLoading, setAuthenticated } = useAppStore((state) => ({
+  user: state.user,
+  isLoading: state.isLoading,
+  setUser: state.setUser,
+  setLoading: state.setLoading,
+  setAuthenticated: state.setAuthenticated,
+}));
   const {
     setUser: setStoreUser,
     setAuthenticated: setStoreAuthenticated,
