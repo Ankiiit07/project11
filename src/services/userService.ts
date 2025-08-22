@@ -25,6 +25,10 @@ class UserService {
     });
     if (authError) throw authError;
 
+    if (!authData.user) {
+    return { message: "Check your email for a confirmation link." };
+  }
+
     const user = authData.user;
     if (!user) throw new Error("User not created");
 
