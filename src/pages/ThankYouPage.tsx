@@ -12,6 +12,7 @@ import {
   Home,
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
+import { useOrders } from "../hooks/useOrders";
 
 interface OrderDetails {
   orderNumber: string;
