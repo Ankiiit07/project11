@@ -154,12 +154,13 @@ const CheckoutPage: React.FC = () => {
         });
   
         setTimeout(() => {
-          cartDispatch({ type: "CLEAR_CART" });
-          localStorage.setItem("orderDetails", JSON.stringify(newOrder));
-          navigate(`/thank-you?orderId=${newOrder.id}`, {
-            state: { orderDetails: newOrder },
-          });
-        }, 3000);
+  cartDispatch({ type: "CLEAR_CART" });
+  // Navigate and pass order details via state for guest users
+  navigate(`/thank-you?email=${formData.email}`, {
+    state: { orderDetails: newOrder },
+  });
+}, 3000);
+
       } catch (error) {
         console.error("Error creating order:", error);
         notification.error(
