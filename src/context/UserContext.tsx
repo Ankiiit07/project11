@@ -36,6 +36,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   // ✅ refresh user and ensure profile row exists
   const refreshUser = async () => {
+    console.log("refreshUser called"); 
     setLoading(true);
     try {
       const {
@@ -116,8 +117,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     loadUser();
 
   const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+  console.log("Auth state change:", event); // Add this
+  // Don't call loadUser here, just refresh
+  if (session) {
     await refreshUser();
+  } else {
+    setStoreUser(null);
+    setStoreAuthenticated(false);
+    setLoading(false);
   }
 });
 
