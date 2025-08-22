@@ -44,58 +44,37 @@ const ThankYouPage: React.FC = () => {
     const loadOrder = async () => {
   let details = location.state?.orderDetails;
 
-  if (!details) {
-    const params = new URLSearchParams(location.search);
-    const email = params.get("email");
+  const params = new URLSearchParams(location.search);
+const orderId = params.get("orderId");
 
-    if (email) {
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+if (!details && orderId) {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("id", orderId)
+    .single();
 
-      if (!error && data?.length) {
-        // Find the latest order matching the email
-        const latestOrder = data.find(
-          (order: any) => order.customer_info?.email === email
-        );
+  if (!error && data) {
+    const customerInfo = typeof data.customer_info === "string"
+      ? JSON.parse(data.customer_info)
+      : data.customer_info;
 
-        if (latestOrder) {
-          const customerInfo =
-            typeof latestOrder.customer_info === "string"
-              ? JSON.parse(latestOrder.customer_info)
-              : latestOrder.customer_info;
+    const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
 
-          const items =
-            typeof latestOrder.items === "string"
-              ? JSON.parse(latestOrder.items)
-              : latestOrder.items;
-
-          details = {
-            orderNumber: latestOrder.id,
-            customerName:
-              (customerInfo.firstName || "") +
-              " " +
-              (customerInfo.lastName || ""),
-            customerEmail: customerInfo.email || "",
-            customerPhone: customerInfo.phone || "",
-            total: latestOrder.total || 0,
-            items: items || [],
-            shippingAddress: customerInfo.address || {
-              street: "",
-              city: "",
-              state: "",
-              zipCode: "",
-            },
-            estimatedDelivery: new Date(
-              Date.now() + 3 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            paymentInfo: latestOrder.payment_info || { method: "cod" },
-          };
-        }
-      }
-    }
+    details = {
+      orderNumber: data.id,
+      customerName: `${customerInfo.firstName || ""} ${customerInfo.lastName || ""}`,
+      customerEmail: customerInfo.email || "",
+      customerPhone: customerInfo.phone || "",
+      total: data.total || 0,
+      items: items || [],
+      shippingAddress: customerInfo.address || { street: "", city: "", state: "", zipCode: "" },
+      estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      paymentInfo: data.payment_info || { method: "cod" },
+    };
   }
+}
+    }
 
   setOrderDetails(details);
 };
