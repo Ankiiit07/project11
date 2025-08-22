@@ -151,7 +151,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         register,
         updateProfile,
         refreshUser,
-        isAuthenticated: !!user,
+        isAuthenticated: !!(user && user.id),,
       }}
     >
       {children}
