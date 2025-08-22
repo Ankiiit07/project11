@@ -20,7 +20,7 @@ const AccountPage: React.FC = () => {
   }, []);
 
   const { user, logout, login, register, isAuthenticated, loading } = useUser();
-//  const { orders = [], loading: ordersLoading } = useOrders() || {};
+const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
     searchParams.get("tab") || "profile"
