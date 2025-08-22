@@ -53,11 +53,13 @@ if (!details && orderId) {
     .select("*")
     .eq("id", orderId)
     .single();
+console.log("Supabase response:", data, error);
 
   if (!error && data) {
     const customerInfo = typeof data.customer_info === "string"
       ? JSON.parse(data.customer_info)
       : data.customer_info;
+    console.log("Customer Info:", customerInfo);
 
     const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
 
@@ -72,10 +74,12 @@ if (!details && orderId) {
       estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       paymentInfo: data.payment_info || { method: "cod" },
     };
+    console.log("Order Details prepared:", details);
   }
 }
 
   setOrderDetails(details);
+      console.log("Final orderDetails state:", details);
 };
 
     loadOrder();
