@@ -40,51 +40,51 @@ const ThankYouPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const { getOrderById } = useOrders(); // ✅ Add this line
 
   useEffect(() => {
-    const loadOrder = async () => {
-  let details = location.state?.orderDetails;
+  const loadOrder = async () => {
+    let details = location.state?.orderDetails;
 
-  const params = new URLSearchParams(location.search);
-const orderId = params.get("orderId");
+    const params = new URLSearchParams(location.search);
+    const orderId = params.get("orderId");
 
-if (!details && orderId) {
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*")
-    .eq("id", orderId)
-    .single();
-console.log("Supabase response:", data, error);
+    if (!details && orderId) {
+      try {
+        // ✅ Use the hook method
+        const orderData = await getOrderById(orderId);
+        
+        if (orderData) {
+          // ✅ Now customer_info is properly typed
+          const customerInfo = orderData.customer_info;
+          
+          details = {
+            orderNumber: orderData.id,
+            customerName: `${customerInfo.firstName || ""} ${customerInfo.lastName || ""}`,
+            customerEmail: customerInfo.email || "",
+            customerPhone: customerInfo.phone || "",
+            total: orderData.total || 0,
+            items: orderData.items || [],
+            shippingAddress: {
+              street: customerInfo.address || "",
+              city: customerInfo.city || "",
+              state: customerInfo.state || "",
+              zipCode: customerInfo.zipCode || ""
+            },
+            estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            paymentInfo: orderData.payment_info || { method: "cod" },
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      }
+    }
 
-  if (!error && data) {
-    const customerInfo = typeof data.customer_info === "string"
-      ? JSON.parse(data.customer_info)
-      : data.customer_info;
-    console.log("Customer Info:", customerInfo);
+    setOrderDetails(details);
+  };
 
-    const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
-
-    details = {
-      orderNumber: data.id,
-      customerName: `${customerInfo.firstName || ""} ${customerInfo.lastName || ""}`,
-      customerEmail: customerInfo.email || "",
-      customerPhone: customerInfo.phone || "",
-      total: data.total || 0,
-      items: items || [],
-      shippingAddress: customerInfo.address || { street: "", city: "", state: "", zipCode: "" },
-      estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      paymentInfo: data.payment_info || { method: "cod" },
-    };
-    console.log("Order Details prepared:", details);
-  }
-}
-
-  setOrderDetails(details);
-      console.log("Final orderDetails state:", details);
-};
-
-    loadOrder();
-  }, [location]);
+  loadOrder();
+}, [location, getOrderById]); // ✅ Add getOrderById to dependencies
 
   useEffect(() => {
     // Scroll to top when component mounts
