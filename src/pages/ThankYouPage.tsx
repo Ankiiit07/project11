@@ -42,13 +42,12 @@ const ThankYouPage: React.FC = () => {
 
   useEffect(() => {
     const loadOrder = async () => {
-  // 1. Try from location.state
   let details = location.state?.orderDetails;
 
-  // 2. Fallback to email query param
   if (!details) {
     const params = new URLSearchParams(location.search);
     const email = params.get("email");
+
     if (email) {
       const { data, error } = await supabase
         .from("orders")
@@ -62,14 +61,27 @@ const ThankYouPage: React.FC = () => {
         );
 
         if (latestOrder) {
+          const customerInfo =
+            typeof latestOrder.customer_info === "string"
+              ? JSON.parse(latestOrder.customer_info)
+              : latestOrder.customer_info;
+
+          const items =
+            typeof latestOrder.items === "string"
+              ? JSON.parse(latestOrder.items)
+              : latestOrder.items;
+
           details = {
             orderNumber: latestOrder.id,
-            customerName: latestOrder.customer_info?.name || "",
-            customerEmail: latestOrder.customer_info?.email || "",
-            customerPhone: latestOrder.customer_info?.phone || "",
+            customerName:
+              (customerInfo.firstName || "") +
+              " " +
+              (customerInfo.lastName || ""),
+            customerEmail: customerInfo.email || "",
+            customerPhone: customerInfo.phone || "",
             total: latestOrder.total || 0,
-            items: latestOrder.items || [],
-            shippingAddress: latestOrder.customer_info?.address || {
+            items: items || [],
+            shippingAddress: customerInfo.address || {
               street: "",
               city: "",
               state: "",
@@ -78,7 +90,7 @@ const ThankYouPage: React.FC = () => {
             estimatedDelivery: new Date(
               Date.now() + 3 * 24 * 60 * 60 * 1000
             ).toISOString(),
-            paymentMethod: latestOrder.payment_info?.method || "cod",
+            paymentInfo: latestOrder.payment_info || { method: "cod" },
           };
         }
       }
