@@ -135,22 +135,45 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const refreshUser = async () => {
-    setLoading(true);
-    try {
-      const profile = await userService.getProfile();
-      if (profile) {
-        setStoreUser(profile);
-        setStoreAuthenticated(true);
+  setLoading(true);
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      // check if profile exists
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile) {
+        // 🔹 create a profile row if it doesn't exist
+        const { data: newProfile, error: insertError } = await supabase
+          .from("profiles")
+          .insert([{ id: user.id, email: user.email, role: "customer" }])
+          .select()
+          .single();
+
+        if (insertError) throw insertError;
+        setStoreUser(newProfile);
       } else {
-        setStoreUser(null);
-        setStoreAuthenticated(false);
+        setStoreUser(profile);
       }
-    } catch (error) {
-      console.error("Refresh user error:", error);
-    } finally {
-      setLoading(false);
+
+      setStoreAuthenticated(true);
+    } else {
+      setStoreUser(null);
+      setStoreAuthenticated(false);
     }
-  };
+  } catch (error) {
+    console.error("Refresh user error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <UserContext.Provider
