@@ -34,53 +34,96 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     logout: clearStore,
   } = useAppActions();
 
-  // Load user session + profile on mount
-  useEffect(() => {
-  const loadUser = async () => {
+  // ✅ refresh user and ensure profile row exists
+  const refreshUser = async () => {
+    setLoading(true);
     try {
-      // If there's a hash (#access_token=...), set session from it
-      if (window.location.hash) {
-        const { data, error } = await supabase.auth.getSessionFromUrl({
-          storeSession: true,
-        });
-        if (error) {
-          console.error("Error handling redirect session:", error);
-        }
-      }
-
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (user) {
-        const profile = await userService.getProfile();
-        if (profile) {
+        // check if profile exists
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (!profile) {
+          // 🔹 create a profile row if it doesn't exist
+          const { data: newProfile, error: insertError } = await supabase
+            .from("profiles")
+            .insert([{ id: user.id, email: user.email, role: "customer" }])
+            .select()
+            .single();
+
+          if (insertError) {
+            console.error("Profile insert error:", insertError);
+            // fallback: set minimal user
+            setStoreUser({ id: user.id, email: user.email, name: "" });
+          } else {
+            setStoreUser(newProfile);
+          }
+        } else {
           setStoreUser(profile);
-          setStoreAuthenticated(true);
         }
+
+        setStoreAuthenticated(true);
       } else {
         setStoreUser(null);
         setStoreAuthenticated(false);
       }
     } catch (error) {
-      console.error("Error loading user:", error);
+      console.error("Refresh user error:", error);
       setStoreUser(null);
       setStoreAuthenticated(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  loadUser();
+  // ✅ Load user session + profile on mount
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        // Handle email verification redirect with hash
+        if (window.location.hash.includes("access_token")) {
+          const { error } = await supabase.auth.getSessionFromUrl({
+            storeSession: true,
+          });
+          if (error) {
+            console.error("Error restoring session:", error);
+          }
+          await refreshUser();
 
-  // 🔄 listen to supabase auth state changes
-  const { data: listener } = supabase.auth.onAuthStateChange(() => {
+          // Clear hash from URL so it doesn’t trigger again
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        } else {
+          await refreshUser();
+        }
+      } catch (error) {
+        console.error("Error loading user:", error);
+        setStoreUser(null);
+        setStoreAuthenticated(false);
+      }
+    };
+
     loadUser();
-  });
 
-  return () => {
-    listener?.subscription.unsubscribe();
-  };
-}, [setStoreUser, setStoreAuthenticated]);
+    // 🔄 listen to supabase auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      loadUser();
+    });
 
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, [refreshUser, setStoreUser, setStoreAuthenticated]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
@@ -113,8 +156,32 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   ) => {
     setLoading(true);
     try {
-      await userService.register(email, password, name, phone);
-      await refreshUser();
+      // create auth user
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name, phone },
+        },
+      });
+      if (error) throw error;
+
+      const authUser = data.user;
+      if (authUser) {
+        // immediately insert profile row
+        const { error: insertError } = await supabase.from("profiles").insert([
+          {
+            id: authUser.id,
+            email: authUser.email,
+            name,
+            phone,
+            role: "customer",
+          },
+        ]);
+        if (insertError) {
+          console.error("Profile insert during register failed:", insertError);
+        }
+      }
     } catch (error) {
       console.error("Registration error:", error);
       throw error;
@@ -133,47 +200,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       throw error;
     }
   };
-
-  const refreshUser = async () => {
-  setLoading(true);
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      // check if profile exists
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (!profile) {
-        // 🔹 create a profile row if it doesn't exist
-        const { data: newProfile, error: insertError } = await supabase
-          .from("profiles")
-          .insert([{ id: user.id, email: user.email, role: "customer" }])
-          .select()
-          .single();
-
-        if (insertError) throw insertError;
-        setStoreUser(newProfile);
-      } else {
-        setStoreUser(profile);
-      }
-
-      setStoreAuthenticated(true);
-    } else {
-      setStoreUser(null);
-      setStoreAuthenticated(false);
-    }
-  } catch (error) {
-    console.error("Refresh user error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
 
   return (
     <UserContext.Provider
