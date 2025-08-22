@@ -36,41 +36,51 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
   // Load user session + profile on mount
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        await supabase.auth.exchangeCodeForSession(window.location.href);
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (user) {
-          const profile = await userService.getProfile();
-          if (profile) {
-            setStoreUser(profile);
-            setStoreAuthenticated(true);
-          }
-        } else {
-          setStoreUser(null);
-          setStoreAuthenticated(false);
+  const loadUser = async () => {
+    try {
+      // If there's a hash (#access_token=...), set session from it
+      if (window.location.hash) {
+        const { data, error } = await supabase.auth.getSessionFromUrl({
+          storeSession: true,
+        });
+        if (error) {
+          console.error("Error handling redirect session:", error);
         }
-      } catch (error) {
-        console.error("Error loading user:", error);
+      }
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const profile = await userService.getProfile();
+        if (profile) {
+          setStoreUser(profile);
+          setStoreAuthenticated(true);
+        }
+      } else {
         setStoreUser(null);
         setStoreAuthenticated(false);
       }
-    };
+    } catch (error) {
+      console.error("Error loading user:", error);
+      setStoreUser(null);
+      setStoreAuthenticated(false);
+    }
+  };
 
+  loadUser();
+
+  // 🔄 listen to supabase auth state changes
+  const { data: listener } = supabase.auth.onAuthStateChange(() => {
     loadUser();
+  });
 
-    // 🔄 listen to supabase auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      loadUser();
-    });
+  return () => {
+    listener?.subscription.unsubscribe();
+  };
+}, [setStoreUser, setStoreAuthenticated]);
 
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, [setStoreUser, setStoreAuthenticated]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
