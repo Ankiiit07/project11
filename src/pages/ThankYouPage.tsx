@@ -1,122 +1,123 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import { Truck, CheckCircle, Clock, Mail, Phone, MapPin, Home, ArrowLeft } from "lucide-react";
+import { useLocation, useSearchParams, Link } from "react-router-dom";
+import { supabase } from "../supabaseClient"; // Your Supabase client
+import { ShoppingBag, CheckCircle } from "lucide-react";
 
-interface OrderDetails {
+interface OrderItem {
   id: string;
-  customer_info: {
-    name: string;
-    email: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    zipCode?: string;
-    country?: string;
-  };
-  items: Array<{ name: string; quantity: number; price: number }>;
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface Order {
+  id: string;
+  orderNumber: string;
+  date: string;
   total: number;
-  payment_info: {
-    method: string;
-    status: string;
-  };
+  items: OrderItem[];
   status: string;
-  created_at: string;
+  customerEmail: string;
 }
 
 const ThankYouPage: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [order, setOrder] = useState<OrderDetails | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const guestEmail = searchParams.get("email");
+
+  const [order, setOrder] = useState<Order | null>(location.state?.orderDetails || null);
+  const [loading, setLoading] = useState(!order);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      setLoading(true);
-      const params = new URLSearchParams(location.search);
-      const orderId = params.get("orderId");
-      const email = params.get("email"); // guest email passed from checkout
+      if (!order && guestEmail) {
+        setLoading(true);
+        try {
+          const { data, error } = await supabase
+            .from<Order>("orders")
+            .select("*")
+            .eq("customerEmail", guestEmail)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .single();
 
-      if (!orderId && !email) return;
-
-      let query = supabase.from("orders").select("*");
-
-      if (orderId) {
-        query = query.eq("id", orderId).single();
-      } else if (email) {
-        query = query.eq("customer_info->>email", email).order("created_at", { ascending: false }).limit(1).single();
+          if (error) throw error;
+          setOrder(data);
+        } catch (err) {
+          console.error("Failed to fetch order:", err);
+        } finally {
+          setLoading(false);
+        }
       }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Supabase fetch error:", error);
-      } else {
-        setOrder(data as OrderDetails);
-      }
-
-      setLoading(false);
     };
 
     fetchOrder();
-  }, [location]);
+  }, [guestEmail, order]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Order not found.</p>
-        <button onClick={() => navigate("/")}>Go Home</button>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-cream p-6 text-center">
+        <ShoppingBag className="h-16 w-16 text-gray-400 mb-4" />
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
+        <p className="text-gray-600 mb-4">
+          We couldn't find your order. Please check your email for the confirmation.
+        </p>
+        <Link
+          to="/products"
+          className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+        >
+          Continue Shopping
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream py-8">
-      <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow">
-        <div className="text-center mb-6">
-          <CheckCircle className="mx-auto text-green-600 w-12 h-12 mb-2" />
-          <h1 className="text-2xl font-bold">Thank you, {order.customer_info.name}!</h1>
-          <p>Your order has been confirmed.</p>
-        </div>
-
-        <div className="mb-6">
-          <h2 className="font-semibold mb-2">Order #{order.id}</h2>
-          <p>
-            <strong>Status:</strong> {order.status}
-          </p>
-          <p>
-            <strong>Payment:</strong> {order.payment_info.method.toUpperCase()} ({order.payment_info.status})
+    <div className="min-h-screen bg-cream py-12 px-6">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
+        <div className="flex flex-col items-center text-center">
+          <CheckCircle className="h-16 w-16 text-green-600 mb-4" />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Thank you for your order!
+          </h1>
+          <p className="text-gray-600 mb-6">
+            We've received your order #{order.orderNumber}. A confirmation email has been sent to {order.customerEmail}.
           </p>
         </div>
 
-        <div className="mb-6">
-          <h3 className="font-semibold mb-2">Items</h3>
-          <ul>
-            {order.items.map((item, i) => (
-              <li key={i}>
-                {item.name} × {item.quantity} — ₹{(item.price * item.quantity).toFixed(2)}
-              </li>
+        <div className="mb-6 border-t border-gray-200 pt-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+          <div className="space-y-3">
+            {order.items.map((item) => (
+              <div key={item.id} className="flex justify-between text-gray-800">
+                <span>
+                  {item.name} x{item.quantity}
+                </span>
+                <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+              </div>
             ))}
-          </ul>
-          <p className="mt-2 font-bold">Total: ₹{order.total.toFixed(2)}</p>
+          </div>
+          <div className="flex justify-between font-bold text-gray-900 border-t pt-3 mt-3">
+            <span>Total</span>
+            <span>₹{order.total.toFixed(2)}</span>
+          </div>
         </div>
 
-        <div className="mb-6">
-          <h3 className="font-semibold mb-2">Shipping</h3>
-          <p>{order.customer_info.address}, {order.customer_info.city}, {order.customer_info.state} {order.customer_info.zipCode}</p>
-          <p>{order.customer_info.country}</p>
-          <p>Email: {order.customer_info.email}</p>
-          {order.customer_info.phone && <p>Phone: {order.customer_info.phone}</p>}
-        </div>
-
-        <div className="flex justify-center gap-4">
-          <button onClick={() => navigate("/")} className="px-4 py-2 bg-primary text-white rounded">Continue Shopping</button>
-          <button onClick={() => navigate(`/account?tab=orders&email=${order.customer_info.email}`)} className="px-4 py-2 border rounded">View My Orders</button>
+        <div className="text-center">
+          <Link
+            to="/products"
+            className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
+          >
+            Continue Shopping
+          </Link>
         </div>
       </div>
     </div>
