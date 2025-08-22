@@ -40,7 +40,7 @@ export const createShiprocketOrder = async (order: any) => {
   const payload: ShiprocketOrderPayload = {
     order_id: order.id,
     order_date: new Date().toISOString(),
-    pickup_location: "Primary", // Must match Shiprocket panel
+    pickup_location: "Home", // Must match Shiprocket panel
     billing_customer_name: order.customerInfo?.firstName || "",
     billing_last_name: order.customerInfo?.lastName || "",
     billing_address: order.customerInfo?.address || "",
@@ -50,7 +50,7 @@ export const createShiprocketOrder = async (order: any) => {
     billing_country: "India",
     billing_email: order.customerInfo?.email || "",
     billing_phone: order.customerInfo?.phone || "",
-    // Shipping same as billing if not specified
+    shipping_is_billing: true,
     shipping_customer_name: order.shippingInfo?.firstName || order.customerInfo?.firstName,
     shipping_last_name: order.shippingInfo?.lastName || order.customerInfo?.lastName,
     shipping_address: order.shippingInfo?.address || order.customerInfo?.address,
