@@ -1,5 +1,3 @@
-console.log("BASIC TEST - This should show if JS is working");
-alert("Page is loading");
 import React, { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
