@@ -44,6 +44,7 @@ const OrderDetailsPage: React.FC = () => {
       if (status === "shipped") {
         try {
           const shiprocketResponse = await createShiprocketOrder(order);
+          order.orderDetails = shiprocketResponse;
           console.log("🚚 Shiprocket order created:", shiprocketResponse);
           alert("Shiprocket order created successfully!");
         } catch (err) {
