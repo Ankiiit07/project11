@@ -156,9 +156,9 @@ const CheckoutPage: React.FC = () => {
         setTimeout(() => {
   cartDispatch({ type: "CLEAR_CART" });
   // Navigate and pass order details via state for guest users
-  navigate("/thank-you", {
-  state: { orderDetails: order },
-});
+  navigate(`/thank-you?orderId=${newOrder.id}`, {
+            state: { orderDetails: newOrder },
+          });
 }, 3000);
 
       } catch (error) {
