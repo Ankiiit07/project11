@@ -48,7 +48,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .maybeSingle()
+          .maybeSingle();
 
         if (!profile) {
           // 🔹 create a profile row if it doesn't exist
@@ -115,15 +115,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
 
     loadUser();
 
-    // 🔄 listen to supabase auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      loadUser();
-    });
+  const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+    await refreshUser();
+  }
+});
 
     return () => {
       listener?.subscription.unsubscribe();
     };
-  }, [refreshUser, setStoreUser, setStoreAuthenticated]);
+  }, [setStoreUser, setStoreAuthenticated]);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
