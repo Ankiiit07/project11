@@ -53,7 +53,7 @@ export async function handler(event) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ action: "createOrder", payload }),
       });
 
       data = await res.json();
