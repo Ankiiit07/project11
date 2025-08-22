@@ -74,7 +74,6 @@ if (!details && orderId) {
     };
   }
 }
-    }
 
   setOrderDetails(details);
 };
