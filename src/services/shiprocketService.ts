@@ -78,7 +78,10 @@ export const createShiprocketOrder = async (order: any) => {
   const response = await fetch("/.netlify/functions/shiprocket", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      action: "createOrder",  // ✅ required
+      payload
+    }),
   });
 
   const text = await response.text(); // Get raw response
