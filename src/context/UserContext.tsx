@@ -38,6 +38,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const loadUser = async () => {
       try {
+        await supabase.auth.exchangeCodeForSession(window.location.href);
         const {
           data: { user },
         } = await supabase.auth.getUser();
