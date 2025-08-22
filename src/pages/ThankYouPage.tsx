@@ -42,47 +42,51 @@ const ThankYouPage: React.FC = () => {
 
   useEffect(() => {
     const loadOrder = async () => {
-      // 1. Try to get from state
-      let details = location.state?.orderDetails;
+  // 1. Try from location.state
+  let details = location.state?.orderDetails;
 
-      // 2. Fallback to email query param
-      if (!details) {
-        const params = new URLSearchParams(location.search);
-        const email = params.get("email");
-        if (email) {
-          const { data, error } = await supabase
-            .from("orders")
-            .select("*")
-            .eq("customer_info->>email", email) // query by email in JSON field
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .single();
+  // 2. Fallback to email query param
+  if (!details) {
+    const params = new URLSearchParams(location.search);
+    const email = params.get("email");
+    if (email) {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-          if (data && !error) {
-            details = {
-              orderNumber: data.id,
-              customerName: data.customer_info?.name || "",
-              customerEmail: data.customer_info?.email || "",
-              customerPhone: data.customer_info?.phone || "",
-              total: data.total || 0,
-              items: data.items || [],
-              shippingAddress: data.customer_info?.address || {
-                street: "",
-                city: "",
-                state: "",
-                zipCode: "",
-              },
-              estimatedDelivery: new Date(
-                Date.now() + 3 * 24 * 60 * 60 * 1000
-              ).toISOString(),
-              paymentMethod: data.payment_info?.method || "cod",
-            };
-          }
+      if (!error && data?.length) {
+        // Find the latest order matching the email
+        const latestOrder = data.find(
+          (order: any) => order.customer_info?.email === email
+        );
+
+        if (latestOrder) {
+          details = {
+            orderNumber: latestOrder.id,
+            customerName: latestOrder.customer_info?.name || "",
+            customerEmail: latestOrder.customer_info?.email || "",
+            customerPhone: latestOrder.customer_info?.phone || "",
+            total: latestOrder.total || 0,
+            items: latestOrder.items || [],
+            shippingAddress: latestOrder.customer_info?.address || {
+              street: "",
+              city: "",
+              state: "",
+              zipCode: "",
+            },
+            estimatedDelivery: new Date(
+              Date.now() + 3 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            paymentMethod: latestOrder.payment_info?.method || "cod",
+          };
         }
       }
+    }
+  }
 
-      setOrderDetails(details);
-    };
+  setOrderDetails(details);
+};
 
     loadOrder();
   }, [location]);
