@@ -26,8 +26,8 @@ class UserService {
     if (authError) throw authError;
 
     if (!authData.user) {
-    return { message: "Check your email for a confirmation link." };
-  }
+      return { message: "Check your email for a confirmation link." } as any;
+    }
 
     const user = authData.user;
     if (!user) throw new Error("User not created");
@@ -70,10 +70,13 @@ class UserService {
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single();
+      .maybeSingle(); // ✅ changed from .single() to .maybeSingle()
 
-    if (error) throw error;
-    return profile as UserProfile;
+    if (error) {
+      console.error("getProfile error:", error);
+      return null;
+    }
+    return profile as UserProfile | null;
   }
 
   // Promote user to admin (only from backend/SQL ideally)
