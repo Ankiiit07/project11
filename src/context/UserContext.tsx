@@ -26,6 +26,7 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  console.log("UserProvider component is rendering");
   const { user, isLoading, setUser, setLoading, setAuthenticated } = useAppStore((state) => ({
   user: state.user,
   isLoading: state.isLoading,
