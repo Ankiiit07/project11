@@ -58,6 +58,7 @@ export const createShiprocketOrder = async (order: any) => {
     billing_country: "India",
     billing_email: customer.email || "",
     billing_phone: customer.phone || "",
+    shipping_is_billing: true,
     shipping_customer_name: customer.firstName,
     shipping_last_name: customer.lastName,
     shipping_address: customer.address,
