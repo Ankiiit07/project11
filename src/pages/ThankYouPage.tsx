@@ -59,7 +59,7 @@ const ThankYouPage: React.FC = () => {
                 Date.now() + 3 * 24 * 60 * 60 * 1000
               ).toISOString(),
               paymentInfo: orderData.payment_info ?? { 
-                method: "cod", 
+                method: orderData.payment_info?.method || orderData.payment_info?.payment_method || "cod", 
                 status: "pending", 
                 orderId: orderData.id 
               },
