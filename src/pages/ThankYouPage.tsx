@@ -54,13 +54,11 @@ const ThankYouPage: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
 
   useEffect(() => {
-    const loadOrder = async () => {
-      console.log("🔹 location.state:", location.state);
+  const loadOrder = async () => {
+    try {
+      let details = location.state?.orderDetails;
       const params = new URLSearchParams(location.search);
       const orderId = params.get("orderId");
-      console.log("🔹 orderId from URL:", orderId);
-
-      let details = location.state?.orderDetails;
 
       if (!details && orderId) {
         const { data, error } = await supabase
@@ -69,43 +67,39 @@ const ThankYouPage: React.FC = () => {
           .eq("id", orderId)
           .single();
 
-        console.log("🔹 Supabase response:", data, error);
+        console.log("Supabase response:", data, error);
 
-        if (!error && data) {
-          // Safe parsing for customer info & items
-          const customerInfo =
-            typeof data.customer_info === "string"
-              ? JSON.parse(data.customer_info)
-              : data.customer_info;
+        if (error) throw error;
 
-          const items: OrderItem[] =
-            typeof data.items === "string" ? JSON.parse(data.items) : data.items;
+        const customerInfo = typeof data.customer_info === "string"
+          ? JSON.parse(data.customer_info)
+          : data.customer_info;
 
-          const shippingAddress: ShippingAddress =
-            customerInfo.address || { street: "", city: "", state: "", zipCode: "" };
+        const items = typeof data.items === "string" ? JSON.parse(data.items) : data.items;
 
-          details = {
-            orderNumber: data.id,
-            customerName: `${customerInfo.firstName || ""} ${customerInfo.lastName || ""}`,
-            customerEmail: customerInfo.email || "",
-            customerPhone: customerInfo.phone || "",
-            total: data.total || 0,
-            items: items || [],
-            shippingAddress,
-            estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-            paymentInfo: data.payment_info || { method: "cod" },
-          };
-
-          console.log("🔹 Prepared orderDetails:", details);
-        }
+        details = {
+          orderNumber: data.id,
+          customerName: `${customerInfo.firstName || ""} ${customerInfo.lastName || ""}`,
+          customerEmail: customerInfo.email || "",
+          customerPhone: customerInfo.phone || "",
+          total: data.total || 0,
+          items: items || [],
+          shippingAddress: customerInfo.address || { street: "", city: "", state: "", zipCode: "" },
+          estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          paymentInfo: data.payment_info || { method: "cod" },
+        };
       }
 
       setOrderDetails(details);
-      console.log("🔹 Final orderDetails state:", details);
-    };
+      console.log("Final orderDetails state:", details);
+    } catch (err) {
+      console.error("Failed to load order:", err);
+    }
+  };
 
-    loadOrder();
-  }, [location]);
+  loadOrder();
+}, [location]);
+
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
