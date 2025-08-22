@@ -1,106 +1,124 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { CheckCircle, Truck, Clock, MapPin, Phone, Mail, ArrowLeft, Home } from "lucide-react";
 import { supabase } from "../supabaseClient";
+import { Truck, CheckCircle, Clock, Mail, Phone, MapPin, Home, ArrowLeft } from "lucide-react";
 
 interface OrderDetails {
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  total: number;
-  items: Array<{
+  id: string;
+  customer_info: {
     name: string;
-    quantity: number;
-    price: number;
-  }>;
-  shippingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
   };
-  estimatedDelivery: string;
-  paymentInfo: {
-    method: "razorpay" | "cod";
-    paymentId?: string;
-    orderId: string;
-    signature?: string;
-    status: "pending" | "completed" | "failed";
+  items: Array<{ name: string; quantity: number; price: number }>;
+  total: number;
+  payment_info: {
+    method: string;
+    status: string;
   };
+  status: string;
+  created_at: string;
 }
 
 const ThankYouPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
+  const [order, setOrder] = useState<OrderDetails | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadOrder = async () => {
+    const fetchOrder = async () => {
+      setLoading(true);
       const params = new URLSearchParams(location.search);
       const orderId = params.get("orderId");
+      const email = params.get("email"); // guest email passed from checkout
 
-      if (!orderId) return;
+      if (!orderId && !email) return;
 
-      const { data, error } = await supabase
-        .from("orders")
-        .select("*")
-        .eq("id", orderId)
-        .single();
+      let query = supabase.from("orders").select("*");
 
-      if (!error && data) {
-        setOrderDetails({
-          orderNumber: data.id,
-          customerName: `${data.customer_info?.firstName || ""} ${data.customer_info?.lastName || ""}`,
-          customerEmail: data.customer_info?.email,
-          customerPhone: data.customer_info?.phone,
-          total: data.total,
-          items: data.items.map((item: any) => ({
-            name: item.name,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-          shippingAddress: {
-            street: data.customer_info?.address || "",
-            city: data.customer_info?.city || "",
-            state: data.customer_info?.state || "",
-            zipCode: data.customer_info?.zipCode || "",
-          },
-          estimatedDelivery: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-          paymentInfo: data.payment_info,
-        });
+      if (orderId) {
+        query = query.eq("id", orderId).single();
+      } else if (email) {
+        query = query.eq("customer_info->>email", email).order("created_at", { ascending: false }).limit(1).single();
       }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Supabase fetch error:", error);
+      } else {
+        setOrder(data as OrderDetails);
+      }
+
+      setLoading(false);
     };
 
-    loadOrder();
+    fetchOrder();
   }, [location]);
 
-  if (!orderDetails) {
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  if (!order) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Order Not Found</h1>
-          <p className="text-gray-600 mb-8">Please check your order details.</p>
-          <button
-            onClick={() => navigate("/")}
-            className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-          >
-            Go Home
-          </button>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Order not found.</p>
+        <button onClick={() => navigate("/")}>Go Home</button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream py-8 thank-you-page">
-      {/* Render order details similar to your previous component */}
-      <h1 className="text-3xl font-bold text-center mb-6">Thank You for Your Order!</h1>
-      <p className="text-center mb-4">Order #{orderDetails.orderNumber}</p>
-      <p className="text-center mb-8">Total: ₹{orderDetails.total.toFixed(2)}</p>
-      {/* Items, Customer Info, Shipping Info, Payment Info */}
-      {/* ...rest of the UI */}
+    <div className="min-h-screen bg-cream py-8">
+      <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow">
+        <div className="text-center mb-6">
+          <CheckCircle className="mx-auto text-green-600 w-12 h-12 mb-2" />
+          <h1 className="text-2xl font-bold">Thank you, {order.customer_info.name}!</h1>
+          <p>Your order has been confirmed.</p>
+        </div>
+
+        <div className="mb-6">
+          <h2 className="font-semibold mb-2">Order #{order.id}</h2>
+          <p>
+            <strong>Status:</strong> {order.status}
+          </p>
+          <p>
+            <strong>Payment:</strong> {order.payment_info.method.toUpperCase()} ({order.payment_info.status})
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Items</h3>
+          <ul>
+            {order.items.map((item, i) => (
+              <li key={i}>
+                {item.name} × {item.quantity} — ₹{(item.price * item.quantity).toFixed(2)}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 font-bold">Total: ₹{order.total.toFixed(2)}</p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Shipping</h3>
+          <p>{order.customer_info.address}, {order.customer_info.city}, {order.customer_info.state} {order.customer_info.zipCode}</p>
+          <p>{order.customer_info.country}</p>
+          <p>Email: {order.customer_info.email}</p>
+          {order.customer_info.phone && <p>Phone: {order.customer_info.phone}</p>}
+        </div>
+
+        <div className="flex justify-center gap-4">
+          <button onClick={() => navigate("/")} className="px-4 py-2 bg-primary text-white rounded">Continue Shopping</button>
+          <button onClick={() => navigate(`/account?tab=orders&email=${order.customer_info.email}`)} className="px-4 py-2 border rounded">View My Orders</button>
+        </div>
+      </div>
     </div>
   );
 };
