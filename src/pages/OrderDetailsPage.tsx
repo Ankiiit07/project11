@@ -89,43 +89,51 @@ const OrderDetailsPage: React.FC = () => {
           <h2 className="text-2xl font-bold mb-4">Order #{order.id}</h2>
 
           {/* Customer Info */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Customer</h3>
-            <p>
-              {order.customerInfo?.firstName} {order.customerInfo?.lastName}
-            </p>
-            <p>{order.customerInfo?.email}</p>
-            <p>{order.customerInfo?.phone}</p>
-            <p>{order.customerInfo?.address}</p>
-          </div>
+  <div className="mb-4">
+    <h4 className="font-semibold text-gray-800 mb-2">Customer Info</h4>
+    <p><span className="font-medium">Name:</span> {order.customerInfo?.firstName} {order.customerInfo?.lastName}</p>
+    <p><span className="font-medium">Email:</span> {order.customerInfo?.email}</p>
+    <p><span className="font-medium">Phone:</span> {order.customerInfo?.phone}</p>
+  </div>
 
-          {/* Items */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Items</h3>
-            <ul className="list-disc list-inside text-gray-700">
-              {order.items.map((item, idx) => (
-                <li key={idx}>
-                  {item.name} × {item.quantity} — ₹{item.price}
-                </li>
-              ))}
-            </ul>
-          </div>
+  {/* Shipping Info */}
+  <div className="mb-4">
+    <h4 className="font-semibold text-gray-800 mb-2">Shipping Address</h4>
+    <p>{order.customerInfo?.address}</p>
+    <p>{order.customerInfo?.city}, {order.customerInfo?.state} - {order.customerInfo?.zipCode}</p>
+    <p>{order.customerInfo?.country}</p>
+  </div>
 
-          {/* Payment Info */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Payment</h3>
-            <p>
-              Method:{" "}
-              <span className="font-medium">
-                {order.paymentInfo?.method
-                  ? order.paymentInfo.method.toUpperCase()
-                  : "N/A"}
-              </span>
-            </p>
-            <p>Status: {order.paymentInfo?.status || "unknown"}</p>
-            <p>Total: ₹{order.total.toFixed(2)}</p>
-          </div>
+  {/* Order Items */}
+  <div className="mb-4">
+    <h4 className="font-semibold text-gray-800 mb-2">Items</h4>
+    <ul className="list-disc list-inside text-gray-700">
+      {order.items.map((item, idx) => (
+        <li key={idx}>
+          {item.name} × {item.quantity} — ₹{item.price.toFixed(2)}
+        </li>
+      ))}
+    </ul>
+  </div>
 
+  {/* Payment Info */}
+  <div className="mb-4">
+    <h4 className="font-semibold text-gray-800 mb-2">Payment</h4>
+    <p><span className="font-medium">Method:</span> {order.paymentInfo?.method?.toUpperCase() || "N/A"}</p>
+    <p><span className="font-medium">Status:</span> {order.paymentInfo?.status || "N/A"}</p>
+    <p><span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}</p>
+  </div>
+
+  {/* Shiprocket Payload Preview (optional) */}
+  {order.orderDetails && (
+    <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
+      <h4 className="font-semibold mb-2">Mapped Shiprocket Payload</h4>
+      <pre className="text-xs text-gray-700 overflow-x-auto">
+        {JSON.stringify(order.orderDetails, null, 2)}
+      </pre>
+    </div>
+  )}
+</div>
           {/* Order Status Update */}
           <div className="mb-6">
             <h3 className="font-semibold text-lg mb-2">Update Status</h3>
