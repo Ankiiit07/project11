@@ -127,7 +127,14 @@ const CheckoutPage: React.FC = () => {
           throw new Error("Payment information missing or invalid");
         }
         
-  
+  console.log("💡 Creating order with data:", {
+  items: cartState.items,
+  customerInfo,
+  paymentInfo,
+  total: finalTotal,
+  shipping,
+  tax,
+});
         const newOrder = await createOrder(
           cartState.items,
           customerInfo,
