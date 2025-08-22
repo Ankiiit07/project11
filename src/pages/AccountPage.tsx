@@ -14,6 +14,7 @@ import { useUser } from "../context/UserContext";
 import { useOrders } from "../hooks/useOrders";
 
 const AccountPage: React.FC = () => {
+  console.log("AccountPage component is rendering");
   // Scroll to top when component mounts
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
