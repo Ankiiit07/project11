@@ -1,16 +1,13 @@
 import fetch from "node-fetch";
 
-let shiprocketToken: string | null = null;
-let tokenExpiry: number | null = null;
+let shiprocketToken = null;
+let tokenExpiry = null;
 
 const SHIPROCKET_BASE_URL = "https://apiv2.shiprocket.in/v1/external";
 
 // LOGIN FUNCTION WITH TOKEN CACHING
 async function loginToShiprocket() {
-  console.log("🔑 Logging in to Shiprocket...");
-
   if (shiprocketToken && tokenExpiry && Date.now() < tokenExpiry) {
-    console.log("✅ Using cached Shiprocket token");
     return shiprocketToken;
   }
 
@@ -23,42 +20,31 @@ async function loginToShiprocket() {
     }),
   });
 
-  const text = await res.text();
-  console.log("📥 Shiprocket login raw response:", text);
-
-  const data = JSON.parse(text);
+  const data = await res.json();
 
   if (!res.ok) {
-    console.error("❌ Login failed:", data);
-    throw new Error(`Login failed: ${data.message || text}`);
+    throw new Error(`Login failed: ${data.message}`);
   }
 
   shiprocketToken = data.token;
   tokenExpiry = Date.now() + 23 * 60 * 60 * 1000; // 23 hours caching
-  console.log("✅ Login successful, token cached");
   return shiprocketToken;
 }
 
-export async function handler(event: any) {
+export async function handler(event) {
   try {
-    console.log("📦 Incoming event:", event);
-
     const body = event.body ? JSON.parse(event.body) : {};
     const { action, payload } = body;
 
     if (!action) {
-      console.warn("⚠️ Missing 'action' in request body");
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Missing 'action' in request body" }),
       };
     }
 
-    console.log("🛠 Action:", action);
-    console.log("📤 Payload:", JSON.stringify(payload, null, 2));
-
     const token = await loginToShiprocket();
-    let data: any;
+    let data;
 
     if (action === "createOrder") {
       const res = await fetch(`${SHIPROCKET_BASE_URL}/orders/create/adhoc`, {
@@ -70,18 +56,10 @@ export async function handler(event: any) {
         body: JSON.stringify(payload),
       });
 
-      const rawText = await res.text();
-      console.log("📥 Shiprocket createOrder raw response:", rawText);
-
-      try {
-        data = JSON.parse(rawText);
-      } catch (parseErr) {
-        console.error("❌ Failed to parse Shiprocket response as JSON", parseErr);
-        data = { raw: rawText };
-      }
+      data = await res.json();
 
       if (!res.ok) {
-        console.error("❌ Shiprocket createOrder returned error:", data);
+        console.error("Shiprocket createOrder error:", data);
         return {
           statusCode: 400,
           body: JSON.stringify({ error: data }),
@@ -89,7 +67,6 @@ export async function handler(event: any) {
       }
     } else if (action === "track") {
       if (!payload?.awb) {
-        console.warn("⚠️ Missing AWB number in payload");
         return {
           statusCode: 400,
           body: JSON.stringify({ error: "Missing AWB number in payload" }),
@@ -98,28 +75,21 @@ export async function handler(event: any) {
 
       const res = await fetch(
         `${SHIPROCKET_BASE_URL}/courier/track/awb/${payload.awb}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      const rawText = await res.text();
-      console.log("📥 Shiprocket track raw response:", rawText);
-
-      try {
-        data = JSON.parse(rawText);
-      } catch (parseErr) {
-        console.error("❌ Failed to parse Shiprocket track response as JSON", parseErr);
-        data = { raw: rawText };
-      }
+      data = await res.json();
 
       if (!res.ok) {
-        console.error("❌ Shiprocket track returned error:", data);
+        console.error("Shiprocket track error:", data);
         return {
           statusCode: 400,
           body: JSON.stringify({ error: data }),
         };
       }
     } else {
-      console.warn("⚠️ Invalid action:", action);
       return {
         statusCode: 400,
         body: JSON.stringify({
@@ -128,16 +98,16 @@ export async function handler(event: any) {
       };
     }
 
-    console.log("✅ Shiprocket API call successful:", data);
+    // Return the real Shiprocket response
     return {
       statusCode: 200,
       body: JSON.stringify(data),
     };
-  } catch (err: any) {
-    console.error("🔥 Function error:", err);
+  } catch (err) {
+    console.error("Function error:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message || err.toString() }),
+      body: JSON.stringify({ error: err.message }),
     };
   }
 }
