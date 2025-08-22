@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useOrders } from "../hooks/useOrders";
-import { PaymentInfo } from "../hooks/useOrders"; // ✅ import PaymentInfo type
+import { PaymentInfo } from "../hooks/useOrders"; 
 
 interface OrderDetails {
   orderNumber: string;
@@ -58,7 +58,11 @@ const ThankYouPage: React.FC = () => {
               estimatedDelivery: new Date(
                 Date.now() + 3 * 24 * 60 * 60 * 1000
               ).toISOString(),
-              paymentInfo: orderData.payment_info || { method: "cod", status: "pending", orderId: orderData.id },
+              paymentInfo: orderData.payment_info ?? { 
+                method: "cod", 
+                status: "pending", 
+                orderId: orderData.id 
+              },
             };
           }
         } catch (error) {
@@ -117,7 +121,7 @@ const ThankYouPage: React.FC = () => {
             Thank You for Your Order!
           </h1>
           <p className="text-xl text-gray-600">
-            Your {orderDetails.paymentInfo.method === "razorpay" ? "online payment" : "COD"} order has been confirmed and will be delivered soon.
+            Your {orderDetails.paymentInfo?.method === "razorpay" ? "online payment" : "Prepaid"} order has been confirmed and will be delivered soon.
           </p>
         </motion.div>
 
@@ -161,9 +165,9 @@ const ThankYouPage: React.FC = () => {
                 ₹{orderDetails.total.toFixed(2)}
               </span>
             </div>
-            {orderDetails.paymentInfo.method === "cod" && (
+            {orderDetails.paymentInfo?.method === "cod" && (
               <p className="text-sm text-gray-600 mt-2">
-                *Including ₹25 COD charges
+                *
               </p>
             )}
           </div>
