@@ -115,14 +115,22 @@ const refreshUser = async () => {
         if (error) {
           console.error("Error restoring session:", error);
         }
-        await refreshUser();
+        } else {
+          // Successfully verified - set user immediately
+          if (data.session?.user) {
+            setStoreUser({ 
+              id: data.session.user.id, 
+              email: data.session.user.email || "", 
+              name: data.session.user.user_metadata?.name || "" 
+            });
+            setStoreAuthenticated(true);
+            setLoading(false);
+          }
+        }
 
-        // Clear hash from URL so it doesn't trigger again
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
+        // Clear hash from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return; // Exit early after verification
       } else {
         await refreshUser();
       }
@@ -140,15 +148,14 @@ const refreshUser = async () => {
   const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
     console.log("Auth state change:", event, session?.user?.email_confirmed_at);
     
-    if (event === 'SIGNED_IN' && session?.user) {
-      // Only allow fully verified users
-      if (session.user.email_confirmed_at) {
-        await refreshUser(); // Get full profile
-      } else {
-        console.log("User email not verified yet");
-        setStoreUser(null);
-        setStoreAuthenticated(false);
-      }
+    if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+      // User is signed in and verified
+      setStoreUser({ 
+        id: session.user.id, 
+        email: session.user.email || "", 
+        name: session.user.user_metadata?.name || "" 
+      });
+      setStoreAuthenticated(true);
     } else if (event === 'SIGNED_OUT') {
       setStoreUser(null);
       setStoreAuthenticated(false);
@@ -160,6 +167,8 @@ const refreshUser = async () => {
     listener?.subscription.unsubscribe();
   };
 }, []);
+
+
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
