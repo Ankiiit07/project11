@@ -358,11 +358,11 @@ React.useEffect(() => {
                         <div className="flex justify-between items-start mb-3">
                           <div>
                             <p className="font-medium text-gray-900">
-                              Order #{order.orderNumber}
+                              Order #{order.id.slice(-8)}
                             </p>
                             <p className="text-sm text-gray-600">
                               Placed on{" "}
-                              {new Date(order.date).toLocaleDateString()}
+                             {new Date(order.created_at).toLocaleDateString()}
                             </p>
                           </div>
                           <span
