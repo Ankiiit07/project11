@@ -10,6 +10,7 @@ import {
 import { supabase } from "../supabaseClient";
 import { useOrders } from "../hooks/useOrders";
 import { PaymentInfo } from "../hooks/useOrders"; 
+import { useUser } from "../context/UserContext";
 
 interface OrderDetails {
   orderNumber: string;
@@ -30,6 +31,7 @@ const ThankYouPage: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { getOrderById } = useOrders();
+  const { isAuthenticated } = useUser();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -218,7 +220,7 @@ const ThankYouPage: React.FC = () => {
             Continue Shopping
           </button>
 
-          {isLoggedIn && (
+          {isAuthenticated && (
             <button
               onClick={() => navigate("/account?tab=orders")}
               className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
