@@ -30,6 +30,8 @@ const { orders = [], loading: ordersLoading } = useOrders() || {};
   );
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formMessage, setFormMessage] = useState(""); // Add this
+const [messageType, setMessageType] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,11 +43,21 @@ const { orders = [], loading: ordersLoading } = useOrders() || {};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setFormMessage("");
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
         await register(formData.name, formData.email, formData.password);
+        setFormMessage("Registration successful! Please check your email to verify your account before signing in.");
+      setMessageType("success");
+
+        // Clear form after successful signup
+      setFormData({ name: "", email: "", password: "" });
+         setTimeout(() => {
+        setIsLogin(true);
+        setFormMessage("");
+      }, 3000);
       }
     } catch (error) {
       console.error("Authentication error:", error);
@@ -85,6 +97,16 @@ const { orders = [], loading: ordersLoading } = useOrders() || {};
                   ? "Sign in to manage your coffee subscriptions"
                   : "Join us for exclusive benefits and personalized coffee delivery"}
               </p>
+              {/* Add this message display */}
+  {formMessage && (
+    <div className={`mt-4 p-3 rounded-lg text-sm ${
+      messageType === "success" 
+        ? "bg-green-100 text-green-800 border border-green-200" 
+        : "bg-red-100 text-red-800 border border-red-200"
+    }`}>
+      {formMessage}
+    </div>
+  )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
