@@ -106,7 +106,26 @@ const refreshUser = async () => {
   
   const initUser = async () => {
     try {
-      await refreshUser();
+      // Handle email verification redirect with hash
+      if (window.location.hash.includes("access_token")) {
+        console.log("Email verification redirect detected");
+        const { error } = await supabase.auth.getSessionFromUrl({
+          storeSession: true,
+        });
+        if (error) {
+          console.error("Error restoring session:", error);
+        }
+        await refreshUser();
+
+        // Clear hash from URL so it doesn't trigger again
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      } else {
+        await refreshUser();
+      }
     } catch (error) {
       console.error("Error loading user:", error);
       setStoreUser(null);
@@ -117,12 +136,20 @@ const refreshUser = async () => {
 
   initUser();
 
+  // Listen to auth state changes for email verification
   const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log("Auth state change:", event, session?.user?.id);
-    if (session?.user) {
-      setStoreUser({ id: session.user.id, email: session.user.email || "", name: "" });
-      setStoreAuthenticated(true);
-    } else {
+    console.log("Auth state change:", event, session?.user?.email_confirmed_at);
+    
+    if (event === 'SIGNED_IN' && session?.user) {
+      // Only allow fully verified users
+      if (session.user.email_confirmed_at) {
+        await refreshUser(); // Get full profile
+      } else {
+        console.log("User email not verified yet");
+        setStoreUser(null);
+        setStoreAuthenticated(false);
+      }
+    } else if (event === 'SIGNED_OUT') {
       setStoreUser(null);
       setStoreAuthenticated(false);
     }
@@ -132,8 +159,7 @@ const refreshUser = async () => {
   return () => {
     listener?.subscription.unsubscribe();
   };
-}, []); // Changed from [refreshUser, setStoreUser, setStoreAuthenticated] to []
-
+}, []);
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
@@ -158,46 +184,37 @@ const refreshUser = async () => {
   };
 
   const register = async (
-    name: string,
-    email: string,
-    password: string,
-    phone?: string
-  ) => {
-    setLoading(true);
-    try {
-      // create auth user
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name, phone },
-        },
-      });
-      if (error) throw error;
+  name: string,
+  email: string,
+  password: string,
+  phone?: string
+) => {
+  setLoading(true);
+  try {
+    // Create auth user with email confirmation required
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name, phone },
+        emailRedirectTo: `${window.location.origin}/account`, // Redirect after verification
+      },
+    });
+    if (error) throw error;
 
-      const authUser = data.user;
-      if (authUser) {
-        // immediately insert profile row
-        const { error: insertError } = await supabase.from("profiles").insert([
-          {
-            id: authUser.id,
-            email: authUser.email,
-            name,
-            phone,
-            role: "customer",
-          },
-        ]);
-        if (insertError) {
-          console.error("Profile insert during register failed:", insertError);
-        }
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Don't create profile yet - wait for email verification
+    console.log("Registration successful - check email for verification");
+    
+    // You might want to show a message to user to check their email
+    return { message: "Please check your email to verify your account before signing in." };
+    
+  } catch (error) {
+    console.error("Registration error:", error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const updateProfile = async (userData: Partial<User>) => {
     try {
