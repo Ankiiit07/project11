@@ -22,7 +22,7 @@ const AccountPage: React.FC = () => {
   }, []);
 
   const { user, login, register, isAuthenticated, loading } = useUser();
-const { logout } = useAppActions(); // Get logout from store actions instead
+const { user, login, register, isAuthenticated, loading, logout } = useUser(); 
 const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
