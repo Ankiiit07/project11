@@ -30,7 +30,12 @@ const ThankYouPage: React.FC = () => {
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const { getOrderById } = useOrders();
-  const { isAuthenticated, loading } = useUser();
+  const { isAuthenticated, loading, refreshUser } = useUser();
+
+ useEffect(() => {
+    refreshUser();
+  }, []);
+  
 
   useEffect(() => {
     const loadOrder = async () => {
