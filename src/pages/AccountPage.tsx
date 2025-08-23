@@ -179,7 +179,7 @@ const [messageType, setMessageType] = useState("");
             </form>
 
             <div className="mt-6 text-center">
-              // Update the toggle button onClick:
+              
 <button
   onClick={() => {
     setIsLogin(!isLogin);
