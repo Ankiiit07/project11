@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useOrders } from "../hooks/useOrders";
+import { useAppActions } from "../store";
 
 const AccountPage: React.FC = () => {
  console.log("AccountPage loaded successfully!");
@@ -20,7 +21,8 @@ const AccountPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const { user, logout, login, register, isAuthenticated, loading } = useUser();
+  const { user, login, register, isAuthenticated, loading } = useUser();
+const { logout } = useAppActions(); // Get logout from store actions instead
 const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
