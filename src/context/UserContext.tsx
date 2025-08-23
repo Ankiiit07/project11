@@ -109,12 +109,11 @@ const refreshUser = async () => {
       // Handle email verification redirect with hash
       if (window.location.hash.includes("access_token")) {
         console.log("Email verification redirect detected");
-        const { error } = await supabase.auth.getSessionFromUrl({
+        const { data, error } = await supabase.auth.getSessionFromUrl({
           storeSession: true,
         });
         if (error) {
           console.error("Error restoring session:", error);
-        }
         } else {
           // Successfully verified - set user immediately
           if (data.session?.user) {
@@ -127,7 +126,6 @@ const refreshUser = async () => {
             setLoading(false);
           }
         }
-
         // Clear hash from URL
         window.history.replaceState({}, document.title, window.location.pathname);
         return; // Exit early after verification
@@ -141,7 +139,7 @@ const refreshUser = async () => {
       setLoading(false);
     }
   };
-
+  
   initUser();
 
   // Listen to auth state changes for email verification
