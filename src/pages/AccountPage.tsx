@@ -179,12 +179,15 @@ const [messageType, setMessageType] = useState("");
             </form>
 
             <div className="mt-6 text-center">
-              <button
-                onClick={() => setIsLogin(!isLogin);
-                setFormMessage(""); // Clear messages when switching
-    setFormData({ name: "", email: "", password: "" }); // Clear form too}
-                className="text-primary hover:text-primary-dark font-medium"
-              >
+              // Update the toggle button onClick:
+<button
+  onClick={() => {
+    setIsLogin(!isLogin);
+    setFormMessage(""); // Clear messages when switching
+    setFormData({ name: "", email: "", password: "" }); // Clear form too
+  }}
+  className="text-primary hover:text-primary-dark font-medium"
+>
                 {isLogin
                   ? "Don't have an account? Sign up"
                   : "Already have an account? Sign in"}
