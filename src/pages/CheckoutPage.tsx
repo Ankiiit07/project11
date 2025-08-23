@@ -146,6 +146,8 @@ const CheckoutPage: React.FC = () => {
   
         setOrderDetails(newOrder);
         setPaymentSuccess(true);
+
+        await sendOrderConfirmationEmail(newOrder, customerInfo);
   
         await updateProfile({
           name: `${formData.firstName} ${formData.lastName}`,
@@ -228,6 +230,34 @@ const CheckoutPage: React.FC = () => {
   const shipping = calculateShipping();
   const tax = calculateTax();
   const finalTotal = (cartState.total || 0) + tax + shipping;
+
+  const sendOrderConfirmationEmail = async (orderDetails: any, customerInfo: any) => {
+  try {
+    const response = await fetch('/.netlify/functions/send-order-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orderDetails,
+        customerInfo
+      })
+    });
+
+    const result = await response.json();
+    
+    if (response.ok) {
+      console.log('✅ Order confirmation email sent successfully');
+      notification.success('Order confirmation email sent to your email address');
+    } else {
+      console.error('❌ Failed to send confirmation email:', result.error);
+      // Don't show error to user as order is still successful
+    }
+  } catch (error) {
+    console.error('❌ Email service error:', error);
+    // Don't show error to user as order is still successful
+  }
+};
 
   if (cartState.items.length === 0) {
     return (
