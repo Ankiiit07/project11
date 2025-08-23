@@ -52,12 +52,6 @@ const [messageType, setMessageType] = useState("");
         setFormMessage("Registration successful! Please check your email to verify your account before signing in.");
       setMessageType("success");
 
-        // Clear form after successful signup
-      setFormData({ name: "", email: "", password: "" });
-         setTimeout(() => {
-        setIsLogin(true);
-        setFormMessage("");
-      }, 3000);
       }
     } catch (error) {
       console.error("Authentication error:", error);
