@@ -180,7 +180,7 @@ const [messageType, setMessageType] = useState("");
 
             <div className="mt-6 text-center">
               <button
-                onClick={() => setIsLogin(!isLogin)
+                onClick={() => setIsLogin(!isLogin);
                 setFormMessage(""); // Clear messages when switching
     setFormData({ name: "", email: "", password: "" }); // Clear form too}
                 className="text-primary hover:text-primary-dark font-medium"
