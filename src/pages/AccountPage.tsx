@@ -47,15 +47,32 @@ const [messageType, setMessageType] = useState("");
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
+        // Login success - user will be redirected automatically by UserContext
+      setFormMessage("Login successful! Welcome back.");
+      setMessageType("success");
       } else {
         await register(formData.name, formData.email, formData.password);
         setFormMessage("Registration successful! Please check your email to verify your account before signing in.");
       setMessageType("success");
 
+        setFormData({ name: "", email: "", password: "" });
       }
     } catch (error) {
       console.error("Authentication error:", error);
-      // You could add error state here to show to user
+       let errorMessage = "An error occurred. Please try again.";
+    
+    if (error?.message?.includes("Invalid login credentials")) {
+      errorMessage = "Invalid email or password. Please check and try again.";
+    } else if (error?.message?.includes("Email not confirmed")) {
+      errorMessage = "Please check your email and click the verification link before signing in.";
+    } else if (error?.message?.includes("User already registered")) {
+      errorMessage = "An account with this email already exists. Try signing in instead.";
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    
+    setFormMessage(errorMessage);
+    setMessageType("error");
     } finally {
       setIsSubmitting(false);
     }
@@ -163,7 +180,9 @@ const [messageType, setMessageType] = useState("");
 
             <div className="mt-6 text-center">
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => setIsLogin(!isLogin)
+                setFormMessage(""); // Clear messages when switching
+    setFormData({ name: "", email: "", password: "" }); // Clear form too}
                 className="text-primary hover:text-primary-dark font-medium"
               >
                 {isLogin
