@@ -20,7 +20,13 @@ const AccountPage: React.FC = () => {
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
+React.useEffect(() => {
+    if (!isAuthenticated) {
+      setFormData({ name: "", email: "", password: "" });
+      setFormMessage("");
+      setMessageType("");
+    }
+  }, [isAuthenticated]);
   const { user, login, register, isAuthenticated, loading, logout } = useUser();
 const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
@@ -245,12 +251,19 @@ const [messageType, setMessageType] = useState("");
               })}
 
               <button
-                onClick={logout}
-                className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors mt-6"
-              >
-                <LogOut className="h-5 w-5" />
-                <span>Logout</span>
-              </button>
+  onClick={async () => {
+    // Clear form state immediately
+    setFormData({ name: "", email: "", password: "" });
+    setFormMessage("");
+    setMessageType("");
+    // Then logout
+    await logout();
+  }}
+  className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors mt-6"
+>
+  <LogOut className="h-5 w-5" />
+  <span>Logout</span>
+</button>
             </nav>
           </div>
 
