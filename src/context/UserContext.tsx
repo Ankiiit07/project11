@@ -170,6 +170,36 @@ const refreshUser = async () => {
 
 
   const login = async (email: string, password: string) => {
+  setLoading(true);
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (error) throw error;
+    
+    // Check if user is verified
+    if (data.user && !data.user.email_confirmed_at) {
+      throw new Error("Please check your email and click the verification link before signing in.");
+    }
+    
+    // User is verified, set them in store
+    if (data.user) {
+      setStoreUser({ 
+        id: data.user.id, 
+        email: data.user.email || "", 
+        name: data.user.user_metadata?.name || "" 
+      });
+      setStoreAuthenticated(true);
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};= async (email: string, password: string) => {
     setLoading(true);
     try {
       await userService.login(email, password);
