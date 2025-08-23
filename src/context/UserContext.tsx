@@ -197,18 +197,7 @@ const refreshUser = async () => {
   } finally {
     setLoading(false);
   }
-};= async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      await userService.login(email, password);
-      await refreshUser();
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+};
 
   const logout = async () => {
     try {
