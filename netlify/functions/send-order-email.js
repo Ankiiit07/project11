@@ -43,8 +43,8 @@ exports.handler = async (event, context) => {
     }
 
     console.log('Creating email transporter');
-    // Create transporter
-    const transporter = nodemailer.createTransporter({
+    // Create transporter (note: createTransport, not createTransporter)
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
