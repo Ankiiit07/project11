@@ -29,17 +29,8 @@ const ThankYouPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { getOrderById } = useOrders();
-  const { isAuthenticated } = useUser();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getUser();
-      setIsLoggedIn(!!data.user);
-    };
-    checkAuth();
-  }, []);
+  const { isAuthenticated, loading } = useUser();
 
   useEffect(() => {
     const loadOrder = async () => {
@@ -220,7 +211,7 @@ const ThankYouPage: React.FC = () => {
             Continue Shopping
           </button>
 
-          {isAuthenticated && (
+          {!loading && isAuthenticated && (
             <button
               onClick={() => navigate("/account?tab=orders")}
               className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
