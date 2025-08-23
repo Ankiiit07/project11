@@ -18,7 +18,8 @@ const AccountPage: React.FC = () => {
  console.log("AccountPage loaded successfully!");
 
   const { user, login, register, isAuthenticated, loading, logout } = useUser();
-const { orders = [], loading: ordersLoading } = useOrders() || {};
+const { getOrdersByCustomer, loading: ordersLoading } = useOrders();
+const [userOrders, setUserOrders] = useState([]);
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
     searchParams.get("tab") || "profile"
@@ -39,7 +40,22 @@ const [messageType, setMessageType] = useState("");
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
+  
+React.useEffect(() => {
+    const fetchUserOrders = async () => {
+      if (user?.email) {
+        try {
+          const orders = await getOrdersByCustomer(user.email);
+          setUserOrders(orders);
+        } catch (error) {
+          console.error('Error fetching user orders:', error);
+          setUserOrders([]);
+        }
+      }
+    };
+    
+    fetchUserOrders();
+  }, [user?.email, getOrdersByCustomer]);
   
 React.useEffect(() => {
     if (!isAuthenticated) {
@@ -332,9 +348,9 @@ React.useEffect(() => {
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                ) : orders.length > 0 ? (
+                ) : userOrders.length > 0 ? (
                   <div className="space-y-4">
-                    {orders.map((order) => (
+                    {userOrders.map((order) => (
                       <div
                         key={order.id}
                         className="border border-gray-200 rounded-lg p-4"
