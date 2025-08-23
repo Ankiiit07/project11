@@ -21,8 +21,7 @@ const AccountPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  const { user, login, register, isAuthenticated, loading } = useUser();
-const { user, login, register, isAuthenticated, loading, logout } = useUser(); 
+  const { user, login, register, isAuthenticated, loading, logout } = useUser();
 const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
