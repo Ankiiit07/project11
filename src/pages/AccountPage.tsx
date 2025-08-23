@@ -16,17 +16,7 @@ import { useAppActions } from "../store";
 
 const AccountPage: React.FC = () => {
  console.log("AccountPage loaded successfully!");
-  // Scroll to top when component mounts
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-React.useEffect(() => {
-    if (!isAuthenticated) {
-      setFormData({ name: "", email: "", password: "" });
-      setFormMessage("");
-      setMessageType("");
-    }
-  }, [isAuthenticated]);
+
   const { user, login, register, isAuthenticated, loading, logout } = useUser();
 const { orders = [], loading: ordersLoading } = useOrders() || {};
   const [searchParams] = useSearchParams();
@@ -44,6 +34,21 @@ const [messageType, setMessageType] = useState("");
   });
   // For order details modal
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  
+  // Scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  
+React.useEffect(() => {
+    if (!isAuthenticated) {
+      setFormData({ name: "", email: "", password: "" });
+      setFormMessage("");
+      setMessageType("");
+    }
+  }, [isAuthenticated]);
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
