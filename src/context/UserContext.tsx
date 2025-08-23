@@ -143,23 +143,25 @@ const refreshUser = async () => {
   initUser();
 
   // Listen to auth state changes for email verification
-  const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log("Auth state change:", event, session?.user?.email_confirmed_at);
-    
-    if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
-      // User is signed in and verified
-      setStoreUser({ 
-        id: session.user.id, 
-        email: session.user.email || "", 
-        name: session.user.user_metadata?.name || "" 
-      });
-      setStoreAuthenticated(true);
-    } else if (event === 'SIGNED_OUT') {
-      setStoreUser(null);
-      setStoreAuthenticated(false);
-    }
-    setLoading(false);
-  });
+  // In the useEffect, update the onAuthStateChange listener:
+const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log("Auth state change:", event, session?.user?.email_confirmed_at);
+  
+  if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
+    // User is signed in and verified
+    setStoreUser({ 
+      id: session.user.id, 
+      email: session.user.email || "", 
+      name: session.user.user_metadata?.name || "" 
+    });
+    setStoreAuthenticated(true);
+  } else if (event === 'SIGNED_OUT' || !session) {
+    // Clear everything on sign out or no session
+    setStoreUser(null);
+    setStoreAuthenticated(false);
+  }
+  setLoading(false);
+});
 
   return () => {
     listener?.subscription.unsubscribe();
@@ -199,15 +201,23 @@ const refreshUser = async () => {
   }
 };
 
-  const logout = async () => {
-    try {
-      await userService.logout();
-      clearStore();
-      setStoreAuthenticated(false);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-  };
+  // REPLACE the current logout function (around line 165) with:
+const logout = async () => {
+  setLoading(true); // Add loading state
+  try {
+    // First sign out from Supabase
+    await supabase.auth.signOut();
+    
+    // Then clear the store
+    clearStore();
+    setStoreAuthenticated(false);
+    setStoreUser(null);
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const register = async (
   name: string,
