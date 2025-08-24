@@ -117,7 +117,7 @@ exports.handler = async (event, context) => {
     const emailResult = await resend.emails.send({
       from: 'onboarding@resend.dev', // You'll need to verify a domain OR use onboarding@resend.dev
       to: customerInfo.email,
-      subject: `Order Confirmed - #${orderDetails.id} - once Coffee`,
+      subject: `Order Confirmed- Once Coffee`,
       html: emailHtml,
     });
 
