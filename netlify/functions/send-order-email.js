@@ -57,7 +57,6 @@ exports.handler = async (event, context) => {
       <body>
         <div class="container">
           <div class="header">
-            <div class="emoji">☕</div>
             <h1>Order Confirmed!</h1>
             <p>Thank you for choosing @once Coffee</p>
           </div>
