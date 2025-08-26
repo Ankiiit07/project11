@@ -604,39 +604,7 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Test Razorpay Integration */}
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h4 className="font-semibold text-blue-800 mb-3">
-                    🧪 Test Razorpay Integration
-                  </h4>
-                  <p className="text-sm text-blue-700 mb-4">
-                    Test the Razorpay payment with your configuration. This will
-                    show payment alerts and use your callback URL.
-                  </p>
-                  <PaymentButton
-                    amount={500}
-                    customerInfo={{
-                      name: "Test Customer",
-                      email: "test@example.com",
-                      phone: "9876543210",
-                    }}
-                    orderDetails={{
-                      description: "Test Payment - Razorpay Integration",
-                      receipt: `test_receipt_${Date.now()}`,
-                    }}
-                    onSuccess={(response) => {
-                      console.log("✅ Test payment successful:", response);
-                      alert("Test payment completed successfully!");
-                    }}
-                    onError={(error) => {
-                      console.error("❌ Test payment failed:", error);
-                      alert(`Test payment failed: ${error.message}`);
-                    }}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    Test Payment ₹500
-                  </PaymentButton>
-                </div>
+                
 
                 {/* Payment Button */}
                 <div className="mt-6">
