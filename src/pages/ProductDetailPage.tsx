@@ -7,6 +7,7 @@ import ProductCard from '../components/ProductCard';
 import { useProductsByCategory } from '../hooks/useProducts';
 import ProductImageGallery from '../components/ProductImageGallery';
 import SEO from '../components/SEO';
+import PageWrapper from '../components/PageWrapper';
 
 const ProductDetailPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -20,7 +21,7 @@ const ProductDetailPage: React.FC = () => {
   // Debug logs removed for production
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState('nutrition');
   
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
@@ -31,28 +32,32 @@ const ProductDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-cream page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading product details"></div>
-      </div>
+      <PageWrapper padding="medium">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading product details"></div>
+        </div>
+      </PageWrapper>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-cream page-container flex items-center justify-center">
+      <PageWrapper padding="medium">
         <SEO 
           title="Product Not Found - @once Business"
           description="The product you're looking for doesn't exist."
         />
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            {error || 'Product Not Found'}
-          </h1>
-          <Link to="/products" className="text-primary hover:underline">
-            ← Back to Products
-          </Link>
+        <div className="text-center min-h-[60vh] flex items-center justify-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+              {error || 'Product Not Found'}
+            </h1>
+            <Link to="/products" className="text-primary hover:underline">
+              ← Back to Products
+            </Link>
+          </div>
         </div>
-      </div>
+      </PageWrapper>
     );
   }
 
@@ -93,7 +98,7 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/products/${product.id}`;
+    const url = ${window.location.origin}/products/${product.id};
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -116,11 +121,11 @@ const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cream py-8">
+    <PageWrapper padding="medium">
       <SEO 
-        title={`${product.name} - @once Business`}
+        title={${product.name} - @once Business}
         description={product.description}
-        keywords={`${product.name}, coffee concentrate, premium coffee, ${product.category}`}
+        keywords={${product.name}, coffee concentrate, premium coffee, ${product.category}}
         product={{
           name: product.name,
           description: product.description,
@@ -137,10 +142,10 @@ const ProductDetailPage: React.FC = () => {
         breadcrumbs={[
           { name: "Home", url: "https://tranquil-bonbon-7645e7.netlify.app/" },
           { name: "Products", url: "https://tranquil-bonbon-7645e7.netlify.app/products" },
-          { name: product.name, url: `https://tranquil-bonbon-7645e7.netlify.app/product/${product.id}` }
+          { name: product.name, url: https://tranquil-bonbon-7645e7.netlify.app/product/${product.id} }
         ]}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <nav className="mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 text-sm">
@@ -174,10 +179,11 @@ const ProductDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Product Image */}
           <div className="space-y-6">
-            {/* Image Gallery */}
+            {/* Image Gallery with Video */}
             <ProductImageGallery 
               images={product.images || [product.image]} 
-              productName={product.name} 
+              productName={product.name}
+              videoUrl={product.video}
             />
             
             {/* Product Badges */}
@@ -289,7 +295,7 @@ const ProductDetailPage: React.FC = () => {
                       : 'border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <Heart className={`h-5 w-5 mr-2 ${isWishlisted ? 'fill-current' : ''}`} />
+                  <Heart className={h-5 w-5 mr-2 ${isWishlisted ? 'fill-current' : ''}} />
                   {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
                 </button>
                 
@@ -342,9 +348,9 @@ const ProductDetailPage: React.FC = () => {
           <div className="border-b border-gray-200">
             <nav className="flex">
               {[
+                { id: 'nutrition', label: 'Nutrition' },
                 { id: 'description', label: 'Description' },
                 { id: 'ingredients', label: 'Ingredients' },
-                { id: 'nutrition', label: 'Nutrition' },
                 { id: 'instructions', label: 'Instructions' },
                 { id: 'reviews', label: 'Reviews' },
               ].map((tab) => (
@@ -364,29 +370,12 @@ const ProductDetailPage: React.FC = () => {
           </div>
 
           <div className="p-6">
-            {activeTab === 'description' && (
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            {activeTab === 'ingredients' && (
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Ingredients</h3>
-                <ul className="space-y-2">
-                  {product.ingredients.map((ingredient: string, index: number) => (
-                    <li key={index} className="flex items-center text-gray-700">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                      {ingredient}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
             {activeTab === 'nutrition' && (
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Nutrition Facts (per 100ml)</h3>
+                <div className="mb-6">
+                  <h3 className="font-semibold text-gray-900 text-xl mb-2">Nutrition Facts (per 100ml)</h3>
+                  <p className="text-gray-600 text-sm">Complete nutritional information for your coffee concentrate</p>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-cream rounded-lg">
                     <div className="text-xl font-bold text-primary">{product.nutrition.energy}</div>
@@ -421,6 +410,26 @@ const ProductDetailPage: React.FC = () => {
                     <div className="text-sm text-gray-600">Sugar (g)</div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'description' && (
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              </div>
+            )}
+
+            {activeTab === 'ingredients' && (
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Ingredients</h3>
+                <ul className="space-y-2">
+                  {product.ingredients.map((ingredient: string, index: number) => (
+                    <li key={index} className="flex items-center text-gray-700">
+                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                      {ingredient}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
@@ -489,7 +498,7 @@ const ProductDetailPage: React.FC = () => {
                               key={star}
                               type="button"
                               onClick={() => setReview({...review, rating: star})}
-                              className={`text-2xl ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                              className={text-2xl ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}}
                             >
                               ★
                             </button>
@@ -585,7 +594,7 @@ const ProductDetailPage: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 
