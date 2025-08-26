@@ -98,27 +98,13 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const handleShare = () => {
-  const url = `${window.location.origin}/products/${product.id}`;
-
-  if (navigator.share) {
-    navigator
-      .share({
+    const url = `${window.location.origin}/products/${product.id}`;
+    if (navigator.share) {
+      navigator.share({
         title: product.name,
         text: product.description,
         url: url,
-      })
-      .catch((error) => console.error("Error sharing:", error));
-  } else if (navigator.clipboard) {
-    // fallback for browsers without Web Share API
-    navigator.clipboard.writeText(url);
-    alert("Product link copied to clipboard!");
-  } else {
-    // final fallback if clipboard API is also not available
-    alert(`Share this link: ${url}`);
-  }
-};
-
-
+      });
     } else {
       navigator.clipboard.writeText(url);
       alert('Product link copied to clipboard!');
@@ -137,9 +123,9 @@ const ProductDetailPage: React.FC = () => {
   return (
     <PageWrapper padding="medium">
       <SEO 
-        title={${product.name} - @once Business}
+        title={`${product.name} - @once Business`}
         description={product.description}
-        keywords={${product.name}, coffee concentrate, premium coffee, ${product.category}}
+        keywords={`${product.name}, coffee concentrate, premium coffee, ${product.category}`}
         product={{
           name: product.name,
           description: product.description,
@@ -156,7 +142,7 @@ const ProductDetailPage: React.FC = () => {
         breadcrumbs={[
           { name: "Home", url: "https://tranquil-bonbon-7645e7.netlify.app/" },
           { name: "Products", url: "https://tranquil-bonbon-7645e7.netlify.app/products" },
-          { name: product.name, url: https://tranquil-bonbon-7645e7.netlify.app/product/${product.id} }
+          { name: product.name, url: `https://tranquil-bonbon-7645e7.netlify.app/product/${product.id}` }
         ]}
       />
       <div className="max-w-7xl mx-auto">
@@ -309,7 +295,7 @@ const ProductDetailPage: React.FC = () => {
                       : 'border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <Heart className={h-5 w-5 mr-2 ${isWishlisted ? 'fill-current' : ''}} />
+                  <Heart className={`h-5 w-5 mr-2 ${isWishlisted ? 'fill-current' : ''}`} />
                   {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
                 </button>
                 
@@ -512,7 +498,7 @@ const ProductDetailPage: React.FC = () => {
                               key={star}
                               type="button"
                               onClick={() => setReview({...review, rating: star})}
-                              className={text-2xl ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}}
+                              className={`text-2xl ${star <= review.rating ? 'text-yellow-400' : 'text-gray-300'}`}
                             >
                               ★
                             </button>
