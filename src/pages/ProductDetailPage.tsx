@@ -101,16 +101,23 @@ const ProductDetailPage: React.FC = () => {
   const url = `${window.location.origin}/products/${product.id}`;
 
   if (navigator.share) {
-    navigator.share({
-      title: product.name,
-      text: product.description,
-      url: url,
-    }).catch((error) => console.error("Error sharing:", error));
+    navigator
+      .share({
+        title: product.name,
+        text: product.description,
+        url: url,
+      })
+      .catch((error) => console.error("Error sharing:", error));
+  } else if (navigator.clipboard) {
+    // fallback for browsers without Web Share API
+    navigator.clipboard.writeText(url);
+    alert("Product link copied to clipboard!");
   } else {
-    // fallback for browsers that don't support navigator.share
+    // final fallback if clipboard API is also not available
     alert(`Share this link: ${url}`);
   }
 };
+
 
     } else {
       navigator.clipboard.writeText(url);
