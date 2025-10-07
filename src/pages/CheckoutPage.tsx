@@ -123,7 +123,13 @@ const CheckoutPage: React.FC = () => {
         console.error("❌ Unknown payment response format:", response);
         throw new Error("Payment information missing or invalid");
       }
-
+console.log("💡 Data being sent to createOrder:");
+console.log("- cartItems:", JSON.stringify(cartState.items, null, 2));
+console.log("- customerInfo:", JSON.stringify(customerInfo, null, 2));
+console.log("- paymentInfo:", JSON.stringify(paymentInfo, null, 2));
+console.log("- subtotal:", cartState.total);
+console.log("- shipping:", shipping);
+console.log("- tax:", tax);
       const newOrder = await createOrder(
         cartState.items,
         customerInfo,
