@@ -167,24 +167,26 @@ const handleCODOrder = async () => {
   setCurrentStep(1);
 
   try {
-    // Validate customer info
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
       throw new Error('Please fill in all required customer information');
     }
 
     setCurrentStep(2);
-
-    // Simulate order processing
     await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // ✅ Create proper payment info object
+    const codPaymentInfo = {
+      method: "cod" as const,
+      orderId: `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      status: "pending" as const,
+    };
 
     const codResponse = {
       payment_method: "cod" as const,
-      order_id: `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      order_id: codPaymentInfo.orderId,
     };
 
     console.log("✅ COD Response created:", codResponse);
-    
-    // Call handlePaymentSuccess directly
     await handlePaymentSuccess(codResponse);
 
   } catch (error) {
