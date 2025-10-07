@@ -35,32 +35,32 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   const [isProcessingCOD, setIsProcessingCOD] = useState(false);
 
   const handleCODOrder = async () => {
+  console.log("🔵 PaymentOptions: COD button clicked");
+  
   if (!customerInfo.name || !customerInfo.email) {
+    console.error("❌ Missing customer info");
     onPaymentError?.(new Error('Please fill in all required customer information'));
     return;
   }
 
   setIsProcessingCOD(true);
+  console.log("🔵 PaymentOptions: Processing COD, calling onCODOrder prop...");
   
   try {
     if (onCODOrder) {
+      console.log("🔵 PaymentOptions: onCODOrder exists, calling it");
       await onCODOrder();
+      console.log("✅ PaymentOptions: onCODOrder completed");
     } else {
-      // Fallback if onCODOrder is not provided
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const orderId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      onPaymentSuccess({
-        payment_method: 'cod',
-        order_id: orderId,
-      });
+      console.error("❌ PaymentOptions: onCODOrder prop not provided!");
     }
   } catch (error) {
+    console.error("❌ PaymentOptions: COD error:", error);
     onPaymentError?.(error instanceof Error ? error : new Error('COD order failed'));
   } finally {
     setIsProcessingCOD(false);
   }
 };
-
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Payment Method Selection */}
