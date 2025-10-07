@@ -131,7 +131,7 @@ const CheckoutPage: React.FC = () => {
   items: cartState.items,
   customerInfo,
   paymentInfo,
-  total: finalTotal,
+  total: cartState.total,
   shipping,
   tax,
 });
@@ -609,20 +609,21 @@ const CheckoutPage: React.FC = () => {
                 {/* Payment Button */}
                 <div className="mt-6">
                   <PaymentOptions
-                    amount={finalTotal}
-                    customerInfo={{
-                      name: `${formData.firstName} ${formData.lastName}`.trim(),
-                      email: formData.email,
-                      phone: formData.phone,
-                    }}
-                    orderDetails={{
-                      description: `@once Coffee - ${cartState.items.length} items`,
-                      receipt: `receipt_${Date.now()}`,
-                    }}
-                    onPaymentSuccess={handlePaymentSuccess}
-                    onPaymentError={handlePaymentError}
-                    disabled={!isFormValid}
-                  />
+  amount={finalTotal}
+  customerInfo={{
+    name: `${formData.firstName} ${formData.lastName}`.trim(),
+    email: formData.email,
+    phone: formData.phone,
+  }}
+  orderDetails={{
+    description: `@once Coffee - ${cartState.items.length} items`,
+    receipt: `receipt_${Date.now()}`,
+  }}
+  onPaymentSuccess={handlePaymentSuccess}
+  onPaymentError={handlePaymentError}
+  onCODOrder={handleCODOrder}
+  disabled={!isFormValid}
+/>
                 </div>
 
                 {!isFormValid && (
