@@ -17,7 +17,7 @@ export interface CustomerInfo {
 export interface PaymentInfo {
   method: "razorpay" | "cod";
   paymentId?: string;
-  orderId: string;
+  orderId?: string;  // ✅ Make this optional
   signature?: string;
   status: "pending" | "completed" | "failed";
 }
