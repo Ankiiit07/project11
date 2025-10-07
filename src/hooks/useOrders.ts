@@ -142,7 +142,7 @@ export const useOrders = (): UseOrdersReturn => {
           orderId: paymentInfo.orderId,
           signature: paymentInfo.signature,
         },
-        order_status: "placed",
+        order_status: "pending",
       };
 
       const { data, error } = await supabase
