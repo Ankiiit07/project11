@@ -16,6 +16,7 @@ interface PaymentOptionsProps {
   };
   onPaymentSuccess: (response: RazorpayResponse | { payment_method: 'cod'; order_id: string }) => void;
   onPaymentError?: (error: Error) => void;
+  onCODOrder?: () => Promise<void>;
   disabled?: boolean;
   className?: string;
 }
@@ -26,6 +27,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   orderDetails,
   onPaymentSuccess,
   onPaymentError,
+  onCODOrder,
   disabled = false,
   className = '',
 }) => {
@@ -33,30 +35,31 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   const [isProcessingCOD, setIsProcessingCOD] = useState(false);
 
   const handleCODOrder = async () => {
-    if (!customerInfo.name || !customerInfo.email) {
-      onPaymentError?.(new Error('Please fill in all required customer information'));
-      return;
-    }
+  if (!customerInfo.name || !customerInfo.email) {
+    onPaymentError?.(new Error('Please fill in all required customer information'));
+    return;
+  }
 
-    setIsProcessingCOD(true);
-    
-    try {
-      // Simulate order processing delay
+  setIsProcessingCOD(true);
+  
+  try {
+    if (onCODOrder) {
+      await onCODOrder();
+    } else {
+      // Fallback if onCODOrder is not provided
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Generate a mock order ID for COD
       const orderId = `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
       onPaymentSuccess({
         payment_method: 'cod',
         order_id: orderId,
       });
-    } catch (error) {
-      onPaymentError?.(error instanceof Error ? error : new Error('COD order failed'));
-    } finally {
-      setIsProcessingCOD(false);
     }
-  };
+  } catch (error) {
+    onPaymentError?.(error instanceof Error ? error : new Error('COD order failed'));
+  } finally {
+    setIsProcessingCOD(false);
+  }
+};
 
   return (
     <div className={`space-y-6 ${className}`}>
