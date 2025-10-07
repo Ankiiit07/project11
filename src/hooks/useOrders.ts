@@ -108,7 +108,11 @@ export const useOrders = (): UseOrdersReturn => {
       setError(null);
       const total = subtotal + shipping + tax;
 
+      // ✅ Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+
       const orderData = {
+        user_id: user?.id || null,  // ✅ ADD THIS
         items: cartItems,
         customer_info: customerInfo,
         payment_info: paymentInfo,
@@ -119,23 +123,13 @@ export const useOrders = (): UseOrdersReturn => {
         status: "placed",
       };
 
-      // 🔥 ADD THIS LOGGING
-      console.log("📦 Order data being sent to Supabase:", JSON.stringify(orderData, null, 2));
-      console.log("📦 Payment info specifically:", paymentInfo);
-
       const { data, error } = await supabase
         .from("orders")
         .insert([orderData])
         .select()
         .single();
 
-      // 🔥 ADD THIS LOGGING
-      if (error) {
-        console.error("❌ Supabase error:", error);
-        console.error("❌ Error details:", JSON.stringify(error, null, 2));
-        throw error;
-      }
-      
+      if (error) throw error;
       if (!data) throw new Error("Order creation failed");
 
       await loadOrders();
