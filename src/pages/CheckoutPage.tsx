@@ -91,50 +91,109 @@ const CheckoutPage: React.FC = () => {
     setCurrentStep(3);
   
     const createOrderData = async () => {
-      try {
-        const customerInfo = {
-          email: formData.email,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          zipCode: formData.zipCode,
-          country: formData.country,
-        };
-  
-        let paymentInfo: any = null; // ✅ until you define PaymentInfo type
-  
-        if (response && "razorpay_payment_id" in response) {
-          // ✅ Razorpay online payment
-          paymentInfo = {
-            method: "razorpay",
-            paymentId: response.razorpay_payment_id,
-            status: "completed",
-          };
-          setPaymentMethod("online");
-        } else if (response && "payment_method" in response && response.payment_method === "cod") {
-          // ✅ Cash on Delivery
-          paymentInfo = {
-            method: "cod",
-            orderId: response.order_id,
-            status: "pending",
-          };
-          setPaymentMethod("cod");
-        } else {
-          console.error("❌ Unknown payment response format:", response);
-          throw new Error("Payment information missing or invalid");
-        }
-        
-  console.log("💡 Creating order with data:", {
-  items: cartState.items,
-  customerInfo,
-  paymentInfo,
-  total: cartState.total,
-  shipping,
-  tax,
-});
+  try {
+    const customerInfo = {
+      email: formData.email,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      zipCode: formData.zipCode,
+      country: formData.country,
+    };
+
+    let paymentInfo: any = null; // ✅ until you define PaymentInfo type
+
+    if (response && "razorpay_payment_id" in response) {
+      // ✅ Razorpay online payment
+      paymentInfo = {
+        method: "razorpay",
+        paymentId: response.razorpay_payment_id,
+        status: "completed",
+      };
+      setPaymentMethod("online");
+    } else if (response && "payment_method" in response && response.payment_method === "cod") {
+      // ✅ Cash on Delivery
+      paymentInfo = {
+        method: "cod",
+        orderId: response.order_id,
+        status: "pending",
+      };
+      setPaymentMethod("cod");
+    } else {
+      console.error("❌ Unknown payment response format:", response);
+      throw new Error("Payment information missing or invalid");
+    }
+    
+    console.log("💡 Creating order with data:", {
+      items: cartState.items,
+      customerInfo,
+      paymentInfo,
+      total: cartState.total,
+      shipping,
+      tax,
+    });
+
+    const newOrder = await createOrder(
+      cartState.items,
+      customerInfo,
+      paymentInfo,
+      cartState.total,
+      shipping,
+      tax
+    );
+
+    setOrderDetails(newOrder);
+    setPaymentSuccess(true);
+
+    await sendOrderConfirmationEmail(newOrder, customerInfo);
+
+    await updateProfile({
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+    });
+
+    setTimeout(() => {
+      cartDispatch({ type: "CLEAR_CART" });
+      navigate(`/thank-you?orderId=${newOrder.id}`, {
+        state: { orderDetails: newOrder },
+      });
+    }, 3000);
+
+  } catch (error) {
+    // 🔥 ADD THIS ENHANCED ERROR LOGGING 🔥
+    console.error("❌ Full error object:", error);
+    console.error("❌ Error type:", typeof error);
+    console.error("❌ Error message:", error instanceof Error ? error.message : error);
+    
+    // Log the error details if it's an object
+    if (error && typeof error === 'object') {
+      console.error("❌ Error keys:", Object.keys(error));
+      console.error("❌ Error JSON:", JSON.stringify(error, null, 2));
+      
+      // Check for Supabase-specific error details
+      if ('details' in error) {
+        console.error("❌ Supabase error details:", (error as any).details);
+      }
+      if ('message' in error) {
+        console.error("❌ Supabase error message:", (error as any).message);
+      }
+      if ('hint' in error) {
+        console.error("❌ Supabase error hint:", (error as any).hint);
+      }
+    }
+    
+    notification.error(
+      error instanceof Error ? error.message : "Order creation failed"
+    );
+    handlePaymentError(
+      error instanceof Error ? error : new Error("Order creation failed")
+    );
+  }
+};
         const newOrder = await createOrder(
           cartState.items,
           customerInfo,
