@@ -107,7 +107,7 @@ exports.handler = async (event, context) => {
           
           <div class="footer">
             <p style="margin: 0 0 10px;">© 2024 @once Coffee. All rights reserved.</p>
-            <p style="margin: 0;">Questions? Email us at <a href="mailto:teamecomaura@gmail.com">teamecomaura@gmail.com</a></p>
+            <p style="margin: 0;">Questions? Email us at <a href="mailto:orders@cafeatonce.com">orders@cafeatonce.com</a></p>
           </div>
         </div>
       </body>
