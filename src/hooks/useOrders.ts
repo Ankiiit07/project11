@@ -108,19 +108,41 @@ export const useOrders = (): UseOrdersReturn => {
       setError(null);
       const total = subtotal + shipping + tax;
 
-      // ✅ Get current user
+      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
 
+      // Generate order number
+      const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+
       const orderData = {
-        user_id: user?.id || null,  // ✅ ADD THIS
+        order_number: orderNumber,
+        user_id: user?.id || null,
+        customer_info: {
+          email: customerInfo.email,
+          firstName: customerInfo.firstName,
+          lastName: customerInfo.lastName,
+          phone: customerInfo.phone,
+        },
+        shipping_address: {
+          address: customerInfo.address,
+          city: customerInfo.city,
+          state: customerInfo.state,
+          zipCode: customerInfo.zipCode,
+          country: customerInfo.country,
+        },
         items: cartItems,
-        customer_info: customerInfo,
-        payment_info: paymentInfo,
-        subtotal,
-        shipping,
-        tax,
-        total,
-        status: "placed",
+        subtotal: Number(subtotal),
+        shipping: Number(shipping),
+        tax: Number(tax),
+        total: Number(total),
+        payment_method: paymentInfo.method,
+        payment_status: paymentInfo.status,
+        payment_details: {
+          paymentId: paymentInfo.paymentId,
+          orderId: paymentInfo.orderId,
+          signature: paymentInfo.signature,
+        },
+        order_status: "placed",
       };
 
       const { data, error } = await supabase
