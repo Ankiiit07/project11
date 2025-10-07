@@ -146,12 +146,19 @@ export const useOrders = (): UseOrdersReturn => {
       };
 
       const { data, error } = await supabase
-        .from("orders")
-        .insert([orderData])
-        .select()
-        .single();
+  .from("orders")
+  .insert([orderData])
+  .select()
+  .single();
 
-      if (error) throw error;
+if (error) {
+  console.error("❌ Supabase insertion error:", error);
+  console.error("❌ Error message:", error.message);
+  console.error("❌ Error details:", error.details);
+  console.error("❌ Error hint:", error.hint);
+  console.error("❌ Data that was sent:", JSON.stringify(orderData, null, 2));
+  throw error;
+}
       if (!data) throw new Error("Order creation failed");
 
       await loadOrders();
