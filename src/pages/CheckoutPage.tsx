@@ -179,22 +179,39 @@ const CheckoutPage: React.FC = () => {
   
 
   const handleCODOrder = async () => {
-    try {
-      // Simulate COD order creation
-      const codResponse = {
-        payment_method: "cod" as const,
-        order_id: `cod_${Date.now()}_${Math.random()
-          .toString(36)
-          .substr(2, 9)}`,
-      };
+  console.log("🚀 COD Order button clicked!");
+  setIsSubmitting(true);
+  setCurrentStep(1);
 
-      handlePaymentSuccess(codResponse);
-    } catch (error) {
-      handlePaymentError(
-        error instanceof Error ? error : new Error("COD order failed")
-      );
+  try {
+    // Validate customer info
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
+      throw new Error('Please fill in all required customer information');
     }
-  };
+
+    setCurrentStep(2);
+
+    // Simulate order processing
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    const codResponse = {
+      payment_method: "cod" as const,
+      order_id: `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
+    console.log("✅ COD Response created:", codResponse);
+    
+    // Call handlePaymentSuccess directly
+    await handlePaymentSuccess(codResponse);
+
+  } catch (error) {
+    console.error("❌ COD Order Error:", error);
+    setIsSubmitting(false);
+    handlePaymentError(
+      error instanceof Error ? error : new Error("COD order failed")
+    );
+  }
+};
 
   const handlePaymentError = (error: Error) => {
     console.error("❌ Payment error in checkout:", error);
