@@ -96,51 +96,59 @@ export const useOrders = (): UseOrdersReturn => {
 
   // Create order
   const createOrder = useCallback(
-    async (
-      cartItems: CartItem[],
-      customerInfo: CustomerInfo,
-      paymentInfo: PaymentInfo,
-      subtotal: number,
-      shipping: number,
-      tax: number
-    ): Promise<Order> => {
-      try {
-        setError(null);
-        const total = subtotal + shipping + tax;
+  async (
+    cartItems: CartItem[],
+    customerInfo: CustomerInfo,
+    paymentInfo: PaymentInfo,
+    subtotal: number,
+    shipping: number,
+    tax: number
+  ): Promise<Order> => {
+    try {
+      setError(null);
+      const total = subtotal + shipping + tax;
 
-        const { data, error } = await supabase
-          .from("orders")
-          .insert([
-            {
-              items: cartItems,
-              customer_info: customerInfo,
-              payment_info: paymentInfo,
-              subtotal,
-              shipping,
-              tax,
-              total,
-              status: "placed",
-            },
-          ])
-          .select()
-          .single();
+      const orderData = {
+        items: cartItems,
+        customer_info: customerInfo,
+        payment_info: paymentInfo,
+        subtotal,
+        shipping,
+        tax,
+        total,
+        status: "placed",
+      };
 
-        if (error) throw error;
-        if (!data) throw new Error("Order creation failed");
+      // 🔥 ADD THIS LOGGING
+      console.log("📦 Order data being sent to Supabase:", JSON.stringify(orderData, null, 2));
+      console.log("📦 Payment info specifically:", paymentInfo);
 
-        // Refresh local state
-        await loadOrders();
+      const { data, error } = await supabase
+        .from("orders")
+        .insert([orderData])
+        .select()
+        .single();
 
-        return data as Order;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to create order";
-        setError(errorMessage);
-        throw new Error(errorMessage);
+      // 🔥 ADD THIS LOGGING
+      if (error) {
+        console.error("❌ Supabase error:", error);
+        console.error("❌ Error details:", JSON.stringify(error, null, 2));
+        throw error;
       }
-    },
-    [loadOrders]
-  );
+      
+      if (!data) throw new Error("Order creation failed");
+
+      await loadOrders();
+      return data as Order;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to create order";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  },
+  [loadOrders]
+);
 
   // Update order status
   const updateOrderStatus = useCallback(
