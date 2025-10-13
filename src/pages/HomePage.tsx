@@ -110,12 +110,12 @@ const HomePage: React.FC = () => {
 
                   <div className="space-y-4 sm:space-y-6">
                     <div className="flex items-center space-x-2 text-primary font-medium">
-                      <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-[#b7e6b9] animate-pulse"/>
+                      <Zap className="h-4 w-4 sm:h-5 sm:h-5 text-[#b7e6b9] animate-pulse"/>
                       <GradientText 
                         className="font-bold text-sm sm:text-base"
                         delay={0.2}
                       >
-                        Healthiest Coffee in India
+                        India's Premium Coffee Concentrate Brand
                       </GradientText>
                     </div>
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 leading-tight">
@@ -143,9 +143,7 @@ const HomePage: React.FC = () => {
                       className="text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed max-w-lg"
                       delay={0.6}
                     >
-                      Enjoy your barista-style coffee at your convenience whether
-                      you are travelling or need the comfort of home with a good
-                      cup of coffee.
+                      Experience the convenience of premium instant coffee concentrate that delivers barista-quality coffee in seconds. Whether you're traveling or need the comfort of home, enjoy your favorite flavored coffee anytime, anywhere.
                     </RevealText>
 
                     {/* Health Benefits Badges - Mobile optimized */}
@@ -360,11 +358,11 @@ const HomePage: React.FC = () => {
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 gradient-text">
-              COFFEE IN 5 SECONDS
+              INSTANT COFFEE IN 5 SECONDS
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto text-reveal">
-              Our revolutionary concentrate system delivers barista-quality coffee
-              in seconds. Just peel, press, and go!
+              Our revolutionary coffee concentrate system delivers barista-quality coffee
+              in seconds. Just peel, press, and enjoy your perfect cup of coffee anywhere!
             </p>
           </div>
 
@@ -460,13 +458,13 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose Cafe at Once?
+              Why Choose Cafe at Once Coffee?
             </h2>
             <p className="text-lg text-gray-600">
               <span className="text-green-600 font-semibold">
-                India's Healthiest Coffee
+                India's Premium Coffee Concentrate Brand
               </span>{' '}
-              - Premium quality meets ultimate convenience
+              - Premium quality coffee meets ultimate convenience
             </p>
           </div>
 
@@ -484,10 +482,10 @@ const HomePage: React.FC = () => {
                 />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                5-Second Brewing
+                Instant Coffee in 5 Seconds
               </h3>
               <p className="text-gray-600">
-                Perfect coffee in seconds, not minutes
+                Perfect barista-quality coffee in seconds, not minutes
               </p>
             </div>
 
@@ -504,7 +502,7 @@ const HomePage: React.FC = () => {
                 />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No Additives
+                Pure Coffee Concentrate
               </h3>
               <p className="text-gray-600">
                 <span className="font-semibold text-green-600">
@@ -527,10 +525,10 @@ const HomePage: React.FC = () => {
                 />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Premium Quality
+                Premium Coffee Quality
               </h3>
               <p className="text-gray-600">
-                100% Arabica beans sourced from top regions
+                100% Arabica coffee beans sourced from top regions for the best coffee experience
               </p>
             </div>
 
@@ -547,10 +545,10 @@ const HomePage: React.FC = () => {
                 />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Portable
+                Portable Coffee Solution
               </h3>
               <p className="text-gray-600">
-                Take your favorite coffee anywhere you go
+                Take your favorite flavored coffee anywhere you go - perfect for travel and gym
               </p>
             </div>
           </div>
@@ -564,10 +562,10 @@ const HomePage: React.FC = () => {
       >
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Featured Products
+            Featured Coffee Products
           </h2>
           <p className="text-lg text-gray-600">
-            Discover our most popular coffee concentrates
+            Discover our most popular coffee concentrates and flavored coffee options
           </p>
         </div>
 
