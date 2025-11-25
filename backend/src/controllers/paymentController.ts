@@ -73,6 +73,7 @@ export const createOrder = catchAsync(async (req: Request, res: Response) => {
     amount: Math.round(amount), // already in paise
     currency,
     receipt: receipt || `receipt_${Date.now()}`,
+    payment_capture: 1, // ✅ Auto-capture payments immediately
     notes: {
       ...notes,
       address: shippingAddress
