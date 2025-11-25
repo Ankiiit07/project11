@@ -67,7 +67,7 @@ const TermsConditionsPage = lazy(() => import('./pages/TermsConditionsPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
-const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage'));
+// const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage')); //
 const OrderSystemDemo = lazy(() => import('./components/OrderSystemDemo'));
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
@@ -124,7 +124,7 @@ function App() {
                         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                         <Route path="/razorpay-test" element={<RazorpayTestPage />} />
                         <Route path="/orders" element={<OrdersPage />} />
-                        <Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
+                        //<Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
                         <Route path="/order-demo" element={<OrderSystemDemo />} />
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
