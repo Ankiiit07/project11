@@ -124,8 +124,8 @@ function App() {
                         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                         <Route path="/razorpay-test" element={<RazorpayTestPage />} />
                         <Route path="/orders" element={<OrdersPage />} />
-                        //<Route path="/order-tracking/:id" element={<OrderTrackingPage />} />
-                        <Route path="/order-demo" element={<OrderSystemDemo />} />
+                        {/* <Route path="/order-tracking/:id" element={<OrderTrackingPage />} /> */}
+                        {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
                       </Routes>
