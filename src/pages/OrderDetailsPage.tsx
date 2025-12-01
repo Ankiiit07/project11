@@ -44,8 +44,8 @@ const OrderDetailsPage: React.FC = () => {
 
   
   // Map fields to UI-friendly variables
-const customer = order.customerInfo || {};
-const shipping = order.shippingInfo || order.customerInfo || {};
+const customer = order.customer_info || {};
+const shipping = order.shipping_address || {};
 
   const handleStatusChange = async () => {
     try {
@@ -113,28 +113,28 @@ const shipping = order.shippingInfo || order.customerInfo || {};
           <h2 className="text-2xl font-bold mb-4">Order #{order.id}</h2>
 
           {/* Customer Info */}
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2">Customer Info</h4>
-            <p>
-              <span className="font-medium">Name:</span> {customer.firstName}{" "}
-              {customer.lastName}
-            </p>
-            <p>
-              <span className="font-medium">Email:</span> {customer.email}
-            </p>
-            <p>
-              <span className="font-medium">Phone:</span> {customer.phone}
-            </p>
-          </div>
+<div className="mb-4">
+  <h4 className="font-semibold text-gray-800 mb-2">Customer Info</h4>
+  <p>
+    <span className="font-medium">Name:</span> {customer.firstName}{" "}
+    {customer.lastName}
+  </p>
+  <p>
+    <span className="font-medium">Email:</span> {customer.email}
+  </p>
+  <p>
+    <span className="font-medium">Phone:</span> {customer.phone}
+  </p>
+</div>
 
-          {/* Shipping Info */}
+{/* Shipping Info */}
 <div className="mb-4">
   <h4 className="font-semibold text-gray-800 mb-2">Shipping Address</h4>
-  <p>{shipping.address || 'No address provided'}</p>
+  <p>{shipping?.address || 'No address provided'}</p>
   <p>
-    {shipping.city || ''}{shipping.city && shipping.state ? ', ' : ''}{shipping.state || ''}{(shipping.city || shipping.state) && shipping.zipCode ? ' - ' : ''}{shipping.zipCode || ''}
+    {shipping?.city || ''}{shipping?.city && shipping?.state ? ', ' : ''}{shipping?.state || ''}{(shipping?.city || shipping?.state) && shipping?.zipCode ? ' - ' : ''}{shipping?.zipCode || ''}
   </p>
-  <p>{shipping.country || ''}</p>
+  <p>{shipping?.country || ''}</p>
 </div>
 
           {/* Order Items */}
@@ -149,16 +149,16 @@ const shipping = order.shippingInfo || order.customerInfo || {};
             </ul>
           </div>
 
-          {/* Payment Info */}
+         {/* Payment Info */}
 <div className="mb-4">
   <h4 className="font-semibold text-gray-800 mb-2">Payment</h4>
   <p>
     <span className="font-medium">Method:</span>{" "}
-    {order.paymentInfo?.method?.toUpperCase() || "N/A"}
+    {order.payment_method?.toUpperCase() || "N/A"}
   </p>
   <p>
     <span className="font-medium">Status:</span>{" "}
-    {order.paymentInfo?.status || "N/A"}
+    {order.payment_status || "N/A"}
   </p>
   <p>
     <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
