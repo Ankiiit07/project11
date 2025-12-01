@@ -44,7 +44,7 @@ const OrdersPage: React.FC = () => {
       filtered = searchOrders(searchQuery);
     }
 
-    return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return filtered.sort((a, b) => new Date((b as any).created_at).getTime() - new Date((a as any).created_at).getTime());
   }, [orders, statusFilter, searchQuery, getOrdersByStatus, searchOrders]);
 
   
@@ -287,60 +287,63 @@ const OrdersPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{order.id}</div>
-                        <div className="text-sm text-gray-500">{order.paymentInfo?.method
-    ? order.paymentInfo.method.toUpperCase()
-    : "N/A"}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-  {order.customerInfo?.firstName || "Unknown"} {order.customerInfo?.lastName || ""}
-</div>
-<div className="text-sm text-gray-500">
-  {order.customerInfo?.email || "No email"}
-</div>
-
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{order.items.length} items</div>
-                        <div className="text-sm text-gray-500">
-                          {order.items.map(item => item.name).join(', ')}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">₹{order.total.toFixed(2)}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {getStatusIcon(order.status)}
-                          <span className="ml-1">{order.status}</span>
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-2">
-                          <Link
-                            to={`/orders/${order.id}`}
-                            className="text-primary hover:text-primary-dark"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteOrder(order.id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+  {filteredOrders.map((order) => {
+    // Extract data with correct field names
+    const customer = (order as any).customer_info || {};
+    const paymentMethod = (order as any).payment_method || 'N/A';
+    
+    return (
+      <tr key={order.id} className="hover:bg-gray-50">
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm font-medium text-gray-900">{order.id}</div>
+          <div className="text-sm text-gray-500">{paymentMethod.toUpperCase()}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm font-medium text-gray-900">
+            {customer.firstName || "Unknown"} {customer.lastName || ""}
+          </div>
+          <div className="text-sm text-gray-500">
+            {customer.email || "No email"}
+          </div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm text-gray-900">{order.items.length} items</div>
+          <div className="text-sm text-gray-500">
+            {order.items.map(item => item.name).join(', ')}
+          </div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <div className="text-sm font-medium text-gray-900">₹{order.total.toFixed(2)}</div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+            {getStatusIcon(order.status)}
+            <span className="ml-1">{order.status}</span>
+          </span>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          {new Date((order as any).created_at).toLocaleDateString()}
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <div className="flex space-x-2">
+            <Link
+              to={`/orders/${order.id}`}
+              className="text-primary hover:text-primary-dark"
+            >
+              <Eye className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={() => handleDeleteOrder(order.id)}
+              className="text-red-600 hover:text-red-900"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  })}
+</tbody>
               </table>
             </div>
           )}
