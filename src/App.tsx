@@ -21,6 +21,7 @@ import { PageLoader } from './components/OptimizedLoader';
 import SkipLink from './components/SkipLink';
 import LiveRegion from './components/LiveRegion';
 import { useDevice } from './hooks/useDevice';
+const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
 
 // Add service worker registration for PWA capabilities
 if ('serviceWorker' in navigator) {
@@ -128,6 +129,7 @@ function App() {
                         {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
+                        <Route path="/orders/:id" element={<OrderDetailsPage />} />
                       </Routes>
                     </Suspense>
                   </ErrorBoundary>
