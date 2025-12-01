@@ -42,9 +42,10 @@ const OrderDetailsPage: React.FC = () => {
     );
   }
 
-  // Map Supabase fields to UI-friendly variables
-  const customer = order.customer_info || {};
-  const shipping = (order as any).shipping_info || null;
+  
+  // Map fields to UI-friendly variables
+const customer = order.customerInfo || {};
+const shipping = order.shippingInfo || order.customerInfo || {};
 
   const handleStatusChange = async () => {
     try {
@@ -127,16 +128,14 @@ const OrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Shipping Info */}
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2">Shipping Address</h4>
-            <p>{shipping?.address || customer.address}</p>
-            <p>
-              {shipping?.city || customer.city},{" "}
-              {shipping?.state || customer.state} -{" "}
-              {shipping?.zipCode || customer.zipCode}
-            </p>
-            <p>{shipping?.country || customer.country}</p>
-          </div>
+<div className="mb-4">
+  <h4 className="font-semibold text-gray-800 mb-2">Shipping Address</h4>
+  <p>{shipping.address || 'No address provided'}</p>
+  <p>
+    {shipping.city || ''}{shipping.city && shipping.state ? ', ' : ''}{shipping.state || ''}{(shipping.city || shipping.state) && shipping.zipCode ? ' - ' : ''}{shipping.zipCode || ''}
+  </p>
+  <p>{shipping.country || ''}</p>
+</div>
 
           {/* Order Items */}
           <div className="mb-4">
@@ -151,20 +150,20 @@ const OrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Payment Info */}
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2">Payment</h4>
-            <p>
-              <span className="font-medium">Method:</span>{" "}
-              {order.payment_info?.method?.toUpperCase() || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Status:</span>{" "}
-              {order.payment_info?.status || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
-            </p>
-          </div>
+<div className="mb-4">
+  <h4 className="font-semibold text-gray-800 mb-2">Payment</h4>
+  <p>
+    <span className="font-medium">Method:</span>{" "}
+    {order.paymentInfo?.method?.toUpperCase() || "N/A"}
+  </p>
+  <p>
+    <span className="font-medium">Status:</span>{" "}
+    {order.paymentInfo?.status || "N/A"}
+  </p>
+  <p>
+    <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
+  </p>
+</div>
 
           {/* Shiprocket Payload Preview */}
           {shiprocketData && (
