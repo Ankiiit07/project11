@@ -47,7 +47,7 @@ export const products: Product[] = [
     reviews: 234,
     badges: ['No Sugar', 'Gluten Free', 'Organic'],
     description:
-      'Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
+      '2-3 cups of Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 5,
@@ -87,7 +87,7 @@ export const products: Product[] = [
     reviews: 189,
     badges: ['No Sugar', 'Gluten Free'],
     description:
-      '2-3 Cup Smooth and balanced Americano concentrate for the perfect cup every time.',
+      '2-3 cups Smooth and balanced Americano concentrate for the perfect cup every time.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 5,
@@ -125,7 +125,7 @@ export const products: Product[] = [
     reviews: 312,
     badges: ['No Sugar', 'Organic', 'Cold Brew'],
     description:
-      '2-3 Cup Smooth, refreshing cold brew concentrate with low acidity and natural sweetness.',
+      '2-3 cups of Smooth, refreshing cold brew concentrate with low acidity and natural sweetness.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 2,
