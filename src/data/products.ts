@@ -298,7 +298,7 @@ export const products: Product[] = [
     inStock: true,
   },
    {
-    id: 'latte-concentrate',
+    id: 'latte-concentrate trial',
     name: 'Cafe at Once Trial Pack',
     price: 799,
     originalPrice: 999,
