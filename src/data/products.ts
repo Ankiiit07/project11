@@ -62,7 +62,7 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 4-6 oz of hot or cold water',
+      'Press into 300-350 ml of hot or cold water',
       'Stir and enjoy your perfect latte',
     ],
     isFeatured: true,
@@ -87,7 +87,7 @@ export const products: Product[] = [
     reviews: 189,
     badges: ['No Sugar', 'Gluten Free'],
     description:
-      'Smooth and balanced Americano concentrate for the perfect cup every time.',
+      '2-3 Cup Smooth and balanced Americano concentrate for the perfect cup every time.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 5,
@@ -102,7 +102,7 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 6-8 oz of hot or cold water',
+      'Press into 300-350 ml of hot or cold water',
       'Stir and enjoy your perfect Americano',
     ],
     isFeatured: true,
@@ -125,7 +125,7 @@ export const products: Product[] = [
     reviews: 312,
     badges: ['No Sugar', 'Organic', 'Cold Brew'],
     description:
-      'Smooth, refreshing cold brew concentrate with low acidity and natural sweetness.',
+      '2-3 Cup Smooth, refreshing cold brew concentrate with low acidity and natural sweetness.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 2,
@@ -140,7 +140,7 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 6-8 oz of cold water or milk',
+      'Press into 300-350 ml of cold water or milk',
       'Add ice and enjoy your cold brew',
     ],
     isFeatured: true,
@@ -164,7 +164,7 @@ export const products: Product[] = [
     rating: 4.6,
     reviews: 156,
     badges: ['No Added Sugar', 'Real Cocoa'],
-    description: 'Rich chocolate and coffee blend in a convenient tube format.',
+    description: '2-3 Cup Rich chocolate and coffee blend in a convenient tube format.',
     ingredients: ['Arabica Coffee', 'Natural Cocoa', 'Natural Flavors'],
     nutrition: {
       calories: 15,
@@ -219,6 +219,122 @@ export const products: Product[] = [
       'Steep for 2-3 minutes and enjoy',
     ],
     inStock: false,
+  },
+   {
+    id: 'espresso-concentrate',
+    name: 'Cafe at Once Espresso Shot',
+    price: 49,
+    originalPrice: 99,
+    image:
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681692/Screenshot_2025-12-02_at_2.16.44_PM_z1hcdt.png',
+    images: [
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681692/Screenshot_2025-12-02_at_2.16.44_PM_z1hcdt.png',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681692/Screenshot_2025-12-02_at_2.17.34_PM_jpscuc.png',
+    ],
+    video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
+    category: 'concentrate',
+    rating: 4.9,
+    reviews: 434,
+    badges: ['No Sugar', 'Gluten Free', 'Organic'],
+    description:
+      '1 Cup Chocolate & Cocoa Flavors, Nutty after Taste.',
+    ingredients: ['100% Classic Italian', 'Natural Flavors'],
+    nutrition: {
+      calories: 5,
+      caffeine: 120,
+      sugar: 0,
+      energy: 323,
+      protein: 25,
+      fat: 0,
+      carbohydrate: 13.7,
+      sodium: 3.2,
+      cholesterol: 0,
+    },
+    instructions: [
+
+      'Tweak into 100-150 ml of hot or cold water',
+      'Stir and enjoy your perfect latte',
+    ],
+    isFeatured: true,
+    inStock: true,
+  },
+   {
+    id: 'Corn Silk Coffee Concentrate',
+    name: 'Cafe at Once Corn Silk',
+    price: 49,
+    originalPrice: 99,
+    image:
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681693/Screenshot_2025-12-02_at_2.18.13_PM_agarvu.png',
+    images: [
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681693/Screenshot_2025-12-02_at_2.18.13_PM_agarvu.png',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681693/Screenshot_2025-12-02_at_2.18.43_PM_z3zchl.png',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681694/Screenshot_2025-12-02_at_2.19.07_PM_bvfme2.png',
+    ],
+    video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
+    category: 'concentrate',
+    rating: 4.8,
+    reviews: 214,
+    badges: ['No Sugar', 'Gluten Free', 'Organic'],
+    description:
+      '1 Cup of Corn Coffee and Tea Flavoring Balance and Smooth after Taste.',
+    ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
+    nutrition: {
+      calories: 5,
+      caffeine: 60,
+      sugar: 0,
+      energy: 123,
+      protein: 15,
+      fat: 0,
+      carbohydrate: 3.7,
+      sodium: 1.2,
+      cholesterol: 0,
+    },
+    instructions: [
+ 
+      'Tweak into 100-150 ml of hot or cold water',
+      'Stir and enjoy your perfect latte',
+    ],
+    isFeatured: true,
+    inStock: true,
+  },
+   {
+    id: 'latte-concentrate',
+    name: 'Cafe at Once Trial Pack',
+    price: 799,
+    originalPrice: 999,
+    image:
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681938/Screenshot_2025-12-02_at_2.24.10_PM_of0omv.png',
+    images: [
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681938/Screenshot_2025-12-02_at_2.24.10_PM_of0omv.png',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681946/WhatsApp_Image_2025-12-02_at_14.25.11_iubug4.jpg',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764682723/Screenshot_2025-12-02_at_2.38.10_PM_qzhxtg.png',
+    ],
+    video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
+    category: 'concentrate',
+    rating: 4.8,
+    reviews: 234,
+    badges: ['No Sugar', 'Gluten Free', 'Organic'],
+    description:
+      ' 2-3 Cups Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
+    ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
+    nutrition: {
+      calories: 5,
+      caffeine: 120,
+      sugar: 0,
+      energy: 323,
+      protein: 25,
+      fat: 0,
+      carbohydrate: 13.7,
+      sodium: 3.2,
+      cholesterol: 0,
+    },
+    instructions: [
+      'Peel the concentrate tube',
+      'Press into 300-350 ml of hot or cold water',
+      'Stir and enjoy your perfect latte',
+    ],
+    isFeatured: true,
+    inStock: true,
   },
 ];
 
