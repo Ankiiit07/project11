@@ -32,7 +32,7 @@ export const products: Product[] = [
   {
     id: 'latte-concentrate',
     name: 'Cafe at Once Latte',
-    price: 1,
+    price: 199,
     originalPrice: 600,
     image:
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1755112233/A4635F65-8EDE-43FF-A8B0-ED8033DC5E13sl_inu7nu.jpg',
