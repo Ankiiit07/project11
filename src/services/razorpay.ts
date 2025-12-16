@@ -1,7 +1,7 @@
 import { RazorpayOptions, RazorpayOrder } from "../types/razorpay";
 import { apiConfig } from "../config/api";
 
-// Razorpay configuration - Using the provided test key
+// Razorpay configuration
 const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID as string;
 
 export {};
@@ -26,7 +26,7 @@ export class RazorpayService {
     return RazorpayService.instance;
   }
 
-  // Load Razorpay checkout script dynamically with better error handling
+  // Load Razorpay checkout script dynamically
   public async loadRazorpayScript(): Promise<boolean> {
     if (this.isScriptLoaded) return true;
 
@@ -35,7 +35,6 @@ export class RazorpayService {
       return true;
     }
 
-    // If already loading, return the existing promise
     if (this.scriptLoadPromise) {
       return this.scriptLoadPromise;
     }
@@ -45,19 +44,6 @@ export class RazorpayService {
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
 
-      script.onload = () => {
-        this.isScriptLoaded = true;
-        console.log("✅ Razorpay script loaded successfully");
-        resolve(true);
-      };
-
-      script.onerror = (error) => {
-        console.error("❌ Failed to load Razorpay script:", error);
-        this.isScriptLoaded = false;
-        resolve(false);
-      };
-
-      // Add timeout
       const timeout = setTimeout(() => {
         console.error("❌ Razorpay script load timeout");
         this.isScriptLoaded = false;
@@ -71,121 +57,82 @@ export class RazorpayService {
         resolve(true);
       };
 
+      script.onerror = (error) => {
+        clearTimeout(timeout);
+        console.error("❌ Failed to load Razorpay script:", error);
+        this.isScriptLoaded = false;
+        resolve(false);
+      };
+
       document.head.appendChild(script);
     });
 
     return this.scriptLoadPromise;
   }
 
-  // Create order - call backend API to create real Razorpay order
+  // ✅ FIXED: Create order - call backend API to create real Razorpay order
   public async createOrder(
     amount: number,
     currency: string = "INR",
     receipt?: string,
     notes: Record<string, any> = {}
   ): Promise<RazorpayOrder> {
-    console.log("Amount received in createOrder:", amount, typeof amount);
+    console.log("📦 Creating Razorpay Order - Amount:", amount, "Currency:", currency);
 
     if (typeof amount !== "number" || isNaN(amount) || amount < 1) {
       throw new Error("Invalid amount provided");
     }
 
     try {
+      // ✅ Call your backend createOrder endpoint
       const response = await fetch(
         `${apiConfig.baseURL}/payments/create-order`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: Math.round(amount * 100),
+            amount: Math.round(amount * 100), // Convert to paise
             currency,
-            receipt,
+            receipt: receipt || `receipt_${Date.now()}`,
             notes,
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create Razorpay order");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to create Razorpay order");
       }
 
       const { data } = await response.json();
+      console.log("✅ Razorpay Order created successfully:", data.order.id);
       return data.order;
     } catch (error) {
-      console.warn("⚠️ Backend order creation failed, using mock order");
-      return this.createMockOrder(amount, currency, receipt);
-    }
-  }
-
-  // Create mock order for development when backend is unavailable
-  private createMockOrder(
-    amount: number,
-    currency: string = "INR",
-    receipt?: string
-  ): RazorpayOrder {
-    const timestamp = Date.now();
-    const randomId = Math.random().toString(36).substring(2, 15);
-
-    const mockOrder: RazorpayOrder = {
-      id: `order_${timestamp}_${randomId}`,
-      entity: "order",
-      amount: Math.round(amount * 100),
-      amount_paid: 0,
-      amount_due: Math.round(amount * 100),
-      currency,
-      receipt: receipt || `receipt_${timestamp}`,
-      status: "created",
-      created_at: timestamp,
-      notes: {
-        source: "mock-order-for-development",
-      },
-    };
-
-    console.log("✅ Mock order created:", mockOrder.id);
-    return mockOrder;
-  }
-
-  // Verify payment signature - placeholder / demo version
-  public async verifyPayment(
-    orderId: string,
-    paymentId: string,
-    signature: string
-  ): Promise<boolean> {
-    if (!orderId || !paymentId || !signature) {
-      console.error("❌ Missing parameters for payment verification");
-      return false;
-    }
-
-    // If it's a mock order, always return true for development
-    if (orderId.startsWith("order_")) {
-      console.log(
-        "✅ Mock order verification - always successful for development"
+      console.error("❌ Failed to create Razorpay order:", error);
+      throw new Error(
+        error instanceof Error 
+          ? error.message 
+          : "Failed to create order. Please try again."
       );
-      return true;
     }
-
-    // Real verification must be done on backend
-    return true;
   }
 
-  // Initiate Razorpay payment with better error handling
+  // ✅ FIXED: Initiate payment - NOW creates order FIRST
   public async initiatePayment(
     options: Omit<RazorpayOptions, "key">
   ): Promise<void> {
     try {
       console.log("🚀 Initiating payment with options:", options);
 
+      // 1. Load Razorpay script
       const scriptLoaded = await this.loadRazorpayScript();
-
       if (!scriptLoaded || !window.Razorpay) {
-        console.warn(
-          "⚠️ Razorpay script not loaded or unavailable. Payment cannot proceed."
-        );
         throw new Error(
           "Razorpay SDK not loaded. Please check your internet connection and try again."
         );
       }
 
+      // 2. Validate inputs
       if (!options.amount || options.amount <= 0) {
         throw new Error("Invalid payment amount");
       }
@@ -194,23 +141,42 @@ export class RazorpayService {
         throw new Error("Payment name and description are required");
       }
 
-      if (!options.order_id) {
-        console.log(
-          "🔄 No order ID provided, Razorpay will create order automatically"
+      // 3. ✅ CREATE ORDER FIRST (This is the critical fix!)
+      let orderId = options.order_id;
+      
+      if (!orderId) {
+        console.log("🔄 No order_id provided, creating Razorpay order...");
+        
+        const razorpayOrder = await this.createOrder(
+          options.amount / 100, // Convert paise back to rupees for createOrder
+          options.currency || "INR",
+          options.notes?.receipt as string,
+          options.notes || {}
         );
+        
+        orderId = razorpayOrder.id;
+        console.log("✅ Order created with ID:", orderId);
       }
 
+      // 4. Open Razorpay checkout with order_id
       const razorpayOptions: RazorpayOptions = {
         key: RAZORPAY_KEY_ID,
-        ...options,
-        callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
+        amount: options.amount,
+        currency: options.currency || "INR",
+        name: options.name,
+        description: options.description,
+        image: options.image,
+        order_id: orderId, // ✅ This is now guaranteed to exist
+        handler: options.handler,
+        prefill: options.prefill,
+        notes: options.notes,
         theme: {
           color: "#8B7355",
           ...options.theme,
         },
         modal: {
           ondismiss: () => {
-            console.log("Payment modal dismissed by user");
+            console.log("⚠️ Payment modal dismissed by user");
             options.modal?.ondismiss?.();
           },
           confirm_close: true,
@@ -221,27 +187,18 @@ export class RazorpayService {
         retry: {
           enabled: true,
           max_count: 3,
-          ...options.retry,
         },
         timeout: 300,
         remember_customer: false,
       };
 
-      console.log(
-        "🎯 Creating Razorpay instance with options:",
-        razorpayOptions
-      );
+      console.log("🎯 Opening Razorpay modal with order_id:", orderId);
 
       const razorpay = new window.Razorpay(razorpayOptions);
 
       // Add event listeners
       razorpay.on("payment.failed", (response: any) => {
         console.error("❌ Payment failed:", response.error);
-        alert(
-          `Payment failed: ${
-            response.error.description || "Unknown error occurred"
-          }`
-        );
         throw new Error(
           `Payment failed: ${response.error.description || "Unknown error"}`
         );
@@ -249,16 +206,9 @@ export class RazorpayService {
 
       razorpay.on("payment.cancelled", () => {
         console.log("⚠️ Payment cancelled by user");
-        alert("Payment was cancelled by user");
         throw new Error("Payment was cancelled by user");
       });
-      razorpay.on("payment.success", (response) => {
-        console.log("✅ Payment successful:", response);
-        if (options.handler) {
-          options.handler(response);
-        }
-      });
-      console.log("🚀 Opening Razorpay modal...");
+
       razorpay.open();
     } catch (error) {
       console.error("❌ Error initiating payment:", error);
@@ -268,17 +218,52 @@ export class RazorpayService {
     }
   }
 
-  // Format amount for display (assumes input is in rupees)
+  // Verify payment signature (should be done on backend)
+  public async verifyPayment(
+    orderId: string,
+    paymentId: string,
+    signature: string
+  ): Promise<boolean> {
+    if (!orderId || !paymentId || !signature) {
+      console.error("❌ Missing parameters for payment verification");
+      return false;
+    }
+
+    try {
+      const response = await fetch(
+        `${apiConfig.baseURL}/payments/verify-payment`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: orderId,
+            razorpay_payment_id: paymentId,
+            razorpay_signature: signature,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Payment verification failed");
+      }
+
+      const { data } = await response.json();
+      return data.isAuthentic;
+    } catch (error) {
+      console.error("❌ Payment verification error:", error);
+      return false;
+    }
+  }
+
+  // Utility methods
   public static formatAmount(amount: number): string {
     return `₹${amount.toFixed(2)}`;
   }
 
-  // Convert rupees to paise
   public static toPaise(amount: number): number {
     return Math.round(amount * 100);
   }
 
-  // Convert paise to rupees
   public static toRupees(paise: number): number {
     return paise / 100;
   }
