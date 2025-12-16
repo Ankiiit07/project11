@@ -22,7 +22,8 @@
     "axios": "^1.6.0",
     "clsx": "^2.0.0",
     "date-fns": "^3.0.0",
-    "zustand": "^4.4.0"
+    "zustand": "^4.4.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
