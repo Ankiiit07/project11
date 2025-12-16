@@ -82,128 +82,73 @@ const CheckoutPage: React.FC = () => {
     setIsFormValid(isValid);
   };
 
-  const handlePaymentSuccess = async (
-    response: RazorpayResponse | { payment_method: "cod"; order_id: string }
-  ) => {
-    console.log("🔥 Payment success raw response:", response);
-    console.log("Payment/Order successful:", response);
-    setIsSubmitting(true);
-    setCurrentStep(3);
-  
-    try {
-      const customerInfo = {
-        email: formData.email,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        country: formData.country,
-      };
-
-      let paymentInfo: any = null;
-
-      if (response && "razorpay_payment_id" in response) {
-        paymentInfo = {
-          method: "razorpay",
-          paymentId: response.razorpay_payment_id,
-          status: "completed",
-        };
-        setPaymentMethod("online");
-      } else if (response && "payment_method" in response && response.payment_method === "cod") {
-        paymentInfo = {
-          method: "cod",
-          orderId: response.order_id,
-          status: "pending",
-        };
-        setPaymentMethod("cod");
-      } else {
-        console.error("❌ Unknown payment response format:", response);
-        throw new Error("Payment information missing or invalid");
-      }
-console.log("💡 Data being sent to createOrder:");
-console.log("- cartItems:", JSON.stringify(cartState.items, null, 2));
-console.log("- customerInfo:", JSON.stringify(customerInfo, null, 2));
-console.log("- paymentInfo:", JSON.stringify(paymentInfo, null, 2));
-console.log("- subtotal:", cartState.total);
-console.log("- shipping:", shipping);
-console.log("- tax:", tax);
-      const newOrder = await createOrder(
-        cartState.items,
-        customerInfo,
-        paymentInfo,
-        cartState.total,
-        shipping,
-        tax
-      );
-
-      setOrderDetails(newOrder);
-      setPaymentSuccess(true);
-
-      await sendOrderConfirmationEmail(newOrder, customerInfo);
-
-      await updateProfile({
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-      });
-
-      setTimeout(() => {
-        cartDispatch({ type: "CLEAR_CART" });
-        navigate(`/thank-you?orderId=${newOrder.id}`, {
-          state: { orderDetails: newOrder },
-        });
-      }, 3000);
-
-    } catch (error) {
-      console.error("❌ Full error object:", error);
-      notification.error(
-        error instanceof Error ? error.message : "Order creation failed"
-      );
-      handlePaymentError(
-        error instanceof Error ? error : new Error("Order creation failed")
-      );
-    }
-  };
-const handleCODOrder = async () => {
-  console.log("🚀 COD Order button clicked!");
+  const handlePaymentSuccess = async (response: RazorpayResponse) => {
+  console.log("🔥 Payment success raw response:", response);
   setIsSubmitting(true);
-  setCurrentStep(1);
+  setCurrentStep(3);
 
   try {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
-      throw new Error('Please fill in all required customer information');
-    }
-
-    setCurrentStep(2);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // ✅ Create proper payment info object
-    const codPaymentInfo = {
-      method: "cod" as const,
-      orderId: `cod_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      status: "pending" as const,
+    const customerInfo = {
+      email: formData.email,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      zipCode: formData.zipCode,
+      country: formData.country,
     };
 
-    const codResponse = {
-      payment_method: "cod" as const,
-      order_id: codPaymentInfo.orderId,
+    const paymentInfo = {
+      method: "online",
+      paymentId: response.razorpay_payment_id,
+      status: "completed",
     };
 
-    console.log("✅ COD Response created:", codResponse);
-    await handlePaymentSuccess(codResponse);
+    console.log("💡 Data being sent to createOrder:");
+    console.log("- cartItems:", JSON.stringify(cartState.items, null, 2));
+    console.log("- customerInfo:", JSON.stringify(customerInfo, null, 2));
+    console.log("- paymentInfo:", JSON.stringify(paymentInfo, null, 2));
+
+    const newOrder = await createOrder(
+      cartState.items,
+      customerInfo,
+      paymentInfo,
+      cartState.total,
+      shipping,
+      tax
+    );
+
+    setOrderDetails(newOrder);
+    setPaymentSuccess(true);
+
+    await sendOrderConfirmationEmail(newOrder, customerInfo);
+
+    await updateProfile({
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+    });
+
+    setTimeout(() => {
+      cartDispatch({ type: "CLEAR_CART" });
+      navigate(`/thank-you?orderId=${newOrder.id}`, {
+        state: { orderDetails: newOrder },
+      });
+    }, 3000);
 
   } catch (error) {
-    console.error("❌ COD Order Error:", error);
-    setIsSubmitting(false);
-    setCurrentStep(0);
+    console.error("❌ Full error object:", error);
+    notification.error(
+      error instanceof Error ? error.message : "Order creation failed"
+    );
     handlePaymentError(
-      error instanceof Error ? error : new Error("COD order failed")
+      error instanceof Error ? error : new Error("Order creation failed")
     );
   }
 };
+
   const handlePaymentError = (error: Error) => {
     console.error("❌ Payment error in checkout:", error);
 
@@ -629,7 +574,6 @@ const handleCODOrder = async () => {
   }}
   onPaymentSuccess={handlePaymentSuccess}
   onPaymentError={handlePaymentError}
-  onCODOrder={handleCODOrder}
   disabled={!isFormValid}
 />
                 </div>
