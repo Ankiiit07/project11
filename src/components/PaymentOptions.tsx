@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { CreditCard, Truck, Shield, CheckCircle, Banknote, Clock, Loader2 } from 'lucide-react';
+import React from 'react';
+import { CreditCard, Clock } from 'lucide-react';
 import PaymentButton from './PaymentButton';
 import { RazorpayResponse } from '../types/razorpay';
 
@@ -14,9 +14,8 @@ interface PaymentOptionsProps {
     description: string;
     receipt?: string;
   };
-  onPaymentSuccess: (response: RazorpayResponse | { payment_method: 'cod'; order_id: string }) => void;
+  onPaymentSuccess: (response: RazorpayResponse) => void;
   onPaymentError?: (error: Error) => void;
-  onCODOrder?: () => Promise<void>;
   disabled?: boolean;
   className?: string;
 }
@@ -27,120 +26,29 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
   orderDetails,
   onPaymentSuccess,
   onPaymentError,
-  onCODOrder,
   disabled = false,
   className = '',
 }) => {
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'online' | 'cod'>('online');
-  const [isProcessingCOD, setIsProcessingCOD] = useState(false);
-
-  const handleCODOrder = async () => {
-  console.log("🔵 PaymentOptions: COD button clicked");
-  
-  if (!customerInfo.name || !customerInfo.email) {
-    console.error("❌ Missing customer info");
-    onPaymentError?.(new Error('Please fill in all required customer information'));
-    return;
-  }
-
-  setIsProcessingCOD(true);
-  console.log("🔵 PaymentOptions: Processing COD, calling onCODOrder prop...");
-  
-  try {
-    if (onCODOrder) {
-      console.log("🔵 PaymentOptions: onCODOrder exists, calling it");
-      await onCODOrder();
-      console.log("✅ PaymentOptions: onCODOrder completed");
-    } else {
-      console.error("❌ PaymentOptions: onCODOrder prop not provided!");
-    }
-  } catch (error) {
-    console.error("❌ PaymentOptions: COD error:", error);
-    onPaymentError?.(error instanceof Error ? error : new Error('COD order failed'));
-  } finally {
-    setIsProcessingCOD(false);
-  }
-};
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Payment Method Selection */}
+      {/* Payment Method Section */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Choose Payment Method</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Secure Payment</h3>
         
-        <div className="grid grid-cols-1 gap-4">
-          {/* Online Payment Option */}
-          <div
-            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-300 ${
-              selectedPaymentMethod === 'online'
-                ? 'border-primary bg-primary-light/10'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
-            onClick={() => setSelectedPaymentMethod('online')}
-          >
-            <div className="flex items-center space-x-3">
-              <div className={`w-4 h-4 rounded-full border-2 ${
-                selectedPaymentMethod === 'online'
-                  ? 'border-primary bg-primary'
-                  : 'border-gray-300'
-              }`}>
-                {selectedPaymentMethod === 'online' && (
-                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  <span className="font-medium text-gray-900">Pay Online</span>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">
-                  Credit/Debit Card, UPI, Net Banking
-                </p>
-                <p className="text-xs text-green-600 mt-1">
-                  ✅ Instant WhatsApp notification to merchant
-                </p>
-              </div>
+        <div className="border-2 border-primary bg-primary-light/10 rounded-lg p-4">
+          <div className="flex items-center space-x-3 mb-4">
+            <CreditCard className="h-5 w-5 text-primary" />
+            <div className="flex-1">
+              <span className="font-medium text-gray-900">Pay Online</span>
+              <p className="text-sm text-gray-600 mt-1">
+                Credit/Debit Card, UPI, Net Banking
+              </p>
+              <p className="text-xs text-green-600 mt-1">
+                ✅ Instant confirmation & order processing
+              </p>
             </div>
           </div>
-
-          {/* COD Option */}
-          <div
-            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-300 ${
-              selectedPaymentMethod === 'cod'
-                ? 'border-primary bg-primary-light/10'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
-            onClick={() => setSelectedPaymentMethod('cod')}
-          >
-            <div className="flex items-center space-x-3">
-              <div className={`w-4 h-4 rounded-full border-2 ${
-                selectedPaymentMethod === 'cod'
-                  ? 'border-primary bg-primary'
-                  : 'border-gray-300'
-              }`}>
-                {selectedPaymentMethod === 'cod' && (
-                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                )}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <Banknote className="h-5 w-5 text-primary" />
-                  <span className="font-medium text-gray-900">Cash on Delivery</span>
-                </div>
-                <p className="text-sm text-gray-600 mt-1">
-                  Pay when your order arrives (₹25 extra charges)
-                </p>
-                <p className="text-xs text-green-600 mt-1">
-                  ✅ Instant WhatsApp notification to merchant
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Method Details */}
-      <div className="space-y-4">
-        {selectedPaymentMethod === 'online' ? (
+          
           <PaymentButton
             amount={amount}
             customerInfo={customerInfo}
@@ -149,25 +57,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
             onError={onPaymentError}
             disabled={disabled}
           />
-        ) : (
-          <button
-            onClick={handleCODOrder}
-            disabled={disabled || isProcessingCOD}
-            className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center"
-          >
-            {isProcessingCOD ? (
-              <>
-                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                Processing COD Order...
-              </>
-            ) : (
-              <>
-                <Truck className="h-5 w-5 mr-2" />
-                Place COD Order (₹{(amount + 25).toFixed(2)})
-              </>
-            )}
-          </button>
-        )}
+        </div>
       </div>
 
       {/* Delivery Information */}
@@ -188,15 +78,6 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
       {/* Payment Security Notice */}
       <div className="text-center text-xs text-gray-500">
         <p>🔒 Your payment and personal information are always secure</p>
-      </div>
-      
-      {/* WhatsApp Order Option */}
-      <div className="border-t pt-6">
-        <div className="text-center mb-4">
-          <h4 className="font-medium text-gray-900 mb-2">Prefer to order via WhatsApp?</h4>
-          <p className="text-sm text-gray-600">Get personalized assistance and place your order directly through WhatsApp</p>
-        </div>
-        {/* WhatsAppButton component was removed, so this section is now empty */}
       </div>
     </div>
   );
