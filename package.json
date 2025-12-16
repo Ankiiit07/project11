@@ -15,7 +15,8 @@
     "lucide-react": "^0.294.0",
     "razorpay": "^2.9.2",
     "react-query": "^3.39.3",
-    "@tanstack/react-query": "^5.0.0"
+    "@tanstack/react-query": "^5.0.0",
+    "react-helmet-async": "^2.0.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
