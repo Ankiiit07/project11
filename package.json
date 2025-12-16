@@ -16,7 +16,8 @@
     "razorpay": "^2.9.2",
     "react-query": "^3.39.3",
     "@tanstack/react-query": "^5.0.0",
-    "react-helmet-async": "^2.0.4"
+    "react-helmet-async": "^2.0.4",
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
