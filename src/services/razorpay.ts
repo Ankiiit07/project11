@@ -84,9 +84,9 @@ export class RazorpayService {
     }
 
     try {
-      // ✅ Call your backend createOrder endpoint
+      // ✅ Call Netlify function
       const response = await fetch(
-        `${apiConfig.baseURL}/payments/create-order`,
+        '/.netlify/functions/create-order',
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -231,7 +231,7 @@ export class RazorpayService {
 
     try {
       const response = await fetch(
-        `${apiConfig.baseURL}/payments/verify-payment`,
+        '/.netlify/functions/verify-payment',
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
