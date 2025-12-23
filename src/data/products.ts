@@ -223,7 +223,7 @@ export const products: Product[] = [
    {
     id: 'espresso-concentrate',
     name: 'Cafe at Once Espresso Shot',
-    price: 49,
+    price: 69,
     originalPrice: 99,
     image:
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681692/Screenshot_2025-12-02_at_2.16.44_PM_z1hcdt.png',
@@ -261,7 +261,7 @@ export const products: Product[] = [
    {
     id: 'Corn Silk Coffee Concentrate',
     name: 'Cafe at Once Corn Silk',
-    price: 49,
+    price: 69,
     originalPrice: 99,
     image:
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681693/Screenshot_2025-12-02_at_2.18.13_PM_agarvu.png',
