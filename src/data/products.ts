@@ -256,7 +256,7 @@ export const products: Product[] = [
       'Stir and enjoy your perfect latte',
     ],
     isFeatured: true,
-    inStock: true,
+    inStock: false,
   },
    {
     id: 'Corn Silk Coffee Concentrate',
