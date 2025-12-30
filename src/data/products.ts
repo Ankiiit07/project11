@@ -218,7 +218,7 @@ export const products: Product[] = [
       'Press into 360ml of hot water',
       'Steep for 2-3 minutes and enjoy',
     ],
-    inStock: false,
+    inStock: true,
   },
    {
     id: 'espresso-concentrate',
@@ -295,12 +295,12 @@ export const products: Product[] = [
       'Stir and enjoy your perfect latte',
     ],
     isFeatured: true,
-    inStock: true,
+    inStock: false,
   },
    {
     id: 'latte-concentrate trial',
     name: 'Cafe at Once Trial Pack',
-    price: 799,
+    price: 699,
     originalPrice: 999,
     image:
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1764681938/Screenshot_2025-12-02_at_2.24.10_PM_of0omv.png',
