@@ -75,6 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       price,
       image,
       type: 'single',
+      weight,
     });
     
     // Show notification
