@@ -64,7 +64,10 @@ const OrderTrackingPage: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || process.env.REACT_APP_BACKEND_URL || '';
+  // Get backend URL from environment - Vite uses import.meta.env
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 
+                      (typeof window !== 'undefined' && (window as any).REACT_APP_BACKEND_URL) || 
+                      '';
 
   const fetchTracking = useCallback(async (code: string) => {
     if (!code.trim()) return;
