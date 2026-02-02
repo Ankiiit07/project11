@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -9,6 +9,9 @@ import {
   ShoppingBag,
   Truck,
   Package,
+  Zap,
+  Clock,
+  Calendar,
 } from "lucide-react";
 import { useCart } from "../context/CartContextOptimized";
 import { useUser } from "../context/UserContext";
@@ -23,7 +26,17 @@ import {
   LoadingOverlay,
 } from "../components/LoadingSystem";
 import PaymentButton from "../components/PaymentButton";
-import { calculateShipping, formatWeight, DEFAULT_SHIPPING_RATES } from "../utils/shippingCalculator";
+import { 
+  calculateShipping, 
+  formatWeight, 
+  DEFAULT_SHIPPING_RATES,
+  getShippingOptions,
+  getDeliveryEstimate,
+  isValidPincode,
+  getDeliveryZone,
+  ShippingMethod,
+  ShippingOption,
+} from "../utils/shippingCalculator";
 
 const CheckoutPage: React.FC = () => {
   // Scroll to top when component mounts
