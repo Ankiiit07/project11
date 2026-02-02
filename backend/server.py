@@ -209,11 +209,11 @@ async def track_by_awb(awb_code: str):
             response.raise_for_status()
             data = response.json()
             
-            tracking_data = data.get("tracking_data", {})
-            shipment_track = tracking_data.get("shipment_track", [])
+            tracking_data = data.get("tracking_data", {}) or {}
+            shipment_track = tracking_data.get("shipment_track", []) or []
             
             # If no tracking data found
-            if not tracking_data or not shipment_track:
+            if not shipment_track:
                 return TrackingResponse(
                     success=False,
                     awb_code=awb_code,
