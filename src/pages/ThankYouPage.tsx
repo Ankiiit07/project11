@@ -161,8 +161,36 @@ const ThankYouPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex justify-between items-center">
+          <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
+            {/* Subtotal */}
+            {orderDetails.subtotal !== undefined && orderDetails.subtotal > 0 && (
+              <div className="flex justify-between items-center text-gray-600">
+                <span>Subtotal</span>
+                <span>₹{orderDetails.subtotal.toFixed(2)}</span>
+              </div>
+            )}
+            
+            {/* Shipping */}
+            <div className="flex justify-between items-center text-gray-600">
+              <span className="flex items-center">
+                <Package className="h-4 w-4 mr-1" />
+                Shipping
+              </span>
+              <span className={orderDetails.shipping === 0 ? "text-green-600 font-medium" : ""}>
+                {orderDetails.shipping === 0 ? "Free" : `₹${orderDetails.shipping?.toFixed(2) || '0.00'}`}
+              </span>
+            </div>
+            
+            {/* Tax */}
+            {orderDetails.tax !== undefined && orderDetails.tax > 0 && (
+              <div className="flex justify-between items-center text-gray-600">
+                <span>Tax (GST)</span>
+                <span>₹{orderDetails.tax.toFixed(2)}</span>
+              </div>
+            )}
+            
+            {/* Total */}
+            <div className="flex justify-between items-center pt-3 border-t">
               <span className="text-xl font-bold text-gray-900">
                 Total Amount
               </span>
