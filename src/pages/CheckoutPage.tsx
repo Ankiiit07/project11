@@ -230,17 +230,15 @@ const CheckoutPage: React.FC = () => {
     return cartState.total * 0; // 18% GST for India
   };
 
-  // Calculate shipping based on weight and quantity
-  const shippingResult = calculateShipping(
-    cartState.items.map(item => ({
-      weight: item.weight || 100, // Default 100g if not specified
-      quantity: item.quantity,
-      price: item.price,
-    })),
-    cartState.total
-  );
+  // Get shipping charge based on selected method
+  const getShippingCharge = () => {
+    if (selectedShippingOption) {
+      return selectedShippingOption.charge;
+    }
+    return shippingResult.shippingCharge;
+  };
 
-  const shipping = shippingResult.shippingCharge;
+  const shipping = getShippingCharge();
   const tax = calculateTax();
   const finalTotal = (cartState.total || 0) + tax + shipping;
 
