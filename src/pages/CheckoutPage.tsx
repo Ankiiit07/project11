@@ -177,12 +177,17 @@ const CheckoutPage: React.FC = () => {
     return cartState.total * 0; // 18% GST for India
   };
 
-  const calculateShipping = () => {
-    // Free shipping for orders above ₹1000
-    return cartState.total >= 1000 ? 0 : 0;
-  };
+  // Calculate shipping based on weight and quantity
+  const shippingResult = calculateShipping(
+    cartState.items.map(item => ({
+      weight: item.weight || 100, // Default 100g if not specified
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    cartState.total
+  );
 
-  const shipping = calculateShipping();
+  const shipping = shippingResult.shippingCharge;
   const tax = calculateTax();
   const finalTotal = (cartState.total || 0) + tax + shipping;
 
