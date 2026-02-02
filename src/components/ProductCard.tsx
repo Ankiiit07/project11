@@ -19,6 +19,7 @@ interface ProductCardProps {
   category?: 'concentrate' | 'flavored' | 'tea' | 'cold-brew';
   viewMode?: 'grid' | 'list';
   inStock?: boolean;
+  weight?: number; // Weight in grams for shipping calculation
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
