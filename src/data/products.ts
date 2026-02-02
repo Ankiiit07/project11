@@ -187,6 +187,7 @@ export const products: Product[] = [
       'Stir well for the perfect mocha',
     ],
     inStock: true,
+    weight: 110, // 110 grams
   },
   {
     id: 'jasmine-tea',
