@@ -196,11 +196,30 @@ async def track_by_awb(awb_code: str):
                 headers={"Authorization": f"Bearer {token}"},
                 timeout=30.0
             )
+            
+            # Check for HTTP errors
+            if response.status_code == 404:
+                return TrackingResponse(
+                    success=False,
+                    awb_code=awb_code,
+                    message="No tracking information found for this AWB number. Please check the AWB and try again.",
+                    error="AWB not found"
+                )
+            
             response.raise_for_status()
             data = response.json()
             
             tracking_data = data.get("tracking_data", {})
             shipment_track = tracking_data.get("shipment_track", [])
+            
+            # If no tracking data found
+            if not tracking_data or not shipment_track:
+                return TrackingResponse(
+                    success=False,
+                    awb_code=awb_code,
+                    message="No tracking information available for this AWB. The shipment may not have been dispatched yet.",
+                    error="No tracking data"
+                )
             
             # Parse checkpoints
             checkpoints = []
@@ -238,9 +257,14 @@ async def track_by_awb(awb_code: str):
             )
             
     except httpx.HTTPStatusError as e:
-        # If authentication fails, return demo data for testing
+        # If authentication fails, return error
         if e.response.status_code in [401, 403]:
-            return get_demo_tracking(awb_code)
+            return TrackingResponse(
+                success=False,
+                awb_code=awb_code,
+                error="Authentication failed with Shiprocket",
+                message="Unable to authenticate with shipping provider. Please contact support."
+            )
         return TrackingResponse(
             success=False,
             awb_code=awb_code,
@@ -248,8 +272,12 @@ async def track_by_awb(awb_code: str):
             message="Failed to fetch tracking information"
         )
     except Exception as e:
-        # Return demo data if there's an error (for demo purposes)
-        return get_demo_tracking(awb_code)
+        return TrackingResponse(
+            success=False,
+            awb_code=awb_code,
+            error=str(e),
+            message="An error occurred while fetching tracking information"
+        )
 
 
 def get_demo_tracking(awb_code: str) -> TrackingResponse:
