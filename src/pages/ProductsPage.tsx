@@ -70,6 +70,7 @@ const ProductsPage: React.FC = () => {
         price: product.price,
         image: product.image,
         type: 'single' as const,
+        weight: product.weight || 100, // Include weight for shipping
       },
     });
   }, [dispatch]);
