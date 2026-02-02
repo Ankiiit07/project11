@@ -667,17 +667,34 @@ const CheckoutPage: React.FC = () => {
 
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600 flex items-center">
-                      <Truck className="h-4 w-4 mr-1" />
-                      Shipping ({formatWeight(shippingResult.totalWeight)})
+                      {selectedShippingMethod === 'express' ? (
+                        <Zap className="h-4 w-4 mr-1 text-yellow-500" />
+                      ) : (
+                        <Truck className="h-4 w-4 mr-1" />
+                      )}
+                      {selectedShippingOption?.name || 'Shipping'} ({formatWeight(shippingResult.totalWeight)})
                     </span>
                     <span
                       className={
-                        shippingResult.isFreeShipping ? "text-green-600 font-medium" : ""
+                        shipping === 0 ? "text-green-600 font-medium" : ""
                       }
                     >
-                      {shippingResult.isFreeShipping ? "Free" : `₹${shipping.toFixed(2)}`}
+                      {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
                     </span>
                   </div>
+
+                  {/* Delivery estimate */}
+                  {deliveryEstimate && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 flex items-center">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        Estimated Delivery
+                      </span>
+                      <span className="text-green-600 font-medium">
+                        {deliveryEstimate.replace('Delivery by ', '').replace('Delivery between ', '')}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">GST (18%)</span>
