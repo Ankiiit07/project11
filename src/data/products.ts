@@ -263,6 +263,7 @@ export const products: Product[] = [
     ],
     isFeatured: true,
     inStock: false,
+    weight: 50, // 50 grams - single shot
   },
    {
     id: 'Corn Silk Coffee Concentrate',
