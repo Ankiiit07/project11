@@ -343,6 +343,7 @@ export const products: Product[] = [
     ],
     isFeatured: true,
     inStock: true,
+    weight: 300, // 300 grams - trial pack with multiple items
   },
 ];
 
