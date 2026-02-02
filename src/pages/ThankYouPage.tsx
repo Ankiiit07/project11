@@ -56,6 +56,9 @@ const ThankYouPage: React.FC = () => {
             details = {
               orderNumber: orderData.id,
               total: orderData.total || 0,
+              subtotal: orderData.subtotal || 0,
+              shipping: orderData.shipping || 0,
+              tax: orderData.tax || 0,
               items: orderData.items || [],
               estimatedDelivery: new Date(
                 Date.now() + 3 * 24 * 60 * 60 * 1000
