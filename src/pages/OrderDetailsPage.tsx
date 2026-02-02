@@ -151,7 +151,7 @@ const shipping = order.shipping_address || {};
 
          {/* Payment Info */}
 <div className="mb-4">
-  <h4 className="font-semibold text-gray-800 mb-2">Payment</h4>
+  <h4 className="font-semibold text-gray-800 mb-2">Payment & Charges</h4>
   <p>
     <span className="font-medium">Method:</span>{" "}
     {order.payment_method?.toUpperCase() || "N/A"}
@@ -160,9 +160,30 @@ const shipping = order.shipping_address || {};
     <span className="font-medium">Status:</span>{" "}
     {order.payment_status || "N/A"}
   </p>
-  <p>
-    <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
-  </p>
+  <div className="mt-2 pt-2 border-t border-gray-100">
+    <p>
+      <span className="font-medium">Subtotal:</span> ₹{order.subtotal?.toFixed(2) || '0.00'}
+    </p>
+    <p>
+      <span className="font-medium">Shipping:</span>{" "}
+      <span className={order.shipping === 0 ? "text-green-600" : ""}>
+        {order.shipping === 0 ? "Free" : `₹${order.shipping?.toFixed(2) || '0.00'}`}
+      </span>
+    </p>
+    {order.tax > 0 && (
+      <p>
+        <span className="font-medium">Tax:</span> ₹{order.tax?.toFixed(2) || '0.00'}
+      </p>
+    )}
+    {order.discount > 0 && (
+      <p>
+        <span className="font-medium">Discount:</span> -₹{order.discount?.toFixed(2) || '0.00'}
+      </p>
+    )}
+    <p className="text-lg font-semibold mt-2">
+      <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
+    </p>
+  </div>
 </div>
 
           {/* Shiprocket Payload Preview */}
