@@ -90,7 +90,7 @@ const OrderTrackingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [BACKEND_URL]);
+  }, [SHIPROCKET_API_URL]);
 
   // Auto-refresh effect
   useEffect(() => {
