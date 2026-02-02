@@ -6,6 +6,7 @@ import {
   Truck,
   ArrowLeft,
   Home,
+  Package,
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useOrders } from "../hooks/useOrders";
@@ -15,6 +16,9 @@ import { useUser } from "../context/UserContext";
 interface OrderDetails {
   orderNumber: string;
   total: number;
+  subtotal?: number;
+  shipping?: number;
+  tax?: number;
   items: Array<{
     name: string;
     quantity: number;
