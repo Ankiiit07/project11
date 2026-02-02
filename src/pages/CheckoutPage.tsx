@@ -471,9 +471,19 @@ const CheckoutPage: React.FC = () => {
                         value={formData.zipCode}
                         onChange={handleInputChange}
                         required
+                        maxLength={6}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
                         placeholder="400001"
                       />
+                      {formData.zipCode && isValidPincode(formData.zipCode) && deliveryEstimate && (
+                        <p className="text-sm text-green-600 mt-1 flex items-center">
+                          <Calendar className="h-3 w-3 mr-1" />
+                          {deliveryEstimate}
+                        </p>
+                      )}
+                      {formData.zipCode && formData.zipCode.length === 6 && !isValidPincode(formData.zipCode) && (
+                        <p className="text-sm text-red-500 mt-1">Invalid PIN code</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -494,6 +504,68 @@ const CheckoutPage: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Delivery Options */}
+              {shippingOptions.length > 0 && (
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <div className="flex items-center mb-6">
+                    <Truck className="h-6 w-6 text-primary mr-3" />
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      Delivery Options
+                    </h2>
+                  </div>
+
+                  <div className="space-y-3">
+                    {shippingOptions.map((option) => (
+                      <label
+                        key={option.id}
+                        className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                          selectedShippingMethod === option.id
+                            ? 'border-primary bg-primary/5'
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${!option.available ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value={option.id}
+                          checked={selectedShippingMethod === option.id}
+                          onChange={() => option.available && setSelectedShippingMethod(option.id)}
+                          disabled={!option.available}
+                          className="h-4 w-4 text-primary focus:ring-primary"
+                        />
+                        <div className="ml-3 flex-1">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-gray-900 flex items-center">
+                              {option.id === 'express' && (
+                                <Zap className="h-4 w-4 text-yellow-500 mr-1" />
+                              )}
+                              {option.name}
+                            </span>
+                            <span className={`font-semibold ${option.charge === 0 ? 'text-green-600' : 'text-gray-900'}`}>
+                              {option.charge === 0 ? 'FREE' : `₹${option.charge}`}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 flex items-center mt-1">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {option.description}
+                          </p>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+
+                  {/* Express delivery info for Mumbai */}
+                  {shippingOptions.some(opt => opt.id === 'express' && opt.available) && (
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-sm text-yellow-800 flex items-center">
+                        <Zap className="h-4 w-4 mr-2 text-yellow-600" />
+                        <span><strong>Express Delivery</strong> available for Mumbai addresses only - Get your order by tomorrow!</span>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Payment Security Notice */}
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
