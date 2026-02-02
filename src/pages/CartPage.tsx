@@ -74,9 +74,18 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const calculateShipping = () => {
-    const subtotal = calculateSubtotal();
-    return subtotal >= 1000 ? 0 : 0; // Free shipping over ₹1000
+  // Calculate shipping based on weight and quantity
+  const shippingResult = calculateShipping(
+    cartState.items.map(item => ({
+      weight: item.weight || 100, // Default 100g if not specified
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    calculateSubtotal()
+  );
+
+  const calculateShippingAmount = () => {
+    return shippingResult.shippingCharge;
   };
 
   const calculateTax = () => {
@@ -84,7 +93,7 @@ const CartPage: React.FC = () => {
   };
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShipping() + calculateTax();
+    return calculateSubtotal() + calculateShippingAmount() + calculateTax();
   };
 
   if (isLoading) {
