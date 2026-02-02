@@ -543,13 +543,16 @@ const CheckoutPage: React.FC = () => {
                   )}
 
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-gray-600 flex items-center">
+                      <Truck className="h-4 w-4 mr-1" />
+                      Shipping ({formatWeight(shippingResult.totalWeight)})
+                    </span>
                     <span
                       className={
-                        shipping === 0 ? "text-green-600 font-medium" : ""
+                        shippingResult.isFreeShipping ? "text-green-600 font-medium" : ""
                       }
                     >
-                      {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
+                      {shippingResult.isFreeShipping ? "Free" : `₹${shipping.toFixed(2)}`}
                     </span>
                   </div>
 
