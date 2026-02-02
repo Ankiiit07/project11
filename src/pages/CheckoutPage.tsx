@@ -594,12 +594,50 @@ const CheckoutPage: React.FC = () => {
                   </p>
                 )}
 
+                {/* Shipping Details */}
+                {!shippingResult.isFreeShipping && (
+                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <Package className="h-5 w-5 text-blue-600 mr-2" />
+                      <span className="font-medium text-blue-900">Shipping Details</span>
+                    </div>
+                    <div className="text-sm text-blue-800 space-y-1">
+                      <p>Total Weight: {formatWeight(shippingResult.totalWeight)}</p>
+                      <p>Items: {shippingResult.itemCount}</p>
+                      {shippingResult.breakdown.baseCharge > 0 && (
+                        <p>Base Charge: ₹{shippingResult.breakdown.baseCharge}</p>
+                      )}
+                      {shippingResult.breakdown.weightCharge > 0 && (
+                        <p>Weight Charge: ₹{shippingResult.breakdown.weightCharge}</p>
+                      )}
+                      {shippingResult.breakdown.itemCharge > 0 && (
+                        <p>Item Charge: ₹{shippingResult.breakdown.itemCharge}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Free Shipping Notice */}
-                {cartState.total < 1000 && (
+                {cartState.total < DEFAULT_SHIPPING_RATES.freeShippingThreshold && (
                   <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-800">
-                      Add ₹{(1000 - cartState.total).toFixed(2)} more for free
-                      shipping! (Currently ₹50)
+                      Add ₹{(DEFAULT_SHIPPING_RATES.freeShippingThreshold - cartState.total).toFixed(2)} more for free
+                      shipping!
+                    </p>
+                  </div>
+                )}
+
+                {/* Free Shipping Badge */}
+                {shippingResult.isFreeShipping && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center">
+                      <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                      <span className="text-green-800 font-medium">
+                        You qualify for FREE shipping!
+                      </span>
+                    </div>
+                    <p className="text-sm text-green-700 mt-1">
+                      You're saving ₹{shippingResult.breakdown.discount} on shipping
                     </p>
                   </div>
                 )}
