@@ -70,6 +70,46 @@ const CheckoutPage: React.FC = () => {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingMethod>('standard');
+  const [deliveryEstimate, setDeliveryEstimate] = useState<string>('');
+
+  // Calculate base shipping based on weight
+  const shippingResult = useMemo(() => calculateShipping(
+    cartState.items.map(item => ({
+      weight: item.weight || 100,
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    cartState.total
+  ), [cartState.items, cartState.total]);
+
+  // Get available shipping options based on pincode
+  const shippingOptions = useMemo(() => {
+    if (formData.zipCode && isValidPincode(formData.zipCode)) {
+      return getShippingOptions(formData.zipCode, cartState.total, shippingResult.shippingCharge);
+    }
+    return [];
+  }, [formData.zipCode, cartState.total, shippingResult.shippingCharge]);
+
+  // Get current selected shipping option
+  const selectedShippingOption = useMemo(() => {
+    return shippingOptions.find(opt => opt.id === selectedShippingMethod) || shippingOptions[0];
+  }, [shippingOptions, selectedShippingMethod]);
+
+  // Update delivery estimate when pincode or shipping method changes
+  useEffect(() => {
+    if (formData.zipCode && isValidPincode(formData.zipCode)) {
+      setDeliveryEstimate(getDeliveryEstimate(formData.zipCode, selectedShippingMethod));
+      
+      // Check if express is available for this pincode
+      const zone = getDeliveryZone(formData.zipCode);
+      if (!zone.expressAvailable && selectedShippingMethod === 'express') {
+        setSelectedShippingMethod('standard');
+      }
+    } else {
+      setDeliveryEstimate('');
+    }
+  }, [formData.zipCode, selectedShippingMethod]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
