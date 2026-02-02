@@ -8,6 +8,7 @@ import {
   CheckCircle,
   ShoppingBag,
   Truck,
+  Package,
 } from "lucide-react";
 import { useCart } from "../context/CartContextOptimized";
 import { useUser } from "../context/UserContext";
@@ -22,6 +23,7 @@ import {
   LoadingOverlay,
 } from "../components/LoadingSystem";
 import PaymentButton from "../components/PaymentButton";
+import { calculateShipping, formatWeight, DEFAULT_SHIPPING_RATES } from "../utils/shippingCalculator";
 
 const CheckoutPage: React.FC = () => {
   // Scroll to top when component mounts
