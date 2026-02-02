@@ -28,8 +28,8 @@ app.add_middleware(
 )
 
 # Shiprocket Configuration
-SHIPROCKET_EMAIL = os.environ.get("SHIPROCKET_EMAIL", "6nishitasj@gmail.com")
-SHIPROCKET_PASSWORD = os.environ.get("SHIPROCKET_PASSWORD", "Nick2324!")
+SHIPROCKET_EMAIL = os.environ.get("SHIPROCKET_EMAIL", "ajha55172@gmail.com")
+SHIPROCKET_PASSWORD = os.environ.get("SHIPROCKET_PASSWORD", "Anand@raj98")
 SHIPROCKET_API_URL = "https://apiv2.shiprocket.in"
 
 # Token cache
