@@ -126,6 +126,12 @@ const Footer: React.FC = () => {
               <h3 className="text-lg font-semibold">Customer Service</h3>
               <div className="space-y-2">
                 <Link
+                  to="/track"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Track Your Order
+                </Link>
+                <Link
                   to="/customer-service"
                   className="block text-gray-400 hover:text-white transition-colors"
                 >
