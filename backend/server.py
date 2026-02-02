@@ -212,8 +212,18 @@ async def track_by_awb(awb_code: str):
             tracking_data = data.get("tracking_data", {}) or {}
             shipment_track = tracking_data.get("shipment_track", []) or []
             
+            # Check for error in tracking data
+            tracking_error = tracking_data.get("error", "")
+            if tracking_error:
+                return TrackingResponse(
+                    success=False,
+                    awb_code=awb_code,
+                    message=tracking_error,
+                    error="AWB not found"
+                )
+            
             # If no tracking data found
-            if not shipment_track:
+            if not shipment_track or (shipment_track and not shipment_track[0].get("awb_code")):
                 return TrackingResponse(
                     success=False,
                     awb_code=awb_code,
