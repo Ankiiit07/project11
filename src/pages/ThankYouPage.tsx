@@ -227,7 +227,13 @@ const ThankYouPage: React.FC = () => {
             </li>
             <li className="flex items-start">
               <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
-              <span>You can track your order status in your account dashboard.</span>
+              <span>
+                Track your shipment in real-time using our{' '}
+                <Link to="/track" className="text-primary font-semibold underline hover:text-primary/80">
+                  Order Tracking
+                </Link>{' '}
+                page once shipped.
+              </span>
             </li>
             <li className="flex items-start">
               <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
