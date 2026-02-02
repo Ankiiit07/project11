@@ -148,6 +148,7 @@ export const products: Product[] = [
     ],
     isFeatured: true,
     inStock: false,
+    weight: 120, // 120 grams
   },
   {
     id: 'mocha-flavored',
