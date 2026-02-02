@@ -35,6 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   category,
   viewMode = 'grid',
   inStock = true,
+  weight = 100, // Default 100g
 }) => {
   // Input validation
   if (!id || !name || price < 0 || originalPrice < 0) {
