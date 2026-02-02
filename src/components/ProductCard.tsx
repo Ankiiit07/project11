@@ -90,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     
     // Cleanup timeout on unmount
     return () => clearTimeout(timeoutId);
-  }, [addItem, clearLastAdded, id, name, price, image, inStock, isAddingToCart]);
+  }, [addItem, clearLastAdded, id, name, price, image, weight, inStock, isAddingToCart]);
 
 
 
