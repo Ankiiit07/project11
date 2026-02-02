@@ -233,7 +233,8 @@ async def track_by_awb(awb_code: str):
             
             # Parse checkpoints
             checkpoints = []
-            for activity in tracking_data.get("shipment_track_activities", []):
+            track_activities = tracking_data.get("shipment_track_activities", []) or []
+            for activity in track_activities:
                 checkpoints.append(TrackingCheckpoint(
                     date=activity.get("date", ""),
                     activity=activity.get("activity", ""),
