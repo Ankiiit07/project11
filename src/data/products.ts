@@ -26,6 +26,7 @@ export interface Product {
   instructions: string[];
   isFeatured?: boolean;
   inStock: boolean;
+  weight: number; // Weight in grams for shipping calculation
 }
 
 export const products: Product[] = [
