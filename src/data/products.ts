@@ -303,6 +303,7 @@ export const products: Product[] = [
     ],
     isFeatured: true,
     inStock: false,
+    weight: 50, // 50 grams
   },
    {
     id: 'latte-concentrate trial',
