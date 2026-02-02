@@ -9,6 +9,7 @@ import {
   ArrowLeft,
   Truck,
   CreditCard,
+  Package,
 } from "lucide-react";
 import { useCart } from "../context/CartContextOptimized";
 import {
@@ -17,6 +18,7 @@ import {
   ProgressBar,
   StepProgress,
 } from "../components/LoadingSystem";
+import { calculateShipping, formatWeight, DEFAULT_SHIPPING_RATES } from "../utils/shippingCalculator";
 
 const CartPage: React.FC = () => {
   const { state: cartState, dispatch } = useCart();
