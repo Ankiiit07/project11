@@ -224,6 +224,7 @@ export const products: Product[] = [
       'Steep for 2-3 minutes and enjoy',
     ],
     inStock: true,
+    weight: 80, // 80 grams
   },
    {
     id: 'espresso-concentrate',
