@@ -109,6 +109,7 @@ export const products: Product[] = [
     ],
     isFeatured: true,
     inStock: true,
+    weight: 100, // 100 grams
   },
   {
     id: 'cold-brew-concentrate',
