@@ -74,7 +74,7 @@ const OrderTrackingPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/shiprocket/tracking/${code.trim()}`);
+      const response = await fetch(`${SHIPROCKET_API_URL}/api/shiprocket/tracking/${code.trim()}`);
       const data = await response.json();
       
       if (data.success) {
