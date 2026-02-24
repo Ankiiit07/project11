@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { QueryClientProvider } from 'react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import HeaderTechForward from './components/HeaderTechForward';
-import Footer from './components/Footer';
+import FooterTechForward from './components/FooterTechForward';
 import ErrorBoundary from './components/ErrorBoundary';
 import { CartProvider } from './context/CartContextOptimized';
 import { UserProvider } from './context/UserContext';
