@@ -136,7 +136,7 @@ function App() {
                     </Suspense>
                   </ErrorBoundary>
                 </main>
-                <Footer />
+                <FooterTechForward />
                 
                 {/* Chat Bot */}
                 <ChatBot />
