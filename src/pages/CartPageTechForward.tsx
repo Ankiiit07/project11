@@ -255,10 +255,6 @@ const CartPageTechForward: React.FC = () => {
                     )}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-foreground/70">Tax (GST)</span>
-                  <span className="font-medium text-foreground">₹0.00</span>
-                </div>
               </div>
 
               {/* Total */}
