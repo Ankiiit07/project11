@@ -69,8 +69,6 @@ const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPageTechForward'));
 const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
 const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForward'));
-// const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage')); //
-// const OrderSystemDemo = lazy(() => import('./components/OrderSystemDemo')); //
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
 const SitemapPage = lazy(() => import('./pages/SitemapPage'));
