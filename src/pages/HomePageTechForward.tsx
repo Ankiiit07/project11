@@ -180,9 +180,9 @@ const HomePageTechForward: React.FC = () => {
         </section>
 
         {/* How It Works - 3 Steps */}
-        <section className="bg-white py-20 lg:py-32">
+        <section className="bg-white py-12 lg:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-12">
               <h2 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-4">
                 Coffee in <span className="text-primary">5 Seconds</span>
               </h2>
