@@ -1,0 +1,119 @@
+{
+  "project_name": "Tech-Forward Coffee E-commerce",
+  "design_philosophy": {
+    "theme": "Tech-Artisan Hybrid",
+    "core_concept": "Coffee as precision engineering. Not just a drink, but a calibrated experience.",
+    "emotional_tone": "Precise, sophisticated, innovative, yet warm.",
+    "visual_style": "Bento grids, kinetic typography, smooth momentum scrolling, high-contrast data visualization."
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Space Grotesk, sans-serif",
+      "weights": ["600", "700"],
+      "usage": "Hero titles, Section headers, Product names",
+      "letter_spacing": "-0.02em"
+    },
+    "body": {
+      "font_family": "Outfit, sans-serif",
+      "weights": ["300", "400", "500"],
+      "usage": "Paragraphs, UI elements, navigation",
+      "line_height": "1.6"
+    },
+    "accent": {
+      "font_family": "Playfair Display, serif",
+      "style": "italic",
+      "usage": "Testimonials, 'Premium' badges, storytelling quotes"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": "#8B7355",
+      "primary_foreground": "#FFFFFF",
+      "secondary": "#F0E4D3",
+      "secondary_foreground": "#2A2118",
+      "background": "#F5F1EB",
+      "foreground": "#2A2118",
+      "card": "#FFFFFF",
+      "card_foreground": "#2A2118",
+      "accent": "#D4C5B0",
+      "accent_foreground": "#2A2118",
+      "destructive": "#EF4444",
+      "destructive_foreground": "#FFFFFF",
+      "border": "#E6DCC9",
+      "input": "#E6DCC9",
+      "ring": "#8B7355"
+    },
+    "usage_rules": {
+      "backgrounds": "Use #F5F1EB for main page backgrounds. Use #FFFFFF for cards but ONLY with 1px border #E6DCC9.",
+      "text": "Never use pure black. Use #2A2118 for main text, #8B7355 for muted text.",
+      "gradients": "Avoid gradients. Use solid colors or noise textures.",
+      "tech_twist": "Use #2A2118 (Dark Roast) for high-contrast sections like Footer or 'Tech Specs' of coffee."
+    }
+  },
+  "layout": {
+    "grid_system": {
+      "desktop": "12 columns, 24px gap, 48px margin",
+      "tablet": "8 columns, 16px gap, 32px margin",
+      "mobile": "4 columns, 12px gap, 16px margin"
+    },
+    "spacing_scale": {
+      "section_padding": "py-20 md:py-32",
+      "element_spacing": "gap-6 md:gap-12"
+    },
+    "border_radius": {
+      "buttons": "rounded-full",
+      "cards": "rounded-xl",
+      "inputs": "rounded-lg"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#8B7355] text-white hover:bg-[#2A2118] transition-all duration-300 rounded-full px-8 py-6 text-lg font-medium tracking-wide shadow-lg hover:shadow-xl hover:-translate-y-1",
+      "secondary": "bg-transparent border-2 border-[#8B7355] text-[#8B7355] hover:bg-[#8B7355] hover:text-white transition-all duration-300 rounded-full px-8 py-6",
+      "ghost": "text-[#8B7355] hover:bg-[#8B7355]/10 rounded-lg px-4 py-2"
+    },
+    "cards": {
+      "product": "bg-white border border-[#E6DCC9] rounded-xl overflow-hidden hover:border-[#8B7355] transition-colors duration-300 group relative",
+      "feature": "bg-[#F0E4D3] p-8 rounded-2xl border border-transparent hover:border-[#8B7355]/20 transition-all"
+    },
+    "inputs": {
+      "default": "bg-white border-[#E6DCC9] focus:border-[#8B7355] focus:ring-[#8B7355]/20 rounded-lg h-12 px-4"
+    }
+  },
+  "visual_enhancers": {
+    "textures": "Add subtle noise overlay (opacity 0.03) to backgrounds to reduce digital flatness.",
+    "shadows": "shadow-[0_8px_30px_rgb(0,0,0,0.04)] for cards. No heavy drop shadows.",
+    "motion": {
+      "page_transition": "Fade in + Slide up (20px)",
+      "hover": "Scale 1.02, slightly darken borders",
+      "scroll": "Parallax effect on coffee bean images"
+    }
+  },
+  "image_strategy": {
+    "hero": "Cinematic, macro shots of coffee texture (crema, beans, pour). High contrast.",
+    "products": "Clean studio shots on #F0E4D3 or transparent background. Floating effect.",
+    "lifestyle": "Young professionals in modern minimalist spaces (lofts, co-working). NOT rustic cafes.",
+    "icons": "Thin, crisp SVG icons (Lucide React or Phosphor). Stroke width 1.5px."
+  },
+  "image_urls": {
+    "hero_bg": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80",
+    "coffee_texture": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80",
+    "pour_over": "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80",
+    "lifestyle_office": "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80",
+    "lifestyle_home": "https://images.unsplash.com/photo-1507133750069-41264de8b971?auto=format&fit=crop&q=80",
+    "latte_art": "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&q=80",
+    "beans_macro": "https://images.unsplash.com/photo-1552346988-3e5f22f7c223?auto=format&fit=crop&q=80",
+    "cold_brew": "https://images.unsplash.com/photo-1517701604599-bb29b5c73553?auto=format&fit=crop&q=80",
+    "packaging": "https://images.unsplash.com/photo-1589395937837-f14b6c33c2df?auto=format&fit=crop&q=80"
+  },
+  "universal_guidelines": [
+    "Do not use gradients for backgrounds. Use solid colors or subtle noise.",
+    "Use 'Space Grotesk' for all headings to maintain the Tech-Forward feel.",
+    "Interactive elements must have a defined hover state (transform or color change).",
+    "Use 2x more whitespace than typical e-commerce sites.",
+    "Buttons must be pill-shaped (rounded-full) for primary actions.",
+    "All images must have alt text for accessibility.",
+    "Mobile menu must be a full-screen overlay with large typography."
+  ],
+  "instructions_to_main_agent": "Implement the design system strictly. Start by setting up the Tailwind config with the custom colors and fonts. Replace all default shadows with the custom soft shadows. Ensure the 'Space Grotesk' font is imported."
+}
