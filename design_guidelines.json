@@ -106,6 +106,10 @@
     "cold_brew": "https://images.unsplash.com/photo-1517701604599-bb29b5c73553?auto=format&fit=crop&q=80",
     "packaging": "https://images.unsplash.com/photo-1589395937837-f14b6c33c2df?auto=format&fit=crop&q=80"
   },
+  "paths": {
+    "tailwind_config": "/app/tailwind.config.js",
+    "css_entry": "/app/src/index.css"
+  },
   "universal_guidelines": [
     "Do not use gradients for backgrounds. Use solid colors or subtle noise.",
     "Use 'Space Grotesk' for all headings to maintain the Tech-Forward feel.",
@@ -113,7 +117,9 @@
     "Use 2x more whitespace than typical e-commerce sites.",
     "Buttons must be pill-shaped (rounded-full) for primary actions.",
     "All images must have alt text for accessibility.",
-    "Mobile menu must be a full-screen overlay with large typography."
+    "Mobile menu must be a full-screen overlay with large typography.",
+    "Note on file types: The project uses TypeScript (.tsx). Maintain this standard.",
+    "If Shadcn UI is not present, install it or build compatible components."
   ],
   "instructions_to_main_agent": "Implement the design system strictly. Start by setting up the Tailwind config with the custom colors and fonts. Replace all default shadows with the custom soft shadows. Ensure the 'Space Grotesk' font is imported."
 }
