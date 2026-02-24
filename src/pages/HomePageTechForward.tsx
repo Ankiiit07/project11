@@ -250,9 +250,9 @@ const HomePageTechForward: React.FC = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="bg-gradient-to-b from-white to-background py-20 lg:py-32">
+        <section className="bg-gradient-to-b from-white to-background py-12 lg:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-12">
+            <div className="flex items-end justify-between mb-8">
               <div>
                 <h2 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-4">
                   Featured <span className="text-primary">Products</span>
