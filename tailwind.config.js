@@ -129,6 +129,9 @@ export default {
       },
       boxShadow: {
         '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
+        'soft': '0 8px 30px rgba(0, 0, 0, 0.04)', // Tech-forward soft shadow
+        'card': '0 2px 8px rgba(0, 0, 0, 0.06)', // Subtle card shadow
+        'hover': '0 12px 40px rgba(0, 0, 0, 0.08)', // Hover state shadow
       },
       transitionDuration: {
         '2000': '2000ms',
