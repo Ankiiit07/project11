@@ -102,8 +102,8 @@ function App() {
               <ScrollToTop />
               <SkipLink />
               {/* <LiveRegion message="" /> */}
-              <div className="min-h-screen bg-cream flex flex-col transition-colors duration-300">
-                <Header />
+              <div className="min-h-screen bg-background flex flex-col transition-colors duration-300">
+                <HeaderTechForward />
                 <main id="main-content" className="flex-1 pt-20 pb-8" role="main">
                   <ErrorBoundary>
                     <Suspense fallback={<PageLoader />}>
