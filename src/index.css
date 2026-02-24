@@ -67,10 +67,19 @@
     border: 0;
   }
   
-  /* Focus styles for better accessibility */
+  /* Focus styles for better accessibility - Tech-forward */
   *:focus {
     outline: 2px solid #8B7355;
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  
+  /* Headings use Space Grotesk font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: #2A2118;
   }
   
   /* Skip link styles */
