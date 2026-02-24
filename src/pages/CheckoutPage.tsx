@@ -802,11 +802,6 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">GST (18%)</span>
-                    <span>₹{tax.toFixed(2)}</span>
-                  </div>
-
                   <div className="flex justify-between text-lg font-bold border-t pt-3">
                     <span>Total</span>
                     <span>₹{(finalTotal || 0).toFixed(2)}</span>
