@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   
   server: {
-    host: 'localhost',
+    host: '0.0.0.0', // Bind to all interfaces for external access
     port: 5173,
     // Enable HMR optimizations
     hmr: {
