@@ -239,7 +239,7 @@ const CheckoutPage: React.FC = () => {
   };
 
   const calculateTax = () => {
-    return cartState.total * 0; // 18% GST for India
+    return 0; // GST removed as per user request
   };
 
   // Apply discount code
