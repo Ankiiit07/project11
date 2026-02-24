@@ -5,21 +5,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#92400e', // coffee/amber-800 (replacing teal-600)
-        'primary-light': '#f59e0b', // amber-500 (replacing cyan-300)
-        'primary-dark': '#78350f', // amber-900 (replacing cyan-700)
-        cream: '#F0E4D3', // new cream color
-        'cream-dark': '#fed7aa', // orange-200
-        coffee: '#92400e', // amber-800
-        'coffee-light': '#f59e0b', // amber-500
-        'custom-cream': '#F0E4D3', // new cream color as custom option
+        // Tech-Forward Design System - keeping coffee theme but modernized
+        primary: '#8B7355', // Main coffee brown
+        'primary-foreground': '#FFFFFF',
+        secondary: '#F0E4D3', // Cream
+        'secondary-foreground': '#2A2118', // Dark roast
+        background: '#F5F1EB', // Light cream background
+        foreground: '#2A2118', // Main text color (not pure black)
+        card: '#FFFFFF',
+        'card-foreground': '#2A2118',
+        accent: '#D4C5B0', // Muted accent
+        'accent-foreground': '#2A2118',
+        destructive: '#EF4444',
+        'destructive-foreground': '#FFFFFF',
+        border: '#E6DCC9', // Subtle borders
+        input: '#E6DCC9',
+        ring: '#8B7355',
+        
+        // Legacy support (gradually migrate away from these)
+        'primary-light': '#D4C5B0',
+        'primary-dark': '#2A2118',
+        cream: '#F0E4D3',
+        'cream-dark': '#D4C5B0',
+        coffee: '#8B7355',
+        'coffee-light': '#D4C5B0',
+        'custom-cream': '#F0E4D3',
         brown: {
-          500: '#8B4513',
-          600: '#654321',
+          500: '#8B7355',
+          600: '#2A2118',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'system-ui', 'sans-serif'], // Body text
+        heading: ['Space Grotesk', 'sans-serif'], // Headings - tech feel
+        accent: ['Playfair Display', 'serif'], // Testimonials, premium badges
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
