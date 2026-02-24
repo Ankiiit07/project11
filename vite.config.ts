@@ -17,7 +17,7 @@ export default defineConfig({
   
   server: {
     host: '0.0.0.0', // Bind to all interfaces for external access
-    port: 5173,
+    port: 3000, // Use port 3000 for compatibility
     // Enable HMR optimizations
     hmr: {
       overlay: false,
