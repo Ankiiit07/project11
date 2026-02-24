@@ -54,7 +54,7 @@ if ('serviceWorker' in navigator) {
 const HomePage = lazy(() => import('./pages/HomePageTechForward'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
+const CartPage = lazy(() => import('./pages/CartPageTechForward'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const InsightsPage = lazy(() => import('./pages/InsightsPage'));
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage'));
