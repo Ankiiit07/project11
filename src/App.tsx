@@ -53,7 +53,7 @@ if ('serviceWorker' in navigator) {
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePageTechForward'));
 const ProductsPage = lazy(() => import('./pages/ProductsPageTechForward'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPageTechForward'));
 const CartPage = lazy(() => import('./pages/CartPageTechForward'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const InsightsPage = lazy(() => import('./pages/InsightsPageTechForward'));
@@ -68,7 +68,9 @@ const ReturnPolicyPage = lazy(() => import('./pages/ReturnPolicyPage'));
 const TermsConditionsPage = lazy(() => import('./pages/TermsConditionsPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
-const OrdersPage = lazy(() => import('./pages/OrdersPage'));
+const OrdersPage = lazy(() => import('./pages/OrdersPageTechForward'));
+const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
+const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForward'));
 // const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage')); //
 // const OrderSystemDemo = lazy(() => import('./components/OrderSystemDemo')); //
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
