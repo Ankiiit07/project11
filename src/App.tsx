@@ -52,15 +52,15 @@ if ('serviceWorker' in navigator) {
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePageTechForward'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPageTechForward'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPageTechForward'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const InsightsPage = lazy(() => import('./pages/InsightsPage'));
 const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
+const AboutPage = lazy(() => import('./pages/AboutPageTechForward'));
+const ContactPage = lazy(() => import('./pages/ContactPageTechForward'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const CustomerServicePage = lazy(() => import('./pages/CustomerServicePage'));
 const ShippingPolicyPage = lazy(() => import('./pages/ShippingPolicyPage'));
