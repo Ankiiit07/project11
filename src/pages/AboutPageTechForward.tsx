@@ -6,7 +6,7 @@ const AboutPageTechForward: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-secondary to-background py-16 sm:py-24">
+      <section className="bg-gradient-to-b from-secondary to-background py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center max-w-3xl mx-auto"
@@ -27,7 +27,7 @@ const AboutPageTechForward: React.FC = () => {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 sm:py-24">
+      <section className="py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -74,7 +74,7 @@ const AboutPageTechForward: React.FC = () => {
       </section>
 
       {/* Values Section */}
-      <section className="bg-foreground text-white py-16 sm:py-24">
+      <section className="bg-foreground text-white py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
@@ -141,7 +141,7 @@ const AboutPageTechForward: React.FC = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 sm:py-24">
+      <section className="py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
