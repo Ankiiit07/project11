@@ -73,7 +73,7 @@ const TestimonialsPageTechForward: React.FC = () => {
       {/* Stats */}
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {[
               { number: '50K+', label: 'Happy Customers' },
               { number: '4.9', label: 'Average Rating', icon: '⭐' },
