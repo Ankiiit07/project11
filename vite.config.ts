@@ -18,6 +18,13 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Bind to all interfaces for external access
     port: 3000, // Use port 3000 for compatibility
+    // Allow external preview hosts
+    allowedHosts: [
+      'ux-refresh-9.cluster-0.preview.emergentcf.cloud',
+      '.preview.emergentcf.cloud', // Allow all preview subdomains
+      '.preview.emergentagent.com', // Allow all emergentagent preview domains
+      'localhost',
+    ],
     // Enable HMR optimizations
     hmr: {
       overlay: false,
