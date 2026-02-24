@@ -294,6 +294,75 @@ const HomePageTechForward: React.FC = () => {
           </div>
         </section>
 
+        {/* Why Choose Cafe at Once - Features Grid */}
+        <section className="bg-background py-20 lg:py-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-4">
+                Why Choose <span className="text-primary">Cafe at Once</span>
+              </h2>
+              <p className="text-lg text-foreground/70">
+                Premium quality meets ultimate convenience
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                {
+                  icon: Clock,
+                  title: 'Instant Coffee',
+                  description: 'Barista-quality in 5 seconds',
+                  color: 'text-blue-600',
+                  bgColor: 'bg-blue-50',
+                },
+                {
+                  icon: Leaf,
+                  title: 'Pure Concentrate',
+                  description: 'Sugar free & gluten free',
+                  color: 'text-green-600',
+                  bgColor: 'bg-green-50',
+                },
+                {
+                  icon: Award,
+                  title: 'Premium Quality',
+                  description: '100% Arabica beans',
+                  color: 'text-purple-600',
+                  bgColor: 'bg-purple-50',
+                },
+                {
+                  icon: Package,
+                  title: 'Portable',
+                  description: 'Perfect for travel & gym',
+                  color: 'text-orange-600',
+                  bgColor: 'bg-orange-50',
+                },
+              ].map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div
+                    key={feature.title}
+                    className="bg-white border border-border rounded-2xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1, duration: 0.4 }}
+                  >
+                    <div className={`w-12 h-12 ${feature.bgColor} rounded-xl flex items-center justify-center mb-4`}>
+                      <Icon className={`h-6 w-6 ${feature.color}`} />
+                    </div>
+                    <h3 className="font-heading text-lg font-bold text-foreground mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-foreground/70">
+                      {feature.description}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* Coffee Insights CTA */}
         <section className="bg-foreground text-white py-20 lg:py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
