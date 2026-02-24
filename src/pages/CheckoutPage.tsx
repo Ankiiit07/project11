@@ -242,6 +242,40 @@ const CheckoutPage: React.FC = () => {
     return cartState.total * 0; // 18% GST for India
   };
 
+  // Apply discount code
+  const applyDiscount = () => {
+    const code = discountCode.trim().toUpperCase();
+    if (!code) {
+      setDiscountError('Please enter a discount code');
+      return;
+    }
+
+    if (VALID_DISCOUNT_CODES[code as keyof typeof VALID_DISCOUNT_CODES]) {
+      const discount = VALID_DISCOUNT_CODES[code as keyof typeof VALID_DISCOUNT_CODES];
+      setAppliedDiscount({ code, percentage: discount.percentage });
+      setDiscountError('');
+      notification.success(`Discount code "${code}" applied! ${discount.percentage}% off`);
+    } else {
+      setDiscountError('Invalid discount code');
+      setAppliedDiscount(null);
+    }
+  };
+
+  // Remove discount code
+  const removeDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCode('');
+    setDiscountError('');
+  };
+
+  // Calculate discount amount (only on cart subtotal, not shipping)
+  const calculateDiscountAmount = () => {
+    if (!appliedDiscount) return 0;
+    return (cartState.total * appliedDiscount.percentage) / 100;
+  };
+
+  const discountAmount = calculateDiscountAmount();
+
   // Get shipping charge based on selected method
   const getShippingCharge = () => {
     if (selectedShippingOption) {
@@ -252,7 +286,7 @@ const CheckoutPage: React.FC = () => {
 
   const shipping = getShippingCharge();
   const tax = calculateTax();
-  const finalTotal = (cartState.total || 0) + tax + shipping;
+  const finalTotal = (cartState.total || 0) - discountAmount + tax + shipping;
 
   const sendOrderConfirmationEmail = async (orderDetails: any, customerInfo: any) => {
   try {
