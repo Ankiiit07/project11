@@ -72,6 +72,18 @@ const CheckoutPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingMethod>('standard');
   const [deliveryEstimate, setDeliveryEstimate] = useState<string>('');
+  
+  // Discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<{code: string, percentage: number} | null>(null);
+  const [discountError, setDiscountError] = useState('');
+
+  // Valid discount codes
+  const VALID_DISCOUNT_CODES = {
+    'WELCOME10': { percentage: 10, description: 'Welcome offer - 10% off' },
+    'SAVE10': { percentage: 10, description: 'Save 10% on your order' },
+    'FIRST10': { percentage: 10, description: 'First order discount - 10% off' },
+  };
 
   // Calculate base shipping based on weight
   const shippingResult = useMemo(() => calculateShipping(
