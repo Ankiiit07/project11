@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { QueryClientProvider } from 'react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import Header from './components/Header';
+import HeaderTechForward from './components/HeaderTechForward';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { CartProvider } from './context/CartContextOptimized';
