@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -23,7 +23,7 @@ interface OrderDetails {
     name: string;
     quantity: number;
     price: number;
-  }>;
+  }>
   estimatedDelivery: string;
   paymentInfo: PaymentInfo;
 }
@@ -94,7 +94,7 @@ const ThankYouPage: React.FC = () => {
           </h1>
           <p className="text-gray-600 mb-8">Please check your order details.</p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/\")}
             className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
           >
             Go Home
@@ -250,7 +250,7 @@ const ThankYouPage: React.FC = () => {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/\")}
             className="flex items-center justify-center px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
           >
             <Home className="w-5 h-5 mr-2" />
