@@ -262,7 +262,7 @@ export const products: Product[] = [
       'Stir and enjoy your perfect latte',
     ],
     isFeatured: true,
-    inStock: false,
+    inStock: true,
     weight: 50, // 50 grams - single shot
   },
    {
@@ -302,7 +302,7 @@ export const products: Product[] = [
       'Stir and enjoy your perfect latte',
     ],
     isFeatured: true,
-    inStock: false,
+    inStock: true,
     weight: 50, // 50 grams
   },
    {
