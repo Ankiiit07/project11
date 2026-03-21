@@ -85,11 +85,11 @@ const HomePageTechForward: React.FC = () => {
                 {/* Heading */}
                 <div className="space-y-4">
                   <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
-                    Real Coffee.
-                    <span className="block text-primary mt-2">No Machine. No Compromise.</span>
+                    Real Coffee
+                    <span className="block text-primary mt-2">No Machine No Compromise</span>
                   </h1>
                   <p className="text-xl font-semibold text-foreground/90 mb-2">
-                    Just Press.
+                    Just Press
                   </p>
                   <p className="text-lg sm:text-xl text-foreground/70 leading-relaxed max-w-xl">
                     India's first <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preserved brewed Arabica coffee</Link> in a portable press tube. 

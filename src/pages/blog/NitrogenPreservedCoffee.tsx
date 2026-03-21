@@ -6,7 +6,7 @@ import SEO from '../../components/SEO';
 
 const NitrogenPreservedCoffee: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="What Is Nitrogen-Preserved Coffee? | Cafe at Once Blog"
         description="Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Cafe at Once explained."

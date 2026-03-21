@@ -54,7 +54,7 @@ const InsightsPageTechForward: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Coffee Insights & Blog | Cafe at Once"
         description="Expert articles on coffee science, brewing techniques, and travel-ready coffee solutions. Learn about nitrogen-preserved coffee and more."

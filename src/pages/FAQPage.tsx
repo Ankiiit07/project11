@@ -51,7 +51,7 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="FAQ | Cafe at Once — Nitrogen-Preserved Coffee Questions Answered"
         description="Everything you need to know about Cafe at Once nitrogen-preserved Arabica coffee. How it works, shelf life, ingredients, and more."

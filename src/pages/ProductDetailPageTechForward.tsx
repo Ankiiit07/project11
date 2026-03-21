@@ -79,7 +79,7 @@ const ProductDetailPageTechForward: React.FC = () => {
   const seoDescription = `${product.name} — Real brewed Arabica coffee, nitrogen-preserved in a portable press tube. No machine. No fridge. No additives. Ready in 5 seconds. ₹${product.price}`;
 
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title={`${product.name} — Nitrogen-Preserved Press Tube | Cafe at Once`}
         description={seoDescription}

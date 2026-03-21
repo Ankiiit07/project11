@@ -44,7 +44,7 @@ const ProductsPageTechForward: React.FC = () => {
   }, [filteredProducts, sortBy]);
 
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Shop Nitrogen-Preserved Coffee | Cafe at Once Collection"
         description="Shop Cafe at Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds — no machine required."

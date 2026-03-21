@@ -6,7 +6,7 @@ import SEO from '../components/SEO';
 
 const AboutPageTechForward: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="About Cafe at Once | India's First Nitrogen-Preserved Coffee"
         description="The story behind Cafe at Once — India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."

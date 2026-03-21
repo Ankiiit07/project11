@@ -6,7 +6,7 @@ import SEO from '../../components/SEO';
 
 const WhyArabicaCoffeeMatters: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Why Arabica Coffee Matters: A Guide to Coffee Quality | Cafe at Once"
         description="Not all coffee beans are created equal. Learn why Arabica is the gold standard — and what to look for in your next cup."

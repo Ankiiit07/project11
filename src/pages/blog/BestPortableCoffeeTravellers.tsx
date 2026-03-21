@@ -6,7 +6,7 @@ import SEO from '../../components/SEO';
 
 const BestPortableCoffeeTravellers: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Best Portable Coffee for Travellers in India (2025 Guide) | Cafe at Once"
         description="Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for Indian travellers — from press tubes to pour-overs."

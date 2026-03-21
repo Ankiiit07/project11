@@ -6,7 +6,7 @@ import SEO from '../../components/SEO';
 
 const InstantVsBrewedCoffee: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Instant Coffee vs Brewed Coffee: What's Really in Your Cup? | Cafe at Once"
         description="A deep dive into how instant coffee is made — and why real brewed coffee (even portable) delivers a superior experience."

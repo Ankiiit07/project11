@@ -6,7 +6,7 @@ import SEO from '../../components/SEO';
 
 const HowToMakeCoffeeWithoutMachine: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-4 pb-16">
+    <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="How to Make Coffee Without a Machine (5 Methods) | Cafe at Once"
         description="No espresso machine? No problem. Here are 5 ways to make excellent coffee anywhere — including the fastest method yet."
