@@ -161,20 +161,16 @@ const HomePageTechForward: React.FC = () => {
                 transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
                 id="coffee-animation"
               >
-                {/* Main Product Image - Coffee Cup with Splash */}
+                {/* Main Product Image - Coffee Pour */}
                 <div className="relative flex items-center justify-center">
                   <motion.img
-                    src="https://customer-assets.emergentagent.com/job_codebase-updates/artifacts/yo97wsgc_8c871113-3f3b-4c32-b825-2dd7620f7624.png"
-                    alt="Cafe at Once coffee cup with dynamic coffee splash"
-                    className="w-full max-w-lg h-auto drop-shadow-2xl"
-                    style={{ 
-                      mixBlendMode: 'screen',
-                      filter: 'brightness(1.1) contrast(1.05)'
-                    }}
+                    src="https://customer-assets.emergentagent.com/job_codebase-updates/artifacts/lsivxbzw_Mask-group-70.png"
+                    alt="Cafe at Once coffee being poured from press tube into glass"
+                    className="w-full max-w-xl h-auto drop-shadow-2xl rounded-2xl"
                     loading="eager"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 2, delay: 0.5, ease: "easeInOut" }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.8, delay: 0.4, ease: "easeOut" }}
                   />
                 </div>
               </motion.div>
