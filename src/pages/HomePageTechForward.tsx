@@ -51,9 +51,9 @@ const HomePageTechForward: React.FC = () => {
       />
       <div className="space-y-0">
         {/* Hero Section - Bento Grid Style */}
-        <section className="relative bg-black overflow-hidden min-h-[85vh] flex items-center">
+        <section className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden min-h-[85vh] flex items-center">
           {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
               backgroundImage: `radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)`,
               backgroundSize: '40px 40px',
@@ -73,7 +73,7 @@ const HomePageTechForward: React.FC = () => {
               >
                 {/* Badge */}
                 <motion.div
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 border border-primary/30 rounded-full"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2, duration: 0.4 }}
@@ -84,14 +84,14 @@ const HomePageTechForward: React.FC = () => {
 
                 {/* Heading */}
                 <div className="space-y-4">
-                  <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight">
+                  <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
                     Real Coffee
                     <span className="block text-primary mt-2">No Machine No Compromise</span>
                   </h1>
-                  <p className="text-xl font-semibold text-white/90 mb-2">
+                  <p className="text-xl font-semibold text-foreground/90 mb-2">
                     Just Press
                   </p>
-                  <p className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-xl">
+                  <p className="text-lg sm:text-xl text-foreground/70 leading-relaxed max-w-xl">
                     India's first <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preserved brewed Arabica coffee</Link> in a portable press tube 
                     Real coffee in 5 seconds — no machine, no fridge, no additives TSA-safe and ready for wherever life takes you
                   </p>
@@ -99,19 +99,19 @@ const HomePageTechForward: React.FC = () => {
 
                 {/* Health Benefits Pills */}
                 <div className="flex flex-wrap gap-3">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-900/50 border border-green-500/30 text-green-400 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-full text-sm font-medium">
                     <Leaf className="h-4 w-4" />
                     Zero Sugar
                   </span>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-900/50 border border-blue-500/30 text-blue-400 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-full text-sm font-medium">
                     <Award className="h-4 w-4" />
                     Zero Additives
                   </span>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-900/50 border border-purple-500/30 text-purple-400 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-200 text-purple-700 rounded-full text-sm font-medium">
                     <Coffee className="h-4 w-4" />
                     100% Arabica
                   </span>
-                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-orange-900/50 border border-orange-500/30 text-orange-400 rounded-full text-sm font-medium">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 border border-orange-200 text-orange-700 rounded-full text-sm font-medium">
                     <Plane className="h-4 w-4" />
                     TSA Safe
                   </span>
@@ -129,7 +129,7 @@ const HomePageTechForward: React.FC = () => {
                   </Link>
                   <Link
                     to="/faq"
-                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 border-2 border-white/30 hover:border-primary text-white hover:text-primary font-heading font-bold rounded-full transition-all duration-300"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-border hover:border-primary text-foreground hover:text-primary font-heading font-bold rounded-full transition-all duration-300"
                     data-testid="hero-learn-more"
                   >
                     How It Works
@@ -139,16 +139,16 @@ const HomePageTechForward: React.FC = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-6 pt-8">
                   <div className="space-y-1">
-                    <div className="font-heading text-3xl font-bold text-white">5<span className="text-primary">s</span></div>
-                    <div className="text-sm text-white/60">Ready to Drink</div>
+                    <div className="font-heading text-3xl font-bold text-foreground">5<span className="text-primary">s</span></div>
+                    <div className="text-sm text-foreground/60">Ready to Drink</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="font-heading text-3xl font-bold text-white">12<span className="text-primary">mo</span></div>
-                    <div className="text-sm text-white/60">Shelf Life</div>
+                    <div className="font-heading text-3xl font-bold text-foreground">12<span className="text-primary">mo</span></div>
+                    <div className="text-sm text-foreground/60">Shelf Life</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="font-heading text-3xl font-bold text-white">4.9<span className="text-primary">★</span></div>
-                    <div className="text-sm text-white/60">843 Reviews</div>
+                    <div className="font-heading text-3xl font-bold text-foreground">4.9<span className="text-primary">★</span></div>
+                    <div className="text-sm text-foreground/60">843 Reviews</div>
                   </div>
                 </div>
               </motion.div>
