@@ -107,17 +107,11 @@ const HeaderTechForward: React.FC = () => {
             {/* Logo */}
             <Link 
               to="/" 
-              className="group flex items-center space-x-3" 
+              className="group flex items-center" 
               onClick={handleMobileNavClick}
               data-testid="header-logo"
             >
               <Logo size="medium" compact className="transition-all duration-300 group-hover:scale-105" />
-              <div className="hidden sm:block">
-                <div className="font-heading text-xl font-bold text-foreground tracking-tight">
-                  Cafe <span className="text-primary">at Once</span>
-                </div>
-                <div className="text-xs text-foreground/60 tracking-wider uppercase">Premium Coffee</div>
-              </div>
             </Link>
 
             {/* Desktop Navigation */}
