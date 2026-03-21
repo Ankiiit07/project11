@@ -72,6 +72,14 @@ const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForwar
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
 const SitemapPage = lazy(() => import('./pages/SitemapPage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
+
+// Blog Posts
+const NitrogenPreservedCoffee = lazy(() => import('./pages/blog/NitrogenPreservedCoffee'));
+const BestPortableCoffeeTravellers = lazy(() => import('./pages/blog/BestPortableCoffeeTravellers'));
+const InstantVsBrewedCoffee = lazy(() => import('./pages/blog/InstantVsBrewedCoffee'));
+const HowToMakeCoffeeWithoutMachine = lazy(() => import('./pages/blog/HowToMakeCoffeeWithoutMachine'));
+const WhyArabicaCoffeeMatters = lazy(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
 
 
 
@@ -129,6 +137,12 @@ function App() {
                         {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
+                        <Route path="/faq" element={<FAQPage />} />
+                        <Route path="/blog/what-is-nitrogen-preserved-coffee" element={<NitrogenPreservedCoffee />} />
+                        <Route path="/blog/best-portable-coffee-travellers-india" element={<BestPortableCoffeeTravellers />} />
+                        <Route path="/blog/instant-vs-brewed-coffee-difference" element={<InstantVsBrewedCoffee />} />
+                        <Route path="/blog/how-to-make-coffee-without-machine" element={<HowToMakeCoffeeWithoutMachine />} />
+                        <Route path="/blog/why-arabica-coffee-matters" element={<WhyArabicaCoffeeMatters />} />
                         <Route path="/orders/:id" element={<OrderDetailsPage />} />
                       </Routes>
                     </Suspense>

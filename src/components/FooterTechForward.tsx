@@ -46,11 +46,18 @@ const FooterTechForward: React.FC = () => {
   };
 
   const quickLinks = [
-    { to: '/products', label: 'Products' },
+    { to: '/products', label: 'Shop Coffee@Once' },
+    { to: '/faq', label: 'FAQ' },
     { to: '/insights', label: 'Coffee Insights' },
     { to: '/about', label: 'About Us' },
     { to: '/contact', label: 'Contact' },
     { to: '/testimonials', label: 'Reviews' },
+  ];
+
+  const blogLinks = [
+    { to: '/blog/what-is-nitrogen-preserved-coffee', label: 'What Is Nitrogen-Preserved Coffee?' },
+    { to: '/blog/best-portable-coffee-travellers-india', label: 'Best Portable Coffee for Travellers' },
+    { to: '/blog/how-to-make-coffee-without-machine', label: 'Coffee Without a Machine' },
   ];
 
   const customerService = [
@@ -188,6 +195,23 @@ const FooterTechForward: React.FC = () => {
                     to={link.to}
                     className="text-white/70 hover:text-primary transition-colors duration-300 text-sm inline-flex items-center group"
                     data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+                  >
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                      {link.label}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Blog Links */}
+            <h4 className="font-heading text-lg font-bold pt-4">From the Blog</h4>
+            <ul className="space-y-3">
+              {blogLinks.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    className="text-white/70 hover:text-primary transition-colors duration-300 text-sm inline-flex items-center group"
                   >
                     <span className="group-hover:translate-x-1 transition-transform duration-300">
                       {link.label}

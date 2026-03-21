@@ -25,17 +25,32 @@ interface SEOProps {
     name: string;
     url: string;
   }>;
+  faq?: Array<{
+    question: string;
+    answer: string;
+  }>;
+  howTo?: {
+    name: string;
+    description: string;
+    totalTime: string;
+    steps: Array<{
+      name: string;
+      text: string;
+    }>;
+  };
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = '@once Business - Premium Coffee Concentrates',
-  description = 'Experience premium coffee in 5 seconds with @once Business coffee concentrates. No sugar, no additives, just pure coffee convenience.',
-  keywords = 'coffee, coffee concentrate, instant coffee, premium coffee, barista coffee, coffee on the go, healthy coffee, sugar free coffee',
-  image = '/favicon.svg',
-  url = 'https://tranquil-bonbon-7645e7.netlify.app',
+  title = 'Coffee@Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India',
+  description = "India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds — no machine, no fridge, no compromise. Just press and go.",
+  keywords = 'nitrogen preserved coffee, instant arabica coffee, coffee press tube, portable coffee India, travel coffee, nitro washed coffee, premium coffee concentrate',
+  image = 'https://cafeatonce.com/og-image.jpg',
+  url = 'https://cafeatonce.com',
   type = 'website',
   product,
-  breadcrumbs = []
+  breadcrumbs = [],
+  faq,
+  howTo
 }) => {
   // Generate structured data
   const generateStructuredData = () => {
@@ -45,18 +60,19 @@ const SEO: React.FC<SEOProps> = ({
     const organizationData = {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "@once Business",
-      "url": "https://tranquil-bonbon-7645e7.netlify.app",
-      "logo": "https://tranquil-bonbon-7645e7.netlify.app/favicon.svg",
-      "description": "Premium coffee concentrates for the modern coffee lover",
+      "name": "Coffee@Once",
+      "url": "https://cafeatonce.com",
+      "logo": "https://cafeatonce.com/logo.png",
+      "description": "India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. Real coffee, no machine, no compromise.",
       "sameAs": [
-        "https://wa.me/917979837079"
+        "https://instagram.com/cafeatonce",
+        "https://facebook.com/cafeatonce"
       ],
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+91-7979837079",
         "contactType": "customer service",
-        "availableLanguage": "English, Hindi"
+        "availableLanguage": ["English", "Hindi"]
       },
       "address": {
         "@type": "PostalAddress",
@@ -76,7 +92,7 @@ const SEO: React.FC<SEOProps> = ({
         "image": product.images,
         "brand": {
           "@type": "Brand",
-          "name": product.brand
+          "name": "Coffee@Once"
         },
         "category": product.category,
         "sku": product.sku,
@@ -89,9 +105,31 @@ const SEO: React.FC<SEOProps> = ({
           "url": url,
           "seller": {
             "@type": "Organization",
-            "name": "@once Business"
+            "name": "Coffee@Once"
           }
-        }
+        },
+        "additionalProperty": [
+          {
+            "@type": "PropertyValue",
+            "name": "Preservation",
+            "value": "Nitrogen-washed"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "Shelf Life",
+            "value": "12 months"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "Serving",
+            "value": "Full press = 300ml | Half press = 150ml"
+          },
+          {
+            "@type": "PropertyValue",
+            "name": "Refrigeration",
+            "value": "Not required"
+          }
+        ]
       };
 
       if (product.rating && product.reviewCount) {
@@ -105,6 +143,41 @@ const SEO: React.FC<SEOProps> = ({
       }
 
       structuredData.push(productData);
+    }
+
+    // HowTo structured data
+    if (howTo) {
+      const howToData = {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": howTo.name,
+        "description": howTo.description,
+        "totalTime": howTo.totalTime,
+        "step": howTo.steps.map((step, index) => ({
+          "@type": "HowToStep",
+          "position": index + 1,
+          "name": step.name,
+          "text": step.text
+        }))
+      };
+      structuredData.push(howToData);
+    }
+
+    // FAQPage structured data
+    if (faq && faq.length > 0) {
+      const faqData = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": faq.map(item => ({
+          "@type": "Question",
+          "name": item.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": item.answer
+          }
+        }))
+      };
+      structuredData.push(faqData);
     }
 
     // Breadcrumb structured data
@@ -126,14 +199,14 @@ const SEO: React.FC<SEOProps> = ({
     const websiteData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "@once Business",
-      "url": "https://tranquil-bonbon-7645e7.netlify.app",
-      "description": "Premium coffee concentrates for the modern coffee lover",
+      "name": "Coffee@Once",
+      "url": "https://cafeatonce.com",
+      "description": "India's first nitrogen-preserved brewed Arabica coffee in a portable press tube.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://tranquil-bonbon-7645e7.netlify.app/products?search={search_term_string}"
+          "urlTemplate": "https://cafeatonce.com/products?search={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       }
@@ -151,7 +224,7 @@ const SEO: React.FC<SEOProps> = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content="@once Business" />
+      <meta name="author" content="Coffee@Once" />
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       
       {/* Canonical URL */}
@@ -165,15 +238,15 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="@once Business" />
-      <meta property="og:locale" content="en_US" />
+      <meta property="og:site_name" content="Coffee@Once" />
+      <meta property="og:locale" content="en_IN" />
       
       {/* Twitter Card Meta Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
-      <meta name="twitter:site" content="@oncebusiness" />
+      <meta name="twitter:site" content="@cafeatonce" />
       
       {/* Additional SEO Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
@@ -202,4 +275,4 @@ const SEO: React.FC<SEOProps> = ({
   );
 };
 
-export default SEO; 
+export default SEO;

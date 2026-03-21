@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
 import ProductCardTechForward from '../components/ProductCardTechForward';
+import SEO from '../components/SEO';
 
 const ProductDetailPageTechForward: React.FC = () => {
   React.useEffect(() => {
@@ -74,8 +75,60 @@ const ProductDetailPageTechForward: React.FC = () => {
 
   const discountPercentage = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
+  // Generate SEO-friendly product description
+  const seoDescription = `${product.name} — Real brewed Arabica coffee, nitrogen-preserved in a portable press tube. No machine. No fridge. No additives. Ready in 5 seconds. ₹${product.price}`;
+
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
+      <SEO 
+        title={`${product.name} — Nitrogen-Preserved Press Tube | Coffee@Once`}
+        description={seoDescription}
+        url={`https://cafeatonce.com/products/${product.id}`}
+        type="product"
+        product={{
+          name: `Coffee@Once ${product.name} — Nitrogen-Preserved Press Tube`,
+          description: seoDescription,
+          price: product.price,
+          currency: "INR",
+          images: product.images || [product.image],
+          category: product.category,
+          brand: "Coffee@Once",
+          rating: product.rating,
+          reviewCount: product.reviews || 843,
+          availability: "InStock",
+          sku: product.id
+        }}
+        breadcrumbs={[
+          { name: "Home", url: "https://cafeatonce.com" },
+          { name: "Shop", url: "https://cafeatonce.com/products" },
+          { name: product.name, url: `https://cafeatonce.com/products/${product.id}` }
+        ]}
+        howTo={{
+          name: "How to Use Coffee@Once Press Tube",
+          description: "Make premium brewed coffee anywhere in 5 seconds.",
+          totalTime: "PT5S",
+          steps: [
+            { name: "Remove cap", text: "Peel off the protective cap from the Coffee@Once tube" },
+            { name: "Position over cup", text: "Hold the tube over your cup or mug" },
+            { name: "Press the tube", text: "Press firmly to dispense the coffee concentrate" },
+            { name: "Add water and enjoy", text: "Add 300ml of hot, cold, or room temperature water. Stir and drink." }
+          ]
+        }}
+        faq={[
+          {
+            question: `How do I use ${product.name}?`,
+            answer: "Simply peel off the cap, position over your cup, press firmly to dispense, add 300ml of water (hot, cold, or room temperature), stir and enjoy. Ready in 5 seconds."
+          },
+          {
+            question: "Does it need refrigeration?",
+            answer: "No — Coffee@Once tubes are nitrogen-preserved and don't require refrigeration. Store in a cool, dry place for up to 12 months."
+          },
+          {
+            question: "Is it TSA/flight safe?",
+            answer: "Yes — Coffee@Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits."
+          }
+        ]}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <div className="mb-6">

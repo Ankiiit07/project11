@@ -1,10 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Award, Users, Target, Heart, Zap, Coffee } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const AboutPageTechForward: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
+      <SEO 
+        title="About Coffee@Once | India's First Nitrogen-Preserved Coffee"
+        description="The story behind Coffee@Once — India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."
+        url="https://cafeatonce.com/about"
+        breadcrumbs={[
+          { name: "Home", url: "https://cafeatonce.com" },
+          { name: "About", url: "https://cafeatonce.com/about" }
+        ]}
+      />
+      
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-secondary to-background py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,12 +27,11 @@ const AboutPageTechForward: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              About <span className="text-primary">Cafe at Once</span>
+              About <span className="text-primary">Coffee@Once</span>
             </h1>
             <p className="text-lg sm:text-xl text-foreground/70 leading-relaxed">
-              We're revolutionizing coffee consumption with precision-engineered concentrates 
-              that deliver barista-quality coffee in just 5 seconds. No machines, no mess—just 
-              pure coffee perfection.
+              India's first <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preserved brewed Arabica coffee</Link> in a portable press tube. 
+              Real coffee for modern lives — no machine, no fridge, no compromise.
             </p>
           </motion.div>
         </div>
@@ -41,17 +52,22 @@ const AboutPageTechForward: React.FC = () => {
               </h2>
               <div className="space-y-4 text-foreground/70 leading-relaxed">
                 <p>
-                  Founded with a vision to make premium coffee accessible to everyone, everywhere, 
-                  Cafe at Once was born from a simple question: Why should great coffee be complicated?
+                  Coffee@Once was born from a simple frustration: why does getting real coffee on the go 
+                  have to mean settling for instant powder or searching for a café?
                 </p>
                 <p>
-                  We spent years perfecting our coffee concentrate technology, working with master 
-                  roasters and food scientists to create a product that captures the full flavor 
-                  profile of freshly brewed coffee in a convenient, portable format.
+                  We developed India's first <strong>nitrogen-preservation technology for brewed coffee</strong> — 
+                  the same process used in premium craft beers and wines, now applied to Arabica coffee. 
+                  The result: real brewed coffee that stays fresh for 12 months without refrigeration.
                 </p>
                 <p>
-                  Today, we're India's #1 coffee concentrate brand, trusted by thousands of coffee 
-                  lovers who refuse to compromise on quality or convenience.
+                  Today, we serve premium frequent travellers, remote workers, and coffee purists who refuse 
+                  to compromise on quality — even when a coffee machine isn't available.
+                </p>
+                <p className="pt-4">
+                  <Link to="/faq" className="text-primary hover:underline font-medium">
+                    Have questions? Read our FAQ →
+                  </Link>
                 </p>
               </div>
             </motion.div>

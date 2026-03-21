@@ -1,122 +1,97 @@
-# Cafe at Once - PRD (Product Requirements Document)
+# Coffee@Once SEO Implementation - PRD
 
 ## Original Problem Statement
-1. Add shipping charges with order based on weight/quantity of items
-2. Add shipping estimates by pincode
-3. Add express shipping option with 1-day delivery only for Mumbai location
-4. Integrate Shiprocket for real-time order tracking
+Implement comprehensive SEO strategy for Coffee@Once (cafeatonce.com) - India's first nitrogen-preserved brewed Arabica coffee brand.
 
-## Architecture & Implementation
-
-### Shipping Calculator (`/app/src/utils/shippingCalculator.ts`)
-- **Base Rate**: ₹50 (includes first 500g)
-- **Per KG Rate**: ₹30 per additional kg
-- **Per Item Rate**: ₹10 per additional item after first
-- **Free Shipping Threshold**: Orders above ₹1000
-- **Express Shipping**: ₹99 (Mumbai only)
-
-### Shiprocket Integration (`/app/backend/server.py`)
-- FastAPI backend for Shiprocket API integration
-- Real-time tracking by AWB code
-- Tracking by order ID
-- Courier serviceability check
-- Shipment creation
-- AWB generation
-
-**API Endpoints:**
-- `GET /api/shiprocket/tracking/{awb_code}` - Track by AWB
-- `GET /api/shiprocket/tracking/order/{order_id}` - Track by order ID
-- `POST /api/shiprocket/shipment/create` - Create shipment
-- `GET /api/shiprocket/couriers` - Check courier availability
-- `POST /api/shiprocket/awb/generate` - Generate AWB
-
-**Note**: Shiprocket credentials need to be updated with valid API credentials.
-Current credentials returning 403 - using demo data for testing.
-
-### Delivery Zones
-| Zone | Pincodes | Standard Days | Express Available | Express Days |
-|------|----------|---------------|-------------------|--------------|
-| Mumbai | 400001-400104, 401101-401210 | 2-3 | ✅ Yes | 1 |
-| Metro Cities | Delhi, Bangalore, Chennai, Kolkata, Hyderabad, Pune, Ahmedabad | 3-5 | ❌ No | - |
-| Rest of India | All others | 5-7 | ❌ No | - |
-
-### Product Weight
-All products have a `weight` property (in grams):
-- Latte Concentrate: 100g
-- Americano: 100g
-- Cold Brew: 120g
-- Mocha: 110g
-- Jasmine Tea: 80g
-- Espresso Shot: 50g
-- Corn Silk: 50g
-- Trial Pack: 300g
-
-### Updated Files
-1. `/app/src/data/products.ts` - Added weight property to all products
-2. `/app/src/context/CartContextOptimized.tsx` - Added weight to CartItem interface
-3. `/app/src/utils/shippingCalculator.ts` - Shipping calculation with pincode zones & express option
-4. `/app/src/pages/CartPage.tsx` - Shows shipping with weight breakdown
-5. `/app/src/pages/CheckoutPage.tsx` - Delivery options UI with Standard/Express selection
-6. `/app/src/pages/ThankYouPage.tsx` - Shows shipping in order confirmation
-7. `/app/src/pages/OrderDetailsPage.tsx` - Shows shipping breakdown
-8. `/app/src/pages/OrderTrackingPage.tsx` - **NEW** - Real-time Shiprocket tracking page
-9. `/app/backend/server.py` - **NEW** - FastAPI backend for Shiprocket integration
-10. `/app/src/App.tsx` - Added /track route
-11. `/app/src/components/Footer.tsx` - Added "Track Your Order" link
-
-## What's Been Implemented
-- [x] Weight-based shipping calculation
-- [x] Quantity-based shipping calculation  
-- [x] Free shipping for orders above ₹1000
-- [x] Pincode validation (6-digit Indian pincodes)
-- [x] Zone-based delivery estimates
-- [x] Express Delivery option for Mumbai (₹99, next day)
-- [x] Delivery date estimates shown at checkout
-- [x] Dynamic shipping option selection
-- [x] Order summary updates with selected shipping method
-- [x] Shiprocket API integration for tracking
-- [x] Real-time shipment tracking page
-- [x] Tracking timeline with checkpoints
-- [x] Auto-refresh tracking option
+## Architecture & Tech Stack
+- **Framework**: Vite + React + TypeScript
+- **Styling**: Tailwind CSS
+- **Routing**: React Router DOM
+- **State Management**: Zustand, React Query
+- **Animation**: Framer Motion
+- **Deployment**: Netlify
 
 ## User Personas
-- **Mumbai Customers**: Can choose Express (1-day) or Standard (2-3 days) delivery
-- **Metro City Customers**: Standard delivery in 3-5 days
-- **Other Customers**: Standard delivery in 5-7 days
+1. **Premium Frequent Travellers** - Flights, remote locations, hotels
+2. **Remote Workers** - Need quality coffee without café access
+3. **Coffee Purists** - Refuse to compromise on taste
 
 ## Core Requirements (Static)
-- Shipping calculated based on product weight and quantity
-- Free shipping threshold at ₹1000
-- Express delivery ONLY for Mumbai addresses
-- Display delivery estimates based on pincode
-- Real-time order tracking via Shiprocket
+- Meta titles & descriptions for all pages
+- Organization, Product, HowTo, FAQPage schema (JSON-LD)
+- Internal linking with exact anchor text
+- Blog post stubs with SEO metadata
+- Image alt text optimization
+
+## What's Been Implemented (Jan 2026)
+
+### 1. Meta Tags & Schema Markup
+- [x] Updated `index.html` with new meta title, description, and Organization schema
+- [x] Enhanced `SEO.tsx` component with:
+  - Organization schema
+  - Product schema with additionalProperty
+  - HowTo schema
+  - FAQPage schema
+  - Breadcrumb schema
+  - Updated brand name from "@once Business" to "Coffee@Once"
+
+### 2. Homepage SEO Optimization
+- [x] Core tagline: "Real Coffee. No Machine. No Compromise. Just Press."
+- [x] Updated hero copy with nitrogen-preservation messaging
+- [x] Added key product benefits: 12-month shelf life, TSA safe, any water temp
+- [x] HowTo schema for using press tube
+
+### 3. FAQ Page Created
+- [x] New `/faq` route with 8 comprehensive FAQs
+- [x] FAQPage schema markup
+- [x] Covers: product basics, nitrogen preservation, shelf life, TSA compliance, ingredients
+
+### 4. Blog Post Stubs Created (5 posts)
+1. `/blog/what-is-nitrogen-preserved-coffee` - Featured article
+2. `/blog/best-portable-coffee-travellers-india` - Travel guide
+3. `/blog/instant-vs-brewed-coffee-difference` - Education
+4. `/blog/how-to-make-coffee-without-machine` - Brewing guide with HowTo schema
+5. `/blog/why-arabica-coffee-matters` - Coffee knowledge
+
+### 5. Internal Linking Strategy
+- [x] Homepage links to FAQ and blog posts
+- [x] Footer includes FAQ and top 3 blog posts
+- [x] Insights page links to all blog articles
+- [x] Product pages link to FAQ
+- [x] About page links to nitrogen preservation blog post
+- [x] Shop page links to FAQ
+
+### 6. Page-Specific SEO
+- [x] Products page: Updated title, description
+- [x] Product detail pages: Product + HowTo + FAQ schema
+- [x] About page: SEO meta tags and internal links
+- [x] Insights/Blog page: SEO meta and article links
+
+### 7. Image Alt Text
+- [x] Hero image: "Coffee@Once nitrogen-preserved Arabica coffee press tube being held"
+- [x] Product images: Descriptive alt text pattern
 
 ## Prioritized Backlog
 
-### P0 - Completed
-- Weight-based shipping calculation
-- Free shipping threshold
-- Pincode-based delivery estimates
-- Express shipping for Mumbai
-- Shiprocket tracking integration
+### P0 - Critical (Next Sprint)
+- [ ] Write full body content for "What Is Nitrogen-Preserved Coffee?" blog post
+- [ ] Submit sitemap to Google Search Console
+- [ ] Verify rich results with Google's Rich Results Test
 
-### P1 - Future
-- [ ] Valid Shiprocket API credentials (current demo mode)
-- [ ] SMS notifications for delivery updates
-- [ ] Automatic shipment creation when order is placed
-- [ ] Webhook for status updates
+### P1 - High Priority
+- [ ] Write remaining blog post body content
+- [ ] Add product-specific FAQs to each product page
+- [ ] Implement product comparison table
+- [ ] Add testimonials with Review schema
 
-### P2 - Nice to Have
-- [ ] Multiple delivery addresses per user
-- [ ] Gift wrapping option
-- [ ] Delivery notes/instructions
-- [ ] Live map tracking
+### P2 - Medium Priority
+- [ ] Create dedicated landing pages for variants (Americano, Latte, Mocha)
+- [ ] Add collection/category page copy
+- [ ] Implement breadcrumb navigation UI
 
 ## Next Tasks
-1. Get valid Shiprocket API credentials from client
-2. Connect order placement flow to create Shiprocket shipment
-3. Add webhook for automatic status updates
-4. Add SMS notifications via Twilio
-
----
-Last Updated: 2026-02-02
+1. Test all schema markup with Google's Rich Results Test
+2. Verify meta tags with metatags.io
+3. Write complete blog post content (priority: nitrogen-preserved coffee)
+4. Publish second blog post within 2 weeks
+5. Commit to monthly blog publishing schedule

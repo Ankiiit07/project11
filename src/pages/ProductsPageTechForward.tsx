@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { products } from '../data/products';
 import ProductCardTechForward from '../components/ProductCardTechForward';
+import SEO from '../components/SEO';
+import { Link } from 'react-router-dom';
 
 const ProductsPageTechForward: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,14 +45,24 @@ const ProductsPageTechForward: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
+      <SEO 
+        title="Shop Nitrogen-Preserved Coffee | Coffee@Once Collection"
+        description="Shop Coffee@Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds — no machine required."
+        url="https://cafeatonce.com/products"
+        breadcrumbs={[
+          { name: "Home", url: "https://cafeatonce.com" },
+          { name: "Shop", url: "https://cafeatonce.com/products" }
+        ]}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3">
-            Our Coffee <span className="text-primary">Collection</span>
+            Shop <span className="text-primary">Coffee@Once</span>
           </h1>
           <p className="text-foreground/70 text-lg max-w-2xl">
-            Discover premium coffee concentrates crafted for the perfect brew in just 5 seconds
+            Nitrogen-preserved brewed Arabica coffee in portable press tubes. Americano, Latte, and Mocha — 
+            ready in 5 seconds. <Link to="/faq" className="text-primary hover:underline">See how it works</Link>
           </p>
         </div>
 
