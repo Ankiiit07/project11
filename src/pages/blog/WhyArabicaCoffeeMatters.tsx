@@ -6,9 +6,9 @@ import SEO from '../../components/SEO';
 
 const WhyArabicaCoffeeMatters: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="Why Arabica Coffee Matters: A Guide to Coffee Quality | Coffee@Once"
+        title="Why Arabica Coffee Matters: A Guide to Coffee Quality | Cafe at Once"
         description="Not all coffee beans are created equal. Learn why Arabica is the gold standard — and what to look for in your next cup."
         url="https://cafeatonce.com/blog/why-arabica-coffee-matters"
         type="article"
@@ -104,10 +104,10 @@ const WhyArabicaCoffeeMatters: React.FC = () => {
 
           <section className="mb-12">
             <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Why Coffee@Once Uses 100% Arabica
+              Why Cafe at Once Uses 100% Arabica
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              At <Link to="/products" className="text-primary hover:underline">Coffee@Once</Link>, we use exclusively 100% Arabica beans. 
+              At <Link to="/products" className="text-primary hover:underline">Cafe at Once</Link>, we use exclusively 100% Arabica beans. 
               Our <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preservation process</Link> is 
               specifically designed to capture and maintain the delicate aromatics and complex flavour profile 
               that makes Arabica special.
@@ -120,7 +120,7 @@ const WhyArabicaCoffeeMatters: React.FC = () => {
             Experience 100% Arabica — Preserved at Peak Freshness
           </h3>
           <p className="text-foreground/70 mb-6">
-            Coffee@Once uses only premium Arabica beans, brewed and nitrogen-preserved to lock in 
+            Cafe at Once uses only premium Arabica beans, brewed and nitrogen-preserved to lock in 
             the complex flavours that define great coffee.
           </p>
           <Link 

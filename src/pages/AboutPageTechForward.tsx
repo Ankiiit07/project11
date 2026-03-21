@@ -6,10 +6,10 @@ import SEO from '../components/SEO';
 
 const AboutPageTechForward: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="About Coffee@Once | India's First Nitrogen-Preserved Coffee"
-        description="The story behind Coffee@Once — India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."
+        title="About Cafe at Once | India's First Nitrogen-Preserved Coffee"
+        description="The story behind Cafe at Once — India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."
         url="https://cafeatonce.com/about"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },
@@ -27,7 +27,7 @@ const AboutPageTechForward: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-              About <span className="text-primary">Coffee@Once</span>
+              About <span className="text-primary">Cafe at Once</span>
             </h1>
             <p className="text-lg sm:text-xl text-foreground/70 leading-relaxed">
               India's first <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preserved brewed Arabica coffee</Link> in a portable press tube. 
@@ -52,7 +52,7 @@ const AboutPageTechForward: React.FC = () => {
               </h2>
               <div className="space-y-4 text-foreground/70 leading-relaxed">
                 <p>
-                  Coffee@Once was born from a simple frustration: why does getting real coffee on the go 
+                  Cafe at Once was born from a simple frustration: why does getting real coffee on the go 
                   have to mean settling for instant powder or searching for a café?
                 </p>
                 <p>

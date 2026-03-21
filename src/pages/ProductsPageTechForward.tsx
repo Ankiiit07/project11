@@ -44,10 +44,10 @@ const ProductsPageTechForward: React.FC = () => {
   }, [filteredProducts, sortBy]);
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="Shop Nitrogen-Preserved Coffee | Coffee@Once Collection"
-        description="Shop Coffee@Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds — no machine required."
+        title="Shop Nitrogen-Preserved Coffee | Cafe at Once Collection"
+        description="Shop Cafe at Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds — no machine required."
         url="https://cafeatonce.com/products"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },
@@ -58,7 +58,7 @@ const ProductsPageTechForward: React.FC = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3">
-            Shop <span className="text-primary">Coffee@Once</span>
+            Shop <span className="text-primary">Cafe at Once</span>
           </h1>
           <p className="text-foreground/70 text-lg max-w-2xl">
             Nitrogen-preserved brewed Arabica coffee in portable press tubes. Americano, Latte, and Mocha — 

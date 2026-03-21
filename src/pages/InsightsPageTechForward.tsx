@@ -54,9 +54,9 @@ const InsightsPageTechForward: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="Coffee Insights & Blog | Coffee@Once"
+        title="Coffee Insights & Blog | Cafe at Once"
         description="Expert articles on coffee science, brewing techniques, and travel-ready coffee solutions. Learn about nitrogen-preserved coffee and more."
         url="https://cafeatonce.com/insights"
         breadcrumbs={[
@@ -66,7 +66,7 @@ const InsightsPageTechForward: React.FC = () => {
       />
       
       {/* Hero */}
-      <section className="bg-gradient-to-b from-secondary to-background py-16 sm:py-20">
+      <section className="bg-gradient-to-b from-secondary to-background py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
@@ -104,7 +104,7 @@ const InsightsPageTechForward: React.FC = () => {
               </h2>
               <p className="text-foreground/70 mb-6 leading-relaxed">
                 Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. 
-                The science behind Coffee@Once explained.
+                The science behind Cafe at Once explained.
               </p>
               <div className="flex items-center gap-4 text-sm text-foreground/60 mb-6">
                 <span className="flex items-center gap-1">

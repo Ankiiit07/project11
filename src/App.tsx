@@ -110,7 +110,7 @@ function App() {
               {/* <LiveRegion message="" /> */}
               <div className="min-h-screen bg-background flex flex-col transition-colors duration-300">
                 <HeaderTechForward />
-                <main id="main-content" className="flex-1 pt-20 pb-8" role="main">
+                <main id="main-content" className="flex-1 pt-16 pb-8" role="main">
                   <ErrorBoundary>
                     <Suspense fallback={<PageLoader />}>
                       <Routes>

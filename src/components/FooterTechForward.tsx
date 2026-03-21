@@ -46,7 +46,7 @@ const FooterTechForward: React.FC = () => {
   };
 
   const quickLinks = [
-    { to: '/products', label: 'Shop Coffee@Once' },
+    { to: '/products', label: 'Shop Cafe at Once' },
     { to: '/faq', label: 'FAQ' },
     { to: '/insights', label: 'Coffee Insights' },
     { to: '/about', label: 'About Us' },

@@ -6,10 +6,10 @@ import SEO from '../../components/SEO';
 
 const NitrogenPreservedCoffee: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="What Is Nitrogen-Preserved Coffee? | Coffee@Once Blog"
-        description="Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Coffee@Once explained."
+        title="What Is Nitrogen-Preserved Coffee? | Cafe at Once Blog"
+        description="Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Cafe at Once explained."
         url="https://cafeatonce.com/blog/what-is-nitrogen-preserved-coffee"
         type="article"
         breadcrumbs={[
@@ -41,7 +41,7 @@ const NitrogenPreservedCoffee: React.FC = () => {
             What Is Nitrogen-Preserved Coffee?
           </h1>
           <p className="text-xl text-foreground/70 mb-6">
-            Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Coffee@Once explained.
+            Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Cafe at Once explained.
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/60">
             <span className="flex items-center gap-2">
@@ -126,14 +126,14 @@ const NitrogenPreservedCoffee: React.FC = () => {
             Experience Nitrogen-Preserved Coffee
           </h3>
           <p className="text-foreground/70 mb-6">
-            Ready to taste the difference? Try Coffee@Once — India's first nitrogen-preserved 
+            Ready to taste the difference? Try Cafe at Once — India's first nitrogen-preserved 
             Arabica coffee in a portable press tube.
           </p>
           <Link 
             to="/products"
             className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
           >
-            Shop Coffee@Once
+            Shop Cafe at Once
           </Link>
         </div>
       </article>

@@ -41,7 +41,7 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = 'Coffee@Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India',
+  title = 'Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India',
   description = "India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds — no machine, no fridge, no compromise. Just press and go.",
   keywords = 'nitrogen preserved coffee, instant arabica coffee, coffee press tube, portable coffee India, travel coffee, nitro washed coffee, premium coffee concentrate',
   image = 'https://cafeatonce.com/og-image.jpg',
@@ -60,7 +60,7 @@ const SEO: React.FC<SEOProps> = ({
     const organizationData = {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "Coffee@Once",
+      "name": "Cafe at Once",
       "url": "https://cafeatonce.com",
       "logo": "https://cafeatonce.com/logo.png",
       "description": "India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. Real coffee, no machine, no compromise.",
@@ -92,7 +92,7 @@ const SEO: React.FC<SEOProps> = ({
         "image": product.images,
         "brand": {
           "@type": "Brand",
-          "name": "Coffee@Once"
+          "name": "Cafe at Once"
         },
         "category": product.category,
         "sku": product.sku,
@@ -105,7 +105,7 @@ const SEO: React.FC<SEOProps> = ({
           "url": url,
           "seller": {
             "@type": "Organization",
-            "name": "Coffee@Once"
+            "name": "Cafe at Once"
           }
         },
         "additionalProperty": [
@@ -199,7 +199,7 @@ const SEO: React.FC<SEOProps> = ({
     const websiteData = {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "Coffee@Once",
+      "name": "Cafe at Once",
       "url": "https://cafeatonce.com",
       "description": "India's first nitrogen-preserved brewed Arabica coffee in a portable press tube.",
       "potentialAction": {
@@ -224,7 +224,7 @@ const SEO: React.FC<SEOProps> = ({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content="Coffee@Once" />
+      <meta name="author" content="Cafe at Once" />
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       
       {/* Canonical URL */}
@@ -238,7 +238,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:image" content={image} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="Coffee@Once" />
+      <meta property="og:site_name" content="Cafe at Once" />
       <meta property="og:locale" content="en_IN" />
       
       {/* Twitter Card Meta Tags */}

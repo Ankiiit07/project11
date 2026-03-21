@@ -6,9 +6,9 @@ import SEO from '../../components/SEO';
 
 const InstantVsBrewedCoffee: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="Instant Coffee vs Brewed Coffee: What's Really in Your Cup? | Coffee@Once"
+        title="Instant Coffee vs Brewed Coffee: What's Really in Your Cup? | Cafe at Once"
         description="A deep dive into how instant coffee is made — and why real brewed coffee (even portable) delivers a superior experience."
         url="https://cafeatonce.com/blog/instant-vs-brewed-coffee-difference"
         type="article"
@@ -107,7 +107,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
               Taste Test: Side-by-Side Comparison
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              [Blind taste test results comparing instant, fresh brewed, and <Link to="/products" className="text-primary hover:underline">Coffee@Once</Link>]
+              [Blind taste test results comparing instant, fresh brewed, and <Link to="/products" className="text-primary hover:underline">Cafe at Once</Link>]
             </p>
           </section>
         </div>
@@ -117,14 +117,14 @@ const InstantVsBrewedCoffee: React.FC = () => {
             Taste Real Brewed Coffee — Anywhere
           </h3>
           <p className="text-foreground/70 mb-6">
-            Coffee@Once is real brewed Arabica coffee, preserved at peak freshness. 
+            Cafe at Once is real brewed Arabica coffee, preserved at peak freshness. 
             Not instant. Not a compromise. Just press and enjoy.
           </p>
           <Link 
             to="/products"
             className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
           >
-            Try Coffee@Once
+            Try Cafe at Once
           </Link>
         </div>
       </article>

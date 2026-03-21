@@ -6,9 +6,9 @@ import SEO from '../../components/SEO';
 
 const BestPortableCoffeeTravellers: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="Best Portable Coffee for Travellers in India (2025 Guide) | Coffee@Once"
+        title="Best Portable Coffee for Travellers in India (2025 Guide) | Cafe at Once"
         description="Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for Indian travellers — from press tubes to pour-overs."
         url="https://cafeatonce.com/blog/best-portable-coffee-travellers-india"
         type="article"
@@ -90,7 +90,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
               Top Portable Coffee Options Compared
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              [Comparison of: instant sachets, pour-over bags, Aeropress, and nitrogen-preserved press tubes like <Link to="/products" className="text-primary hover:underline">Coffee@Once</Link>]
+              [Comparison of: instant sachets, pour-over bags, Aeropress, and nitrogen-preserved press tubes like <Link to="/products" className="text-primary hover:underline">Cafe at Once</Link>]
             </p>
           </section>
 
@@ -118,7 +118,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
             Travel with Real Coffee
           </h3>
           <p className="text-foreground/70 mb-6">
-            Coffee@Once press tubes are TSA-compliant, need no refrigeration, and work with any water temperature. 
+            Cafe at Once press tubes are TSA-compliant, need no refrigeration, and work with any water temperature. 
             Real Arabica coffee, anywhere you go.
           </p>
           <Link 

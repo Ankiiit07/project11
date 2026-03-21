@@ -9,8 +9,8 @@ const FAQPage: React.FC = () => {
 
   const faqs = [
     {
-      question: "What is Coffee@Once?",
-      answer: "Coffee@Once is India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. It's real coffee — not instant powder — preserved using nitrogen washing to lock in freshness for up to 12 months without refrigeration.",
+      question: "What is Cafe at Once?",
+      answer: "Cafe at Once is India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. It's real coffee — not instant powder — preserved using nitrogen washing to lock in freshness for up to 12 months without refrigeration.",
       icon: Coffee
     },
     {
@@ -19,22 +19,22 @@ const FAQPage: React.FC = () => {
       icon: ShieldCheck
     },
     {
-      question: "Do I need hot water to use Coffee@Once?",
-      answer: "No — Coffee@Once works with any water temperature. Hot, cold, or room temperature. Simply press the tube into your cup, add water, stir, and enjoy. Perfect for travel, camping, or anywhere you don't have access to a kettle.",
+      question: "Do I need hot water to use Cafe at Once?",
+      answer: "No — Cafe at Once works with any water temperature. Hot, cold, or room temperature. Simply press the tube into your cup, add water, stir, and enjoy. Perfect for travel, camping, or anywhere you don't have access to a kettle.",
       icon: Thermometer
     },
     {
-      question: "How long does Coffee@Once last?",
+      question: "How long does Cafe at Once last?",
       answer: "Each tube has a shelf life of 12 months from the date of manufacture. No refrigeration required. Store in a cool, dry place away from direct sunlight.",
       icon: Clock
     },
     {
-      question: "Is Coffee@Once TSA/flight safe?",
-      answer: "Yes — Coffee@Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits. Perfect for frequent flyers who refuse to compromise on coffee quality.",
+      question: "Is Cafe at Once TSA/flight safe?",
+      answer: "Yes — Cafe at Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits. Perfect for frequent flyers who refuse to compromise on coffee quality.",
       icon: Package
     },
     {
-      question: "What's in Coffee@Once? Any additives?",
+      question: "What's in Cafe at Once? Any additives?",
       answer: "Just one ingredient: 100% brewed Arabica coffee. Zero sugar. Zero additives. Zero preservatives. Zero artificial flavourings. We believe real coffee doesn't need anything else.",
       icon: Leaf
     },
@@ -51,10 +51,10 @@ const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="FAQ | Coffee@Once — Nitrogen-Preserved Coffee Questions Answered"
-        description="Everything you need to know about Coffee@Once nitrogen-preserved Arabica coffee. How it works, shelf life, ingredients, and more."
+        title="FAQ | Cafe at Once — Nitrogen-Preserved Coffee Questions Answered"
+        description="Everything you need to know about Cafe at Once nitrogen-preserved Arabica coffee. How it works, shelf life, ingredients, and more."
         url="https://cafeatonce.com/faq"
         faq={faqs.map(f => ({ question: f.question, answer: f.answer }))}
         breadcrumbs={[
@@ -64,14 +64,14 @@ const FAQPage: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-secondary to-background py-16 sm:py-20">
+      <section className="bg-gradient-to-b from-secondary to-background py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
               Frequently Asked <span className="text-primary">Questions</span>
             </h1>
             <p className="text-lg text-foreground/70">
-              Everything you need to know about Coffee@Once nitrogen-preserved coffee
+              Everything you need to know about Cafe at Once nitrogen-preserved coffee
             </p>
           </div>
         </div>
@@ -154,7 +154,7 @@ const FAQPage: React.FC = () => {
               className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded-full transition-colors"
               data-testid="faq-shop-btn"
             >
-              Shop Coffee@Once
+              Shop Cafe at Once
             </Link>
           </div>
         </div>

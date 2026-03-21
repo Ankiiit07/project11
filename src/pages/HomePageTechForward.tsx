@@ -31,18 +31,18 @@ const HomePageTechForward: React.FC = () => {
   return (
     <PageWrapper padding="none">
       <SEO 
-        title="Coffee@Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India"
-        description="India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds — no machine, no fridge, no compromise. Just press and go."
+        title="Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India"
+        description="India's first nitrogen-preserved brewed Arabica coffee Real coffee in 5 seconds, no machine, no fridge, no compromise. Just press and go."
         url="https://cafeatonce.com"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" }
         ]}
         howTo={{
-          name: "How to Use Coffee@Once Press Tube",
+          name: "How to Use Cafe at Once Press Tube",
           description: "Make premium brewed coffee anywhere in 5 seconds.",
           totalTime: "PT5S",
           steps: [
-            { name: "Remove cap", text: "Peel off the protective cap from the Coffee@Once tube" },
+            { name: "Remove cap", text: "Peel off the protective cap from the Cafe at Once tube" },
             { name: "Position over cup", text: "Hold the tube over your cup or mug" },
             { name: "Press the tube", text: "Press firmly to dispense the coffee concentrate" },
             { name: "Add water and enjoy", text: "Add 300ml of hot, cold, or room temperature water. Stir and drink." }
@@ -51,7 +51,7 @@ const HomePageTechForward: React.FC = () => {
       />
       <div className="space-y-0">
         {/* Hero Section - Bento Grid Style */}
-        <section className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden min-h-screen flex items-center">
+        <section className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden min-h-[85vh] flex items-center">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
@@ -61,7 +61,7 @@ const HomePageTechForward: React.FC = () => {
             }} />
           </div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
             {/* Bento Grid Layout */}
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left: Content */}
@@ -124,7 +124,7 @@ const HomePageTechForward: React.FC = () => {
                     className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
                     data-testid="hero-shop-now"
                   >
-                    Shop Coffee@Once
+                    Shop Cafe at Once
                     <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
@@ -164,7 +164,7 @@ const HomePageTechForward: React.FC = () => {
                 <div className="relative bg-white border border-border rounded-3xl p-8 shadow-soft hover:shadow-hover transition-all duration-500">
                   <img
                     src="https://res.cloudinary.com/dtcsms7zn/image/upload/v1751551560/Frame_21_1_1_wztli7.png"
-                    alt="Coffee@Once nitrogen-preserved Arabica coffee press tube being held"
+                    alt="Cafe at Once nitrogen-preserved Arabica coffee press tube being held"
                     className="w-full h-auto rounded-2xl"
                     loading="eager"
                   />
@@ -323,12 +323,12 @@ const HomePageTechForward: React.FC = () => {
           </div>
         </section>
 
-        {/* Why Choose Coffee@Once - Features Grid */}
+        {/* Why Choose Cafe at Once - Features Grid */}
         <section className="bg-background py-12 lg:py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-4">
-                Why Choose <span className="text-primary">Coffee@Once</span>
+                Why Choose <span className="text-primary">Cafe at Once</span>
               </h2>
               <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
                 The only coffee that combines real brewed Arabica taste with true portability. 

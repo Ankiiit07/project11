@@ -6,9 +6,9 @@ import SEO from '../../components/SEO';
 
 const HowToMakeCoffeeWithoutMachine: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-16">
+    <div className="min-h-screen bg-background pt-4 pb-16">
       <SEO 
-        title="How to Make Coffee Without a Machine (5 Methods) | Coffee@Once"
+        title="How to Make Coffee Without a Machine (5 Methods) | Cafe at Once"
         description="No espresso machine? No problem. Here are 5 ways to make excellent coffee anywhere — including the fastest method yet."
         url="https://cafeatonce.com/blog/how-to-make-coffee-without-machine"
         type="article"
@@ -26,7 +26,7 @@ const HowToMakeCoffeeWithoutMachine: React.FC = () => {
             { name: "Pour Over Method", text: "Place filter in dripper, add medium ground coffee, pour hot water in circular motions, let drip through" },
             { name: "Cowboy Coffee", text: "Boil water, add coarse ground coffee, let settle for 4 minutes, pour carefully avoiding grounds" },
             { name: "Cold Brew Method", text: "Combine coarse ground coffee with cold water, steep for 12-24 hours, strain and serve over ice" },
-            { name: "Press Tube Method", text: "Remove cap from Coffee@Once tube, position over cup, press firmly, add water and stir" }
+            { name: "Press Tube Method", text: "Remove cap from Cafe at Once tube, position over cup, press firmly, add water and stir" }
           ]
         }}
       />
@@ -117,11 +117,11 @@ const HowToMakeCoffeeWithoutMachine: React.FC = () => {
               Method 5: Press Tube (5 seconds)
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              The fastest method — and arguably the best tasting. <Link to="/products" className="text-primary hover:underline">Coffee@Once press tubes</Link> contain 
+              The fastest method — and arguably the best tasting. <Link to="/products" className="text-primary hover:underline">Cafe at Once press tubes</Link> contain 
               real brewed Arabica coffee, nitrogen-preserved for freshness. No grinding, no steeping, no equipment.
             </p>
             <ol className="list-decimal list-inside space-y-2 text-foreground/80">
-              <li>Remove the cap from the Coffee@Once tube</li>
+              <li>Remove the cap from the Cafe at Once tube</li>
               <li>Position tube over your cup</li>
               <li>Press firmly to dispense the concentrate</li>
               <li>Add 300ml of water (hot, cold, or room temperature)</li>
@@ -135,14 +135,14 @@ const HowToMakeCoffeeWithoutMachine: React.FC = () => {
             The Fastest Way to Real Coffee
           </h3>
           <p className="text-foreground/70 mb-6">
-            When time matters but quality can't be compromised, Coffee@Once delivers real brewed coffee in 5 seconds. 
+            When time matters but quality can't be compromised, Cafe at Once delivers real brewed coffee in 5 seconds. 
             No machine needed — just press and go.
           </p>
           <Link 
             to="/products"
             className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
           >
-            Shop Coffee@Once
+            Shop Cafe at Once
           </Link>
         </div>
       </article>
