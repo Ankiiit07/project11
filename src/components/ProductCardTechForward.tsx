@@ -15,10 +15,12 @@ interface ProductCardProps {
   reviews: number;
   badges?: string[];
   description: string;
-  category?: 'concentrate' | 'flavored' | 'tea' | 'cold-brew';
+  category?: 'concentrate' | 'flavored' | 'tea' | 'cold-brew' | 'preorder';
   viewMode?: 'grid' | 'list';
   inStock?: boolean;
   weight?: number;
+  isPreOrder?: boolean;
+  preOrderNote?: string;
 }
 
 const ProductCardTechForward: React.FC<ProductCardProps> = ({
@@ -35,6 +37,8 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
   viewMode = 'grid',
   inStock = true,
   weight = 100,
+  isPreOrder = false,
+  preOrderNote = '',
 }) => {
   if (!id || !name || price < 0 || originalPrice < 0) {
     console.warn('ProductCard: Invalid props provided', { id, name, price, originalPrice });
@@ -109,8 +113,15 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
           </div>
         )}
 
+        {/* Pre-Order Badge */}
+        {isPreOrder && (
+          <div className="absolute top-4 right-4 z-10 bg-primary text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse">
+            PRE-ORDER
+          </div>
+        )}
+
         {/* Out of Stock Badge */}
-        {!inStock && (
+        {!inStock && !isPreOrder && (
           <div className="absolute top-4 right-4 z-10 bg-foreground/90 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
             Out of Stock
           </div>
@@ -209,6 +220,11 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
                   Save ₹{savingsAmount}
                 </p>
               )}
+              {isPreOrder && preOrderNote && (
+                <p className="text-xs text-primary font-medium">
+                  {preOrderNote}
+                </p>
+              )}
             </div>
 
             {/* Add to Cart Button */}
@@ -219,7 +235,9 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
                 inStock
                   ? isJustAdded
                     ? 'bg-green-600 text-white'
-                    : 'bg-primary hover:bg-primary/90 text-white hover:shadow-lg hover:-translate-y-0.5'
+                    : isPreOrder
+                      ? 'bg-primary hover:bg-primary/90 text-white hover:shadow-lg hover:-translate-y-0.5 ring-2 ring-primary/30'
+                      : 'bg-primary hover:bg-primary/90 text-white hover:shadow-lg hover:-translate-y-0.5'
                   : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
               }`}
               data-testid={`add-to-cart-${id}`}
@@ -228,6 +246,11 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
                 <>
                   <Check className="h-4 w-4" />
                   <span className="hidden sm:inline">Added</span>
+                </>
+              ) : isPreOrder ? (
+                <>
+                  <ShoppingCart className="h-4 w-4" />
+                  <span className="hidden sm:inline">Pre-Order</span>
                 </>
               ) : (
                 <>

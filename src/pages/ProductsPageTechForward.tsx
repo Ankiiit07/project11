@@ -14,6 +14,7 @@ const ProductsPageTechForward: React.FC = () => {
 
   const categories = [
     { id: 'all', name: 'All Products' },
+    { id: 'preorder', name: 'Pre-Order' },
     { id: 'concentrate', name: 'Concentrates' },
     { id: 'flavored', name: 'Flavored' },
     { id: 'tea', name: 'Tea' },
