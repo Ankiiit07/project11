@@ -38,7 +38,7 @@ export const products: Product[] = [
     price: 199,
     originalPrice: 600,
     image:
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774185870/DSC00457-Enhanced-NR-scaled_fuwpn9.jpg',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774196022/a539814e-c21f-4cbd-a95e-94b0e1f4f7d9_yaildm.png',
     images: [
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186149/DSC00887-scaled_ddzxox.jpg',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186148/DSC00851-Enhanced-NR-scaled_fscw1x.jpg',
@@ -78,7 +78,7 @@ export const products: Product[] = [
     price: 199,
     originalPrice: 600,
     image:
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774185870/DSC00508-Enhanced-NR-scaled_vleary.jpg',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774196021/0217b9ab-21f0-4147-a77e-730f995c34a9_d2mmgq.png',
     images: [
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186261/DSC00707-Enhanced-NR-scaled_ys28st.jpg',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186262/DSC00907-Enhanced-NR-scaled_svaz6o.jpg',      
@@ -91,7 +91,7 @@ export const products: Product[] = [
     reviews: 189,
     badges: ['No Sugar', 'Gluten Free'],
     description:
-      '2-3 cups Smooth and balanced Americano concentrate for the perfect cup every time.',
+      '2-3 cups of Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 5,
