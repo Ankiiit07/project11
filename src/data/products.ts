@@ -359,7 +359,7 @@ export const products: Product[] = [
     originalPrice: 999,
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184105/B8_3_1_mk61uf.webp',
     images: [
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184104/B8_1_nz6tjh.webp',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184048/B8_11_yy4btq.webp',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184104/B8_1_nz6tjh.webp',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184050/B8_21_hm3xfs.webp',
     ],
