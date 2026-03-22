@@ -20,6 +20,7 @@ const ProductDetailPageTechForward: React.FC = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   const { products: relatedProducts } = useProductsByCategory(product?.category || '');
 
@@ -147,14 +148,39 @@ const ProductDetailPageTechForward: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            className="space-y-4"
           >
+            {/* Main Image */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden aspect-square">
               <img
-                src={product.image}
+                src={selectedImage || product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
+            
+            {/* Thumbnail Gallery */}
+            {product.images && product.images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {product.images.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(img)}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      (selectedImage || product.image) === img 
+                        ? 'border-primary ring-2 ring-primary/20' 
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <img
+                      src={img}
+                      alt={`${product.name} - Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Product Info */}
