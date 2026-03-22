@@ -353,9 +353,11 @@ export const products: Product[] = [
     name: 'JOYINBAG Arabica',
     price: 749,
     originalPrice: 999,
-    image: 'https://images.unsplash.com/photo-1553570524-8ffa50324118?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
+    image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184105/B8_3_1_mk61uf.webp',
     images: [
-      'https://images.unsplash.com/photo-1553570524-8ffa50324118?crop=entropy&cs=srgb&fm=jpg&q=85&w=600',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184104/B8_1_nz6tjh.webp',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184104/B8_1_nz6tjh.webp',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184050/B8_21_hm3xfs.webp',
     ],
     video: '',
     category: 'preorder',
