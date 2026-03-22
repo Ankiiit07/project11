@@ -48,9 +48,9 @@ export const products: Product[] = [
     category: 'concentrate',
     rating: 4.8,
     reviews: 234,
-    badges: ['No Sugar', 'Gluten Free', 'Organic'],
+    badges: ['No Sugar', 'Gluten Free', 'Nitrogen-Sealed', '100% Arabica'],
     description:
-      '2-3 cups of Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
+      'Barista-style latte concentrate, 100% Arabica, nitrogen-preserved. Add 150–300ml hot or cold milk (or milk + water mix), press, stir. Smooth, creamy, low-acidity. Same 16g tube format, 1–2 servings, 12 months shelf life. Best for: travel, hotel stays, office, daily latte drinkers.',
     ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
     nutrition: {
       calories: 5,
@@ -65,12 +65,13 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 300-350 ml of hot or cold water',
-      'Stir and enjoy your perfect latte',
+      'Add 150–300ml hot or cold milk (or milk + water mix)',
+      'Press and stir',
+      'Enjoy your smooth, creamy latte',
     ],
     isFeatured: true,
     inStock: true,
-    weight: 100, // 100 grams
+    weight: 100,
   },
   {
     id: 'americano-concentrate',
@@ -89,10 +90,10 @@ export const products: Product[] = [
     category: 'concentrate',
     rating: 4.7,
     reviews: 189,
-    badges: ['No Sugar', 'Gluten Free'],
+    badges: ['No Sugar', 'Gluten Free', 'Nitrogen-Sealed', '100% Arabica'],
     description:
-      '2-3 cups of Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
-    ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
+      'Real brewed Americano concentrate in a portable press tube. Made from 100% Arabica beans, nitrogen-sealed to lock in aroma and prevent oxidation. No powders, no machine. Add 150–300ml hot or cold water, press, stir, done. Makes 1–2 cups per 16g tube. 12-month shelf life, no refrigeration, no preservatives. Best for: flights, hotels, office, outdoor travel.',
+    ingredients: ['100% Arabica Coffee'],
     nutrition: {
       calories: 5,
       caffeine: 95,
@@ -119,7 +120,7 @@ export const products: Product[] = [
     price: 199,
     originalPrice: 600,
     image:
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774185880/Product-Image-Cold-brew-scaled_fs698c.jpg',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774196067/ChatGPT_Image_Mar_22_2026_09_43_51_PM_dsevzc.png',
     images: [
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186411/DSC00989-scaled_gmexwr.jpg',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186412/DSC01014-scaled_uhbdhu.jpg',
@@ -130,10 +131,10 @@ export const products: Product[] = [
     category: 'cold-brew',
     rating: 4.9,
     reviews: 312,
-    badges: ['No Sugar', 'Organic', 'Cold Brew'],
+    badges: ['No Sugar', 'Nitrogen-Sealed', 'Cold Brew', '100% Arabica'],
     description:
-      '2-3 cups of Smooth, refreshing cold brew concentrate with low acidity and natural sweetness.',
-    ingredients: ['100% Arabica Coffee', 'Natural Flavors'],
+      'Real cold brew concentrate, bold and naturally smooth with low acidity. 100% Arabica, nitrogen-sealed. Add cold water and ice (150–300ml), press, stir. No brewing time, no refrigeration needed. 16g tube, 1–2 servings, 12 months shelf life. Best for: gym, summer travel, outdoor adventures, cold brew fans.',
+    ingredients: ['100% Arabica Coffee'],
     nutrition: {
       calories: 2,
       caffeine: 110,
@@ -147,12 +148,13 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 300-350 ml of cold water or milk',
-      'Add ice and enjoy your cold brew',
+      'Add cold water and ice (150–300ml)',
+      'Press and stir',
+      'Enjoy your bold, smooth cold brew',
     ],
     isFeatured: true,
-    inStock: false,
-    weight: 120, // 120 grams
+    inStock: true,
+    weight: 120,
   },
   {
     id: 'mocha-flavored',
@@ -160,7 +162,7 @@ export const products: Product[] = [
     price: 249,
     originalPrice: 600,
     image:
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1756191751/Screenshot_2025-08-26_at_12.30.12_PM_sly2il.png',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774196673/ChatGPT_Image_Mar_22_2026_09_54_14_PM_a59uld.png',
     images: [
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1756191751/Screenshot_2025-08-26_at_12.30.12_PM_sly2il.png',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1756191751/Screenshot_2025-08-26_at_12.31.29_PM_lx9rx7.png',
@@ -171,8 +173,8 @@ export const products: Product[] = [
     category: 'flavored',
     rating: 4.6,
     reviews: 156,
-    badges: ['No Added Sugar', 'Real Cocoa'],
-    description: '2-3 Cup Rich chocolate and coffee blend in a convenient tube format.',
+    badges: ['No Added Sugar', 'Real Cocoa', 'Nitrogen-Sealed', '100% Arabica'],
+    description: 'Brewed coffee concentrate blended with rich chocolate notes. 100% Arabica, nitrogen-washed. Add 150–300ml hot or cold milk, press, stir. Deep coffee + indulgent chocolate in one tube. 16g, 1–2 servings, 12 months shelf life. Best for: travel, office, outdoor use, chocolate-coffee lovers.',
     ingredients: ['Arabica Coffee', 'Natural Cocoa', 'Natural Flavors'],
     nutrition: {
       calories: 15,
@@ -199,7 +201,7 @@ export const products: Product[] = [
     price: 249,
     originalPrice: 600,
     image:
-      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186589/DSC00984-scaled_djfvfj.jpg',
+      'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774196479/ChatGPT_Image_Mar_22_2026_09_51_04_PM_jrhsoe.png',
     images: [
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186567/DSC01038-scaled_lzqvmo.jpg',
       'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186568/DSC01057-scaled_qlezop.jpg',
@@ -209,10 +211,10 @@ export const products: Product[] = [
     category: 'tea',
     rating: 4.6,
     reviews: 89,
-    badges: ['Antioxidants', 'Natural', 'Low Caffeine'],
+    badges: ['Antioxidants', 'Natural', 'Nitrogen-Sealed', 'Rich in Catechins'],
     description:
-      'Premium jasmine tea blend with natural antioxidants and smooth flavor.',
-    ingredients: ['Jasmine Tea Leaves', 'Natural Flavors'],
+      'High-quality green tea infused with natural jasmine, nitrogen-sealed to preserve the floral aroma. Rich in catechins (antioxidants). Add 150–300ml hot or cold water, press, stir. Supports metabolism, immunity, digestion, and stress relief. No preservatives, no refrigeration. 1–2 servings per tube, 12 months shelf life. Best for: wellness routines, travel, office, detox, relaxation.',
+    ingredients: ['Jasmine Tea Leaves', 'Natural Jasmine Extract'],
     nutrition: {
       calories: 2,
       caffeine: 25,
@@ -226,11 +228,12 @@ export const products: Product[] = [
     },
     instructions: [
       'Peel the concentrate tube',
-      'Press into 360ml of hot water',
-      'Steep for 2-3 minutes and enjoy',
+      'Add 150–300ml hot or cold water',
+      'Press and stir',
+      'Enjoy your calming jasmine tea',
     ],
     inStock: true,
-    weight: 80, // 80 grams
+    weight: 80,
   },
    {
     id: 'espresso-concentrate',
@@ -354,7 +357,7 @@ export const products: Product[] = [
   // PRE-ORDER PRODUCTS - JOYINBAG Collection
   {
     id: 'preorder-arabica-joyinbag',
-    name: 'JOYINBAG Arabica',
+    name: 'Joy in Bag — Arabica Multi-Serve',
     price: 749,
     originalPrice: 999,
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184105/B8_3_1_mk61uf.webp',
@@ -367,8 +370,8 @@ export const products: Product[] = [
     category: 'preorder',
     rating: 5.0,
     reviews: 0,
-    badges: ['Pre-Order', 'Nitrogen Infused', 'Cold Brew', 'Free Gift'],
-    description: 'Cold Brew Arabica Concentrated Coffee Beverage - Nitrogen-infused Americano coffee liquid. Premium portable coffee in an elegant aluminum bottle. First 5 orders get free gifts!',
+    badges: ['Pre-Order', 'Multi-Serve', '8 Servings', 'Free Gift'],
+    description: 'The large-format option. 100% Arabica brewed concentrate in a multi-serve bag — yields 8 servings of 300ml each (2.4L total). Nitrogen-washed for freshness. Add 150–300ml water per serving, pour concentrate, stir. Adjustable strength. Room temperature storage, 12 months shelf life, no preservatives. Best for: home, office, group servings, daily use, travel setups. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Nitrogen'],
     nutrition: {
       calories: 5,
