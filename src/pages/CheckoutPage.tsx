@@ -37,6 +37,11 @@ import {
   ShippingMethod,
   ShippingOption,
 } from "../utils/shippingCalculator";
+import { 
+  createShiprocketOrder, 
+  calculateShippingWeight, 
+  formatOrderDate 
+} from "../services/shiprocketService";
 
 const CheckoutPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -177,6 +182,47 @@ const CheckoutPage: React.FC = () => {
 
     setOrderDetails(newOrder);
     setPaymentSuccess(true);
+
+    // Create order in Shiprocket for shipping
+    try {
+      const shiprocketOrderData = {
+        order_id: newOrder.id,
+        order_date: formatOrderDate(new Date()),
+        customer_name: `${formData.firstName} ${formData.lastName}`,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        customer_address: formData.address,
+        customer_city: formData.city,
+        customer_state: formData.state,
+        customer_pincode: formData.zipCode,
+        customer_country: "India",
+        items: cartState.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          sku: `CAO-${item.id}`,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        payment_method: 'prepaid' as const,
+        sub_total: cartState.total,
+        shipping_charges: shipping,
+        weight: calculateShippingWeight(cartState.items),
+      };
+
+      console.log("📦 Creating Shiprocket order:", shiprocketOrderData);
+      const shiprocketResult = await createShiprocketOrder(shiprocketOrderData);
+      
+      if (shiprocketResult.success) {
+        console.log("✅ Shiprocket order created:", shiprocketResult);
+        notification.success(`Order shipped via ${shiprocketResult.courier_name || 'courier'}. AWB: ${shiprocketResult.awb_code || 'Pending'}`);
+      } else {
+        console.warn("⚠️ Shiprocket order creation failed:", shiprocketResult);
+        // Don't fail the main order - shipping will be handled manually
+      }
+    } catch (shiprocketError) {
+      console.error("❌ Shiprocket integration error:", shiprocketError);
+      // Don't fail the main order - shipping will be handled manually
+    }
 
     await sendOrderConfirmationEmail(newOrder, customerInfo);
 

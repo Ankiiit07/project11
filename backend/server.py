@@ -468,7 +468,7 @@ async def create_shipment(request: CreateShipmentRequest):
         error_detail = ""
         try:
             error_detail = e.response.json()
-        except:
+        except Exception:
             error_detail = str(e)
         return CreateShipmentResponse(
             success=False,
@@ -604,6 +604,279 @@ async def generate_awb(shipment_id: int, courier_id: int):
             "success": False,
             "error": str(e),
             "message": "Failed to generate AWB"
+        }
+
+
+class CreateOrderWithAWBRequest(BaseModel):
+    """Request model for creating order with automatic AWB assignment"""
+    order_id: str
+    order_date: str
+    pickup_location: str = "Primary"
+    customer_name: str
+    customer_email: str
+    customer_phone: str
+    customer_address: str
+    customer_city: str
+    customer_state: str
+    customer_pincode: str
+    customer_country: str = "India"
+    items: List[Dict[str, Any]]
+    payment_method: str = "prepaid"  # prepaid or cod
+    sub_total: float
+    shipping_charges: float = 0
+    weight: float = 0.5  # in kg
+    length: float = 10  # in cm
+    breadth: float = 10  # in cm
+    height: float = 10  # in cm
+
+
+class CreateOrderWithAWBResponse(BaseModel):
+    """Response model for order with AWB"""
+    success: bool
+    order_id: Optional[str] = None
+    shiprocket_order_id: Optional[int] = None
+    shipment_id: Optional[int] = None
+    awb_code: Optional[str] = None
+    courier_name: Optional[str] = None
+    courier_id: Optional[int] = None
+    label_url: Optional[str] = None
+    estimated_delivery: Optional[str] = None
+    message: Optional[str] = None
+    error: Optional[str] = None
+
+
+@app.post("/api/shiprocket/order/create-with-awb", response_model=CreateOrderWithAWBResponse)
+async def create_order_with_awb(request: CreateOrderWithAWBRequest):
+    """
+    Create a new order in Shiprocket and automatically assign AWB.
+    This is a complete flow that:
+    1. Creates the order in Shiprocket
+    2. Gets available couriers
+    3. Assigns AWB for the shipment
+    4. Returns complete shipping details
+    """
+    try:
+        token = await get_shiprocket_token()
+        
+        # Step 1: Prepare order items
+        order_items = []
+        for item in request.items:
+            order_items.append({
+                "name": item.get("name", "Coffee Product"),
+                "sku": item.get("sku", item.get("id", f"SKU-{request.order_id}")),
+                "units": item.get("quantity", 1),
+                "selling_price": item.get("price", 0),
+                "discount": 0,
+                "tax": 0,
+                "hsn": ""
+            })
+        
+        # Step 2: Create order payload
+        order_payload = {
+            "order_id": request.order_id,
+            "order_date": request.order_date,
+            "pickup_location": request.pickup_location,
+            "billing_customer_name": request.customer_name,
+            "billing_last_name": "",
+            "billing_address": request.customer_address,
+            "billing_address_2": "",
+            "billing_city": request.customer_city,
+            "billing_pincode": request.customer_pincode,
+            "billing_state": request.customer_state,
+            "billing_country": request.customer_country,
+            "billing_email": request.customer_email,
+            "billing_phone": request.customer_phone,
+            "shipping_is_billing": True,
+            "order_items": order_items,
+            "payment_method": request.payment_method.upper(),
+            "shipping_charges": request.shipping_charges,
+            "sub_total": request.sub_total,
+            "length": request.length,
+            "breadth": request.breadth,
+            "height": request.height,
+            "weight": request.weight
+        }
+        
+        async with httpx.AsyncClient() as client:
+            # Step 3: Create order in Shiprocket
+            create_response = await client.post(
+                f"{SHIPROCKET_API_URL}/v1/external/orders/create/adhoc",
+                json=order_payload,
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=30.0
+            )
+            
+            if create_response.status_code != 200:
+                error_data = create_response.json() if create_response.text else {}
+                return CreateOrderWithAWBResponse(
+                    success=False,
+                    order_id=request.order_id,
+                    error=f"Failed to create order: {error_data}",
+                    message="Order creation failed in Shiprocket"
+                )
+            
+            create_data = create_response.json()
+            shiprocket_order_id = create_data.get("order_id")
+            shipment_id = create_data.get("shipment_id")
+            
+            if not shipment_id:
+                return CreateOrderWithAWBResponse(
+                    success=True,
+                    order_id=request.order_id,
+                    shiprocket_order_id=shiprocket_order_id,
+                    message="Order created but shipment ID not generated. AWB will be assigned when ready.",
+                )
+            
+            # Step 4: Get available couriers for this shipment
+            # Shiprocket warehouse pincode (default to Mumbai warehouse)
+            pickup_pincode = "400001"  # Can be configured based on actual warehouse
+            
+            courier_response = await client.get(
+                f"{SHIPROCKET_API_URL}/v1/external/courier/serviceability/",
+                params={
+                    "pickup_postcode": pickup_pincode,
+                    "delivery_postcode": request.customer_pincode,
+                    "weight": request.weight,
+                    "cod": 1 if request.payment_method.lower() == "cod" else 0
+                },
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=30.0
+            )
+            
+            courier_data = courier_response.json() if courier_response.status_code == 200 else {}
+            available_couriers = courier_data.get("data", {}).get("available_courier_companies", [])
+            
+            if not available_couriers:
+                return CreateOrderWithAWBResponse(
+                    success=True,
+                    order_id=request.order_id,
+                    shiprocket_order_id=shiprocket_order_id,
+                    shipment_id=shipment_id,
+                    message="Order created but no couriers available for this pincode. AWB will be assigned manually.",
+                )
+            
+            # Select the best courier (lowest rate with good rating)
+            # Sort by a combination of rate and rating
+            sorted_couriers = sorted(
+                available_couriers,
+                key=lambda c: (c.get("rate", 999), -c.get("rating", 0))
+            )
+            selected_courier = sorted_couriers[0]
+            courier_id = selected_courier.get("courier_company_id")
+            courier_name = selected_courier.get("courier_name")
+            estimated_days = selected_courier.get("estimated_delivery_days", "3-5")
+            
+            # Step 5: Assign AWB
+            awb_response = await client.post(
+                f"{SHIPROCKET_API_URL}/v1/external/courier/assign/awb",
+                json={
+                    "shipment_id": shipment_id,
+                    "courier_id": courier_id
+                },
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=30.0
+            )
+            
+            if awb_response.status_code != 200:
+                return CreateOrderWithAWBResponse(
+                    success=True,
+                    order_id=request.order_id,
+                    shiprocket_order_id=shiprocket_order_id,
+                    shipment_id=shipment_id,
+                    courier_name=courier_name,
+                    courier_id=courier_id,
+                    message="Order created but AWB assignment failed. It will be assigned when the courier picks up.",
+                )
+            
+            awb_data = awb_response.json()
+            awb_response_data = awb_data.get("response", {}).get("data", {})
+            awb_code = awb_response_data.get("awb_code")
+            label_url = awb_response_data.get("label_url")
+            
+            # Calculate estimated delivery date
+            from datetime import datetime, timedelta
+            try:
+                days = int(estimated_days.split("-")[0]) if "-" in str(estimated_days) else int(estimated_days)
+            except (ValueError, AttributeError):
+                days = 5
+            estimated_delivery = (datetime.utcnow() + timedelta(days=days)).strftime("%Y-%m-%d")
+            
+            return CreateOrderWithAWBResponse(
+                success=True,
+                order_id=request.order_id,
+                shiprocket_order_id=shiprocket_order_id,
+                shipment_id=shipment_id,
+                awb_code=awb_code,
+                courier_name=courier_name,
+                courier_id=courier_id,
+                label_url=label_url,
+                estimated_delivery=estimated_delivery,
+                message="Order created and AWB assigned successfully"
+            )
+            
+    except httpx.HTTPStatusError as e:
+        error_detail = ""
+        try:
+            error_detail = e.response.json()
+        except Exception:
+            error_detail = str(e)
+        return CreateOrderWithAWBResponse(
+            success=False,
+            order_id=request.order_id,
+            error=f"Shiprocket API error: {error_detail}",
+            message="Failed to create order with AWB"
+        )
+    except Exception as e:
+        return CreateOrderWithAWBResponse(
+            success=False,
+            order_id=request.order_id,
+            error=str(e),
+            message="An error occurred while processing the order"
+        )
+
+
+@app.get("/api/shiprocket/pickup-locations")
+async def get_pickup_locations():
+    """
+    Get all pickup locations configured in Shiprocket
+    """
+    try:
+        token = await get_shiprocket_token()
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{SHIPROCKET_API_URL}/v1/external/settings/company/pickup",
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=30.0
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            locations = data.get("data", {}).get("shipping_address", [])
+            
+            return {
+                "success": True,
+                "locations": [
+                    {
+                        "id": loc.get("id"),
+                        "pickup_location": loc.get("pickup_location"),
+                        "name": loc.get("name"),
+                        "address": loc.get("address"),
+                        "city": loc.get("city"),
+                        "state": loc.get("state"),
+                        "pincode": loc.get("pin_code"),
+                        "phone": loc.get("phone"),
+                        "is_primary": loc.get("status") == 1
+                    }
+                    for loc in locations
+                ]
+            }
+            
+    except Exception as e:
+        return {
+            "success": False,
+            "locations": [],
+            "error": str(e)
         }
 
 

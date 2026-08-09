@@ -20,18 +20,21 @@
 - Real-time tracking by AWB code
 - Tracking by order ID
 - Courier serviceability check
-- Shipment creation
+- Shipment creation with automatic AWB assignment
 - AWB generation
 
 **API Endpoints:**
 - `GET /api/shiprocket/tracking/{awb_code}` - Track by AWB
 - `GET /api/shiprocket/tracking/order/{order_id}` - Track by order ID
 - `POST /api/shiprocket/shipment/create` - Create shipment
+- `POST /api/shiprocket/order/create-with-awb` - **NEW** - Create order + assign AWB automatically
 - `GET /api/shiprocket/couriers` - Check courier availability
 - `POST /api/shiprocket/awb/generate` - Generate AWB
+- `GET /api/shiprocket/pickup-locations` - **NEW** - Get pickup locations
 
-**Note**: Shiprocket credentials need to be updated with valid API credentials.
-Current credentials returning 403 - using demo data for testing.
+**Shiprocket Credentials:**
+- Email: cafeatonce@gmail.com
+- Password: D4sjQZ#W8BUl@xbgBjOujs@kqSvRMxBo (Live credentials)
 
 ### Delivery Zones
 | Zone | Pincodes | Standard Days | Express Available | Express Days |
@@ -56,13 +59,14 @@ All products have a `weight` property (in grams):
 2. `/app/src/context/CartContextOptimized.tsx` - Added weight to CartItem interface
 3. `/app/src/utils/shippingCalculator.ts` - Shipping calculation with pincode zones & express option
 4. `/app/src/pages/CartPage.tsx` - Shows shipping with weight breakdown
-5. `/app/src/pages/CheckoutPage.tsx` - Delivery options UI with Standard/Express selection
+5. `/app/src/pages/CheckoutPage.tsx` - Delivery options UI + Shiprocket order creation
 6. `/app/src/pages/ThankYouPage.tsx` - Shows shipping in order confirmation
 7. `/app/src/pages/OrderDetailsPage.tsx` - Shows shipping breakdown
-8. `/app/src/pages/OrderTrackingPage.tsx` - **NEW** - Real-time Shiprocket tracking page
-9. `/app/backend/server.py` - **NEW** - FastAPI backend for Shiprocket integration
+8. `/app/src/pages/OrderTrackingPage.tsx` - Real-time Shiprocket tracking page
+9. `/app/backend/server.py` - FastAPI backend for Shiprocket integration
 10. `/app/src/App.tsx` - Added /track route
 11. `/app/src/components/Footer.tsx` - Added "Track Your Order" link
+12. `/app/src/services/shiprocketService.ts` - **NEW** - Frontend service for Shiprocket API calls
 
 ## What's Been Implemented
 - [x] Weight-based shipping calculation
@@ -78,6 +82,7 @@ All products have a `weight` property (in grams):
 - [x] Real-time shipment tracking page
 - [x] Tracking timeline with checkpoints
 - [x] Auto-refresh tracking option
+- [x] **NEW** Automatic Shiprocket order creation on checkout
 
 ## User Personas
 - **Mumbai Customers**: Can choose Express (1-day) or Standard (2-3 days) delivery
@@ -99,12 +104,13 @@ All products have a `weight` property (in grams):
 - Pincode-based delivery estimates
 - Express shipping for Mumbai
 - Shiprocket tracking integration
+- Shiprocket order creation on checkout
 
 ### P1 - Future
-- [ ] Valid Shiprocket API credentials (current demo mode)
 - [ ] SMS notifications for delivery updates
-- [ ] Automatic shipment creation when order is placed
-- [ ] Webhook for status updates
+- [ ] Webhook for automatic status updates
+- [ ] Email notifications when shipment status changes
+- [ ] Pickup location configuration in admin panel
 
 ### P2 - Nice to Have
 - [ ] Multiple delivery addresses per user
@@ -112,11 +118,11 @@ All products have a `weight` property (in grams):
 - [ ] Delivery notes/instructions
 - [ ] Live map tracking
 
-## Next Tasks
-1. Get valid Shiprocket API credentials from client
-2. Connect order placement flow to create Shiprocket shipment
-3. Add webhook for automatic status updates
-4. Add SMS notifications via Twilio
+## Notes
+- Shiprocket integration is fully functional with live credentials
+- Order creation automatically assigns AWB when couriers are available
+- If AWB assignment fails, orders are still created and AWB can be assigned manually
+- The tracking page gracefully handles "AWB not found" errors
 
 ---
-Last Updated: 2026-02-02
+Last Updated: 2026-08-09
