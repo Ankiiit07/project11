@@ -1,16 +1,30 @@
 """
 Shiprocket Integration API Server
 Provides real-time order tracking and shipment management
+Plus email notifications for shipment status updates
 """
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timedelta
 import httpx
 import os
+import asyncio
+import logging
 from enum import Enum
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Email integration
+import resend
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Cafe at Once - Shiprocket Integration",
@@ -31,6 +45,11 @@ app.add_middleware(
 SHIPROCKET_EMAIL = os.environ.get("SHIPROCKET_EMAIL", "cafeatonce@gmail.com")
 SHIPROCKET_PASSWORD = os.environ.get("SHIPROCKET_PASSWORD", "D4sjQZ#W8BUl@xbgBjOujs@kqSvRMxBo")
 SHIPROCKET_API_URL = "https://apiv2.shiprocket.in"
+
+# Email Configuration (Resend)
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
+SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
+resend.api_key = RESEND_API_KEY
 
 # Token cache
 _token_cache = {
@@ -654,9 +673,17 @@ async def create_order_with_awb(request: CreateOrderWithAWBRequest):
     2. Gets available couriers
     3. Assigns AWB for the shipment
     4. Returns complete shipping details
+    5. Caches customer info for webhook notifications
     """
     try:
         token = await get_shiprocket_token()
+        
+        # Cache customer info for webhook notifications
+        cache_order_customer_info(
+            order_id=request.order_id,
+            customer_email=request.customer_email,
+            customer_name=request.customer_name
+        )
         
         # Step 1: Prepare order items
         order_items = []
@@ -878,6 +905,487 @@ async def get_pickup_locations():
             "locations": [],
             "error": str(e)
         }
+
+
+# =============================================
+# EMAIL NOTIFICATION ENDPOINTS
+# =============================================
+
+class EmailNotificationRequest(BaseModel):
+    """Request model for sending shipment notification email"""
+    recipient_email: EmailStr
+    customer_name: str
+    order_id: str
+    awb_code: Optional[str] = None
+    status: str
+    status_description: str
+    courier_name: Optional[str] = None
+    estimated_delivery: Optional[str] = None
+    tracking_url: Optional[str] = None
+
+
+class EmailResponse(BaseModel):
+    """Response model for email operations"""
+    success: bool
+    message: str
+    email_id: Optional[str] = None
+    error: Optional[str] = None
+
+
+def generate_shipment_email_html(
+    customer_name: str,
+    order_id: str,
+    status: str,
+    status_description: str,
+    awb_code: Optional[str] = None,
+    courier_name: Optional[str] = None,
+    estimated_delivery: Optional[str] = None,
+    tracking_url: Optional[str] = None
+) -> str:
+    """Generate HTML email content for shipment status updates"""
+    
+    # Status colors
+    status_colors = {
+        "DELIVERED": "#10B981",  # Green
+        "OUT_FOR_DELIVERY": "#3B82F6",  # Blue
+        "IN_TRANSIT": "#F59E0B",  # Yellow/Amber
+        "SHIPPED": "#F59E0B",
+        "PICKED": "#8B5CF6",  # Purple
+        "PENDING": "#6B7280",  # Gray
+        "CANCELLED": "#EF4444",  # Red
+        "RTO": "#F97316",  # Orange
+    }
+    status_color = status_colors.get(status.upper(), "#6B7280")
+    
+    tracking_section = ""
+    if tracking_url and awb_code:
+        tracking_section = f"""
+        <tr>
+            <td style="padding: 20px 0;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="text-align: center;">
+                            <a href="{tracking_url}" target="_blank" style="background-color: #8B7355; color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Track Your Order
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        """
+    
+    delivery_info = ""
+    if estimated_delivery:
+        delivery_info = f"""
+        <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+                <strong style="color: #374151;">Estimated Delivery:</strong>
+                <span style="color: #6B7280; float: right;">{estimated_delivery}</span>
+            </td>
+        </tr>
+        """
+    
+    return f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipment Update - Cafe at Once</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #F9FAFB; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F9FAFB;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: white; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #8B7355 0%, #6B5344 100%); padding: 30px; text-align: center; border-radius: 16px 16px 0 0;">
+                            <h1 style="margin: 0; color: white; font-size: 24px; font-weight: bold;">☕ Cafe at Once</h1>
+                            <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">Premium Coffee Concentrates</p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Status Banner -->
+                    <tr>
+                        <td style="padding: 25px 30px; text-align: center; background-color: #FEF3C7;">
+                            <div style="display: inline-block; background-color: {status_color}; color: white; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 14px; text-transform: uppercase;">
+                                {status_description}
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="margin: 0 0 20px 0; color: #374151; font-size: 16px; line-height: 1.6;">
+                                Hi <strong>{customer_name}</strong>,
+                            </p>
+                            <p style="margin: 0 0 25px 0; color: #374151; font-size: 16px; line-height: 1.6;">
+                                Great news! Your order status has been updated.
+                            </p>
+                            
+                            <!-- Order Details Card -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #F9FAFB; border-radius: 12px; margin-bottom: 20px;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td style="padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+                                                    <strong style="color: #374151;">Order ID:</strong>
+                                                    <span style="color: #6B7280; float: right;">{order_id}</span>
+                                                </td>
+                                            </tr>
+                                            {f'''<tr>
+                                                <td style="padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+                                                    <strong style="color: #374151;">AWB Number:</strong>
+                                                    <span style="color: #6B7280; float: right;">{awb_code}</span>
+                                                </td>
+                                            </tr>''' if awb_code else ''}
+                                            {f'''<tr>
+                                                <td style="padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+                                                    <strong style="color: #374151;">Courier:</strong>
+                                                    <span style="color: #6B7280; float: right;">{courier_name}</span>
+                                                </td>
+                                            </tr>''' if courier_name else ''}
+                                            <tr>
+                                                <td style="padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+                                                    <strong style="color: #374151;">Current Status:</strong>
+                                                    <span style="color: {status_color}; float: right; font-weight: bold;">{status_description}</span>
+                                                </td>
+                                            </tr>
+                                            {delivery_info}
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            {tracking_section}
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 30px; background-color: #F9FAFB; border-radius: 0 0 16px 16px; text-align: center;">
+                            <p style="margin: 0 0 10px 0; color: #6B7280; font-size: 14px;">
+                                Questions? Contact us at <a href="mailto:support@cafeatonce.com" style="color: #8B7355; text-decoration: none;">support@cafeatonce.com</a>
+                            </p>
+                            <p style="margin: 0; color: #9CA3AF; font-size: 12px;">
+                                © 2026 Cafe at Once. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+"""
+
+
+async def send_email_async(params: dict) -> dict:
+    """Send email asynchronously using thread to avoid blocking"""
+    try:
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        return {"success": True, "result": result}
+    except Exception as e:
+        logger.error(f"Email send error: {str(e)}")
+        return {"success": False, "error": str(e)}
+
+
+@app.post("/api/notifications/shipment-status", response_model=EmailResponse)
+async def send_shipment_status_notification(
+    request: EmailNotificationRequest,
+    background_tasks: BackgroundTasks
+):
+    """
+    Send email notification for shipment status updates.
+    Supports all shipment statuses: PENDING, PICKED, IN_TRANSIT, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, RTO
+    """
+    if not RESEND_API_KEY:
+        return EmailResponse(
+            success=False,
+            message="Email service not configured",
+            error="RESEND_API_KEY not set"
+        )
+    
+    try:
+        # Generate email HTML
+        html_content = generate_shipment_email_html(
+            customer_name=request.customer_name,
+            order_id=request.order_id,
+            status=request.status,
+            status_description=request.status_description,
+            awb_code=request.awb_code,
+            courier_name=request.courier_name,
+            estimated_delivery=request.estimated_delivery,
+            tracking_url=request.tracking_url
+        )
+        
+        # Prepare email parameters
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [request.recipient_email],
+            "subject": f"Order Update: {request.status_description} - Order #{request.order_id}",
+            "html": html_content
+        }
+        
+        # Send email asynchronously (non-blocking)
+        result = await send_email_async(params)
+        
+        if result["success"]:
+            logger.info(f"Shipment notification sent to {request.recipient_email} for order {request.order_id}")
+            return EmailResponse(
+                success=True,
+                message=f"Notification email sent to {request.recipient_email}",
+                email_id=result.get("result", {}).get("id")
+            )
+        else:
+            return EmailResponse(
+                success=False,
+                message="Failed to send notification email",
+                error=result.get("error")
+            )
+            
+    except Exception as e:
+        logger.error(f"Notification email error: {str(e)}")
+        return EmailResponse(
+            success=False,
+            message="An error occurred while sending notification",
+            error=str(e)
+        )
+
+
+@app.post("/api/notifications/order-confirmation", response_model=EmailResponse)
+async def send_order_confirmation_email(
+    request: EmailNotificationRequest
+):
+    """
+    Send order confirmation email when a new order is placed.
+    """
+    if not RESEND_API_KEY:
+        return EmailResponse(
+            success=False,
+            message="Email service not configured",
+            error="RESEND_API_KEY not set"
+        )
+    
+    try:
+        # Generate email HTML with order confirmation styling
+        html_content = generate_shipment_email_html(
+            customer_name=request.customer_name,
+            order_id=request.order_id,
+            status="PENDING",
+            status_description="Order Confirmed",
+            awb_code=request.awb_code,
+            courier_name=request.courier_name,
+            estimated_delivery=request.estimated_delivery,
+            tracking_url=request.tracking_url
+        )
+        
+        # Prepare email parameters
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [request.recipient_email],
+            "subject": f"Order Confirmed! Your Order #{request.order_id} is being processed",
+            "html": html_content
+        }
+        
+        # Send email
+        result = await send_email_async(params)
+        
+        if result["success"]:
+            logger.info(f"Order confirmation sent to {request.recipient_email} for order {request.order_id}")
+            return EmailResponse(
+                success=True,
+                message=f"Order confirmation email sent to {request.recipient_email}",
+                email_id=result.get("result", {}).get("id")
+            )
+        else:
+            return EmailResponse(
+                success=False,
+                message="Failed to send order confirmation",
+                error=result.get("error")
+            )
+            
+    except Exception as e:
+        logger.error(f"Order confirmation email error: {str(e)}")
+        return EmailResponse(
+            success=False,
+            message="An error occurred while sending confirmation",
+            error=str(e)
+        )
+
+
+# =============================================
+# SHIPROCKET WEBHOOK ENDPOINTS
+# =============================================
+
+class ShiprocketWebhookPayload(BaseModel):
+    """Model for Shiprocket webhook payload"""
+    awb: Optional[str] = None
+    courier_name: Optional[str] = None
+    current_status: Optional[str] = None
+    current_status_id: Optional[int] = None
+    shipment_status: Optional[str] = None
+    shipment_status_id: Optional[int] = None
+    order_id: Optional[str] = None
+    etd: Optional[str] = None  # Estimated Time of Delivery
+    current_timestamp: Optional[str] = None
+    # Additional fields that may be present
+    scans: Optional[List[Dict[str, Any]]] = None
+    
+    class Config:
+        extra = "allow"  # Allow additional fields
+
+
+# In-memory store for order customer info (In production, use a database)
+# This stores customer info keyed by order_id for webhook notifications
+_order_customer_cache: Dict[str, Dict[str, str]] = {}
+
+
+def cache_order_customer_info(order_id: str, customer_email: str, customer_name: str):
+    """Store customer info for an order to send email notifications on webhook"""
+    _order_customer_cache[order_id] = {
+        "email": customer_email,
+        "name": customer_name
+    }
+    logger.info(f"Cached customer info for order {order_id}")
+
+
+def get_cached_customer_info(order_id: str) -> Optional[Dict[str, str]]:
+    """Retrieve cached customer info for an order"""
+    return _order_customer_cache.get(order_id)
+
+
+@app.post("/api/webhooks/shiprocket")
+async def shiprocket_webhook(
+    payload: ShiprocketWebhookPayload,
+    background_tasks: BackgroundTasks
+):
+    """
+    Webhook endpoint for Shiprocket status updates.
+    Shiprocket sends POST requests when shipment status changes.
+    
+    Configure this URL in Shiprocket Dashboard:
+    Settings > API > Webhooks > Add Webhook URL
+    
+    Supported events: All shipment status changes
+    """
+    try:
+        logger.info(f"Received Shiprocket webhook: {payload.model_dump()}")
+        
+        order_id = payload.order_id
+        awb_code = payload.awb
+        status = payload.current_status or payload.shipment_status or "UNKNOWN"
+        status_id = payload.current_status_id or payload.shipment_status_id
+        courier_name = payload.courier_name
+        estimated_delivery = payload.etd
+        
+        # Get status description
+        status_info = map_shiprocket_status(status_id) if status_id else {"status": status, "description": status}
+        status_description = status_info.get("description", status)
+        
+        # Try to get customer info from cache
+        customer_info = get_cached_customer_info(order_id) if order_id else None
+        
+        if customer_info and RESEND_API_KEY:
+            # Send email notification in background
+            tracking_url = f"https://www.shiprocket.in/shipment-tracking/?awb={awb_code}" if awb_code else None
+            
+            async def send_notification():
+                try:
+                    html_content = generate_shipment_email_html(
+                        customer_name=customer_info["name"],
+                        order_id=order_id,
+                        status=status,
+                        status_description=status_description,
+                        awb_code=awb_code,
+                        courier_name=courier_name,
+                        estimated_delivery=estimated_delivery,
+                        tracking_url=tracking_url
+                    )
+                    
+                    params = {
+                        "from": SENDER_EMAIL,
+                        "to": [customer_info["email"]],
+                        "subject": f"Shipment Update: {status_description} - Order #{order_id}",
+                        "html": html_content
+                    }
+                    
+                    result = await send_email_async(params)
+                    if result["success"]:
+                        logger.info(f"Webhook notification sent for order {order_id}")
+                    else:
+                        logger.error(f"Webhook notification failed: {result.get('error')}")
+                except Exception as e:
+                    logger.error(f"Error sending webhook notification: {str(e)}")
+            
+            background_tasks.add_task(send_notification)
+            
+            return {
+                "status": "received",
+                "message": "Webhook processed, notification queued",
+                "order_id": order_id,
+                "awb": awb_code,
+                "current_status": status,
+                "notification_sent": True
+            }
+        else:
+            # Log the event but no email (customer info not cached or email not configured)
+            logger.info(f"Webhook received but no notification sent (no cached customer or no email config)")
+            return {
+                "status": "received",
+                "message": "Webhook processed, no notification sent",
+                "order_id": order_id,
+                "awb": awb_code,
+                "current_status": status,
+                "notification_sent": False,
+                "reason": "No customer info cached" if not customer_info else "Email service not configured"
+            }
+            
+    except Exception as e:
+        logger.error(f"Webhook processing error: {str(e)}")
+        # Always return 200 to Shiprocket to prevent retries
+        return {
+            "status": "error",
+            "message": str(e),
+            "notification_sent": False
+        }
+
+
+@app.get("/api/webhooks/shiprocket/info")
+async def webhook_info():
+    """
+    Get information about the webhook endpoint for Shiprocket configuration.
+    """
+    return {
+        "webhook_url": "/api/webhooks/shiprocket",
+        "method": "POST",
+        "content_type": "application/json",
+        "supported_events": [
+            "AWB_ASSIGNED",
+            "PICKUP_SCHEDULED",
+            "PICKED",
+            "IN_TRANSIT",
+            "OUT_FOR_DELIVERY",
+            "DELIVERED",
+            "CANCELLED",
+            "RTO_INITIATED",
+            "RTO_DELIVERED"
+        ],
+        "setup_instructions": {
+            "step_1": "Login to Shiprocket Dashboard",
+            "step_2": "Go to Settings > API > Webhooks",
+            "step_3": "Click 'Add Webhook URL'",
+            "step_4": "Enter your webhook URL (e.g., https://your-domain.com/api/webhooks/shiprocket)",
+            "step_5": "Select events to subscribe to",
+            "step_6": "Save and test the webhook"
+        },
+        "note": "Ensure your webhook URL is publicly accessible for Shiprocket to send events"
+    }
 
 
 if __name__ == "__main__":

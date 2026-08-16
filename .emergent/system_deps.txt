@@ -1,2 +1,3 @@
 cron=3.0pl1-162
 python3-pip=23.0.1+dfsg-1
+python3-uvicorn=0.17.6-1
