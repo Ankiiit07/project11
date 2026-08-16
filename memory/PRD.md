@@ -54,11 +54,10 @@
 - `GET /api/webhooks/shiprocket/info` - Webhook setup instructions
 
 **Shiprocket Credentials:**
-- Email: cafeatonce@gmail.com
-- Password: D4sjQZ#W8BUl@xbgBjOujs@kqSvRMxBo (Live credentials)
+- Stored in `/app/backend/.env` (SHIPROCKET_EMAIL, SHIPROCKET_PASSWORD)
 
 **Resend Email Credentials:**
-- API Key: re_6Jicmms1_Q2icpBcr7an3vLDj4vPykFPt
+- API Key: Stored in `/app/backend/.env` (RESEND_API_KEY)
 - Sender: onboarding@resend.dev (Test mode)
 
 ### Delivery Zones
