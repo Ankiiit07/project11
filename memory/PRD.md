@@ -1,4 +1,4 @@
-# Cafe at Once - PRD (Product Requirements Document)
+# Coffee@Once SEO Implementation - PRD
 
 ## Original Problem Statement
 1. Add shipping charges with order based on weight/quantity of items
@@ -113,9 +113,9 @@ All products have a `weight` property (in grams):
 - [x] **NEW** Shiprocket webhook receiver for automatic status updates
 
 ## User Personas
-- **Mumbai Customers**: Can choose Express (1-day) or Standard (2-3 days) delivery
-- **Metro City Customers**: Standard delivery in 3-5 days
-- **Other Customers**: Standard delivery in 5-7 days
+1. **Premium Frequent Travellers** - Flights, remote locations, hotels
+2. **Remote Workers** - Need quality coffee without café access
+3. **Coffee Purists** - Refuse to compromise on taste
 
 ## Core Requirements (Static)
 - Shipping calculated based on product weight and quantity

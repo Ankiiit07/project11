@@ -78,6 +78,18 @@ const CheckoutPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<ShippingMethod>('standard');
   const [deliveryEstimate, setDeliveryEstimate] = useState<string>('');
+  
+  // Discount code state
+  const [discountCode, setDiscountCode] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<{code: string, percentage: number} | null>(null);
+  const [discountError, setDiscountError] = useState('');
+
+  // Valid discount codes
+  const VALID_DISCOUNT_CODES = {
+    'WELCOME10': { percentage: 10, description: 'Welcome offer - 10% off' },
+    'SAVE10': { percentage: 10, description: 'Save 10% on your order' },
+    'FIRST10': { percentage: 10, description: 'First order discount - 10% off' },
+  };
 
   // Calculate base shipping based on weight
   const shippingResult = useMemo(() => calculateShipping(
@@ -297,8 +309,42 @@ const CheckoutPage: React.FC = () => {
   };
 
   const calculateTax = () => {
-    return cartState.total * 0; // 18% GST for India
+    return 0; // GST removed as per user request
   };
+
+  // Apply discount code
+  const applyDiscount = () => {
+    const code = discountCode.trim().toUpperCase();
+    if (!code) {
+      setDiscountError('Please enter a discount code');
+      return;
+    }
+
+    if (VALID_DISCOUNT_CODES[code as keyof typeof VALID_DISCOUNT_CODES]) {
+      const discount = VALID_DISCOUNT_CODES[code as keyof typeof VALID_DISCOUNT_CODES];
+      setAppliedDiscount({ code, percentage: discount.percentage });
+      setDiscountError('');
+      notification.success(`Discount code "${code}" applied! ${discount.percentage}% off`);
+    } else {
+      setDiscountError('Invalid discount code');
+      setAppliedDiscount(null);
+    }
+  };
+
+  // Remove discount code
+  const removeDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCode('');
+    setDiscountError('');
+  };
+
+  // Calculate discount amount (only on cart subtotal, not shipping)
+  const calculateDiscountAmount = () => {
+    if (!appliedDiscount) return 0;
+    return (cartState.total * appliedDiscount.percentage) / 100;
+  };
+
+  const discountAmount = calculateDiscountAmount();
 
   // Get shipping charge based on selected method
   const getShippingCharge = () => {
@@ -310,7 +356,7 @@ const CheckoutPage: React.FC = () => {
 
   const shipping = getShippingCharge();
   const tax = calculateTax();
-  const finalTotal = (cartState.total || 0) + tax + shipping;
+  const finalTotal = (cartState.total || 0) - discountAmount + tax + shipping;
 
   const sendOrderConfirmationEmail = async (orderDetails: any, customerInfo: any) => {
   try {
@@ -766,10 +812,65 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">GST (18%)</span>
-                    <span>₹{tax.toFixed(2)}</span>
+                  {/* Discount Code Section */}
+                  <div className="pt-4 pb-4 border-t border-b">
+                    {!appliedDiscount ? (
+                      <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Have a discount code?
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={discountCode}
+                            onChange={(e) => {
+                              setDiscountCode(e.target.value.toUpperCase());
+                              setDiscountError('');
+                            }}
+                            placeholder="Enter code"
+                            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            data-testid="discount-code-input"
+                          />
+                          <button
+                            onClick={applyDiscount}
+                            className="px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors"
+                            data-testid="apply-discount-button"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                        {discountError && (
+                          <p className="text-sm text-red-600">{discountError}</p>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          Try: WELCOME10, SAVE10, or FIRST10
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-green-600">
+                            Code "{appliedDiscount.code}" applied!
+                          </span>
+                        </div>
+                        <button
+                          onClick={removeDiscount}
+                          className="text-sm text-red-600 hover:text-red-700 font-medium"
+                          data-testid="remove-discount-button"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    )}
                   </div>
+
+                  {/* Discount Amount */}
+                  {appliedDiscount && (
+                    <div className="flex justify-between text-sm text-green-600 font-medium">
+                      <span>Discount ({appliedDiscount.percentage}% off)</span>
+                      <span>-₹{discountAmount.toFixed(2)}</span>
+                    </div>
+                  )}
 
                   <div className="flex justify-between text-lg font-bold border-t pt-3">
                     <span>Total</span>

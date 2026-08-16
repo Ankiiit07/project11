@@ -5,21 +5,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#92400e', // coffee/amber-800 (replacing teal-600)
-        'primary-light': '#f59e0b', // amber-500 (replacing cyan-300)
-        'primary-dark': '#78350f', // amber-900 (replacing cyan-700)
-        cream: '#F0E4D3', // new cream color
-        'cream-dark': '#fed7aa', // orange-200
-        coffee: '#92400e', // amber-800
-        'coffee-light': '#f59e0b', // amber-500
-        'custom-cream': '#F0E4D3', // new cream color as custom option
+        // Tech-Forward Design System - keeping coffee theme but modernized
+        primary: '#8B7355', // Main coffee brown
+        'primary-foreground': '#FFFFFF',
+        secondary: '#F0E4D3', // Cream
+        'secondary-foreground': '#2A2118', // Dark roast
+        background: '#F5F1EB', // Light cream background
+        foreground: '#2A2118', // Main text color (not pure black)
+        card: '#FFFFFF',
+        'card-foreground': '#2A2118',
+        accent: '#D4C5B0', // Muted accent
+        'accent-foreground': '#2A2118',
+        destructive: '#EF4444',
+        'destructive-foreground': '#FFFFFF',
+        border: '#E6DCC9', // Subtle borders
+        input: '#E6DCC9',
+        ring: '#8B7355',
+        
+        // Legacy support (gradually migrate away from these)
+        'primary-light': '#D4C5B0',
+        'primary-dark': '#2A2118',
+        cream: '#F0E4D3',
+        'cream-dark': '#D4C5B0',
+        coffee: '#8B7355',
+        'coffee-light': '#D4C5B0',
+        'custom-cream': '#F0E4D3',
         brown: {
-          500: '#8B4513',
-          600: '#654321',
+          500: '#8B7355',
+          600: '#2A2118',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Outfit', 'system-ui', 'sans-serif'], // Body text
+        heading: ['Space Grotesk', 'sans-serif'], // Headings - tech feel
+        accent: ['Playfair Display', 'serif'], // Testimonials, premium badges
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -35,6 +54,7 @@ export default {
         'hover-bounce': 'hoverBounce 0.6s ease-in-out',
         'icon-wiggle': 'iconWiggle 0.5s ease-in-out',
         'mobile-scroll': 'mobileScroll 0.3s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out', // New smooth scale animation
       },
       keyframes: {
         fadeIn: {
@@ -44,6 +64,10 @@ export default {
         slideUp: {
           '0%': { transform: 'translateY(30px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { opacity: '0', transform: 'scale(0.95)' },
+          '100%': { opacity: '1', transform: 'scale(1)' },
         },
         bounceLight: {
           '0%, 20%, 50%, 80%, 100%': { transform: 'translateY(0)' },
@@ -105,6 +129,9 @@ export default {
       },
       boxShadow: {
         '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
+        'soft': '0 8px 30px rgba(0, 0, 0, 0.04)', // Tech-forward soft shadow
+        'card': '0 2px 8px rgba(0, 0, 0, 0.06)', // Subtle card shadow
+        'hover': '0 12px 40px rgba(0, 0, 0, 0.08)', // Hover state shadow
       },
       transitionDuration: {
         '2000': '2000ms',
