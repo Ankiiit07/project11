@@ -108,9 +108,10 @@ All products have a `weight` property (in grams):
 - [x] Tracking timeline with checkpoints
 - [x] Auto-refresh tracking option
 - [x] Automatic Shiprocket order creation on checkout
-- [x] **NEW** Email notifications for shipment status updates (via Resend)
-- [x] **NEW** Order confirmation emails sent on checkout
-- [x] **NEW** Shiprocket webhook receiver for automatic status updates
+- [x] Email notifications for shipment status updates (via Resend)
+- [x] Order confirmation emails sent on checkout
+- [x] Shiprocket webhook receiver for automatic status updates
+- [x] **WhatsApp Business button** on homepage (+91 7979837079)
 
 ## User Personas
 - **Mumbai Customers**: Can choose Express (1-day) or Standard (2-3 days) delivery
