@@ -3,11 +3,10 @@
 @tailwind utilities;
 
 @layer base {
-  /* Smooth scrolling and performance optimizations */
+  /* Tech-Forward Design System - Global Styles */
   html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    /* Prevent zoom on input focus */
     font-size: 16px;
   }
   
@@ -15,9 +14,7 @@
   body {
     overflow-x: hidden;
     width: 100%;
-    /* Prevent horizontal scroll */
     position: relative;
-    /* Improve touch scrolling */
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     touch-action: manipulation;
@@ -51,10 +48,19 @@
     border: 0;
   }
   
-  /* Focus styles for better accessibility */
+  /* Focus styles for better accessibility - Tech-forward */
   *:focus {
     outline: 2px solid #8B7355;
-    outline-offset: 2px;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  
+  /* Headings use Space Grotesk font */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: #2A2118;
   }
   
   /* Skip link styles */

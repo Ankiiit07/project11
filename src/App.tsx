@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { QueryClientProvider } from 'react-query';
 import { HelmetProvider } from 'react-helmet-async';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import HeaderTechForward from './components/HeaderTechForward';
+import FooterTechForward from './components/FooterTechForward';
 import ErrorBoundary from './components/ErrorBoundary';
 import { CartProvider } from './context/CartContextOptimized';
 import { UserProvider } from './context/UserContext';
@@ -22,8 +22,6 @@ import { PageLoader } from './components/OptimizedLoader';
 import SkipLink from './components/SkipLink';
 import LiveRegion from './components/LiveRegion';
 import { useDevice } from './hooks/useDevice';
-const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
-const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage'));
 
 // Add service worker registration for PWA capabilities
 if ('serviceWorker' in navigator) {
@@ -52,16 +50,16 @@ if ('serviceWorker' in navigator) {
 }
 
 // Lazy load pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
+const HomePage = lazy(() => import('./pages/HomePageTechForward'));
+const ProductsPage = lazy(() => import('./pages/ProductsPageTechForward'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPageTechForward'));
+const CartPage = lazy(() => import('./pages/CartPageTechForward'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const InsightsPage = lazy(() => import('./pages/InsightsPage'));
-const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage'));
-const AccountPage = lazy(() => import('./pages/AccountPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
+const InsightsPage = lazy(() => import('./pages/InsightsPageTechForward'));
+const TestimonialsPage = lazy(() => import('./pages/TestimonialsPageTechForward'));
+const AccountPage = lazy(() => import('./pages/AccountPageTechForward'));
+const AboutPage = lazy(() => import('./pages/AboutPageTechForward'));
+const ContactPage = lazy(() => import('./pages/ContactPageTechForward'));
 const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
 const CustomerServicePage = lazy(() => import('./pages/CustomerServicePage'));
 const ShippingPolicyPage = lazy(() => import('./pages/ShippingPolicyPage'));
@@ -69,12 +67,20 @@ const ReturnPolicyPage = lazy(() => import('./pages/ReturnPolicyPage'));
 const TermsConditionsPage = lazy(() => import('./pages/TermsConditionsPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
 const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
-const OrdersPage = lazy(() => import('./pages/OrdersPage'));
-// const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage')); //
-// const OrderSystemDemo = lazy(() => import('./components/OrderSystemDemo')); //
+const OrdersPage = lazy(() => import('./pages/OrdersPageTechForward'));
+const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
+const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForward'));
 const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
 const SitemapPage = lazy(() => import('./pages/SitemapPage'));
+const FAQPage = lazy(() => import('./pages/FAQPage'));
+
+// Blog Posts
+const NitrogenPreservedCoffee = lazy(() => import('./pages/blog/NitrogenPreservedCoffee'));
+const BestPortableCoffeeTravellers = lazy(() => import('./pages/blog/BestPortableCoffeeTravellers'));
+const InstantVsBrewedCoffee = lazy(() => import('./pages/blog/InstantVsBrewedCoffee'));
+const HowToMakeCoffeeWithoutMachine = lazy(() => import('./pages/blog/HowToMakeCoffeeWithoutMachine'));
+const WhyArabicaCoffeeMatters = lazy(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
 
 
 
@@ -103,9 +109,9 @@ function App() {
               <ScrollToTop />
               <SkipLink />
               {/* <LiveRegion message="" /> */}
-              <div className="min-h-screen bg-cream flex flex-col transition-colors duration-300">
-                <Header />
-                <main id="main-content" className="flex-1 pt-20 pb-8" role="main">
+              <div className="min-h-screen bg-background flex flex-col transition-colors duration-300">
+                <HeaderTechForward />
+                <main id="main-content" className="flex-1 pt-0 pb-8" role="main">
                   <ErrorBoundary>
                     <Suspense fallback={<PageLoader />}>
                       <Routes>
@@ -132,12 +138,18 @@ function App() {
                         {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
+                        <Route path="/faq" element={<FAQPage />} />
+                        <Route path="/blog/what-is-nitrogen-preserved-coffee" element={<NitrogenPreservedCoffee />} />
+                        <Route path="/blog/best-portable-coffee-travellers-india" element={<BestPortableCoffeeTravellers />} />
+                        <Route path="/blog/instant-vs-brewed-coffee-difference" element={<InstantVsBrewedCoffee />} />
+                        <Route path="/blog/how-to-make-coffee-without-machine" element={<HowToMakeCoffeeWithoutMachine />} />
+                        <Route path="/blog/why-arabica-coffee-matters" element={<WhyArabicaCoffeeMatters />} />
                         <Route path="/orders/:id" element={<OrderDetailsPage />} />
                       </Routes>
                     </Suspense>
                   </ErrorBoundary>
                 </main>
-                <Footer />
+                <FooterTechForward />
                 
                 {/* Chat Bot */}
                 <ChatBot />
