@@ -13,6 +13,7 @@ import { UserProvider } from './context/UserContext';
 // import { ThemeProvider } from './context/ThemeContext';
 // Removed SupabaseProvider - using frontend-only approach
 import ChatBot from './components/ChatBot';
+import WhatsAppButton from './components/WhatsAppButton';
 // Removed SupabaseStatus - using frontend-only approach
 import NotificationSystem from './components/NotificationSystem';
 import PerformanceMonitor from './components/PerformanceMonitor';
@@ -141,7 +142,13 @@ function App() {
                 {/* Chat Bot */}
                 <ChatBot />
                 
-                {/* WhatsApp removed */}
+                {/* WhatsApp Business Button */}
+                <div className="fixed bottom-6 right-6 z-40">
+                  <WhatsAppButton 
+                    phoneNumber="+917979837079" 
+                    message="Hi! I'm interested in Cafe at Once products."
+                  />
+                </div>
                 
                 {/* Notification System */}
                 <NotificationSystem />
