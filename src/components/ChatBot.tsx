@@ -169,11 +169,12 @@ const ChatBot: React.FC = () => {
 
   return (
     <div className="chat-bot">
-      {/* Chat Toggle Button */}
+      {/* Chat Toggle Button - positioned above WhatsApp button */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-20 right-6 bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-40"
+        className="fixed bottom-24 right-6 bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-40"
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
+        data-testid="chatbot-button"
       >
         {isOpen ? (
           <X className="h-6 w-6" />
@@ -184,7 +185,7 @@ const ChatBot: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50">
+        <div className="fixed bottom-40 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50">
           {/* Header */}
           <div className="bg-primary text-white p-4 rounded-t-lg flex items-center justify-between">
             <div className="flex items-center space-x-2">

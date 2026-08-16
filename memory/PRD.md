@@ -1,15 +1,116 @@
 # Coffee@Once SEO Implementation - PRD
 
 ## Original Problem Statement
-Implement comprehensive SEO strategy for Coffee@Once (cafeatonce.com) - India's first nitrogen-preserved brewed Arabica coffee brand.
+1. Add shipping charges with order based on weight/quantity of items
+2. Add shipping estimates by pincode
+3. Add express shipping option with 1-day delivery only for Mumbai location
+4. Integrate Shiprocket for real-time order tracking
+5. Integrate Shiprocket "Create Order" API for automatic AWB generation
+6. Email notifications when shipment status changes
+7. Webhook receiver for automatic status updates from Shiprocket
 
-## Architecture & Tech Stack
-- **Framework**: Vite + React + TypeScript
-- **Styling**: Tailwind CSS
-- **Routing**: React Router DOM
-- **State Management**: Zustand, React Query
-- **Animation**: Framer Motion
-- **Deployment**: Netlify
+## Architecture & Implementation
+
+### Shipping Calculator (`/app/src/utils/shippingCalculator.ts`)
+- **Base Rate**: ₹50 (includes first 500g)
+- **Per KG Rate**: ₹30 per additional kg
+- **Per Item Rate**: ₹10 per additional item after first
+- **Free Shipping Threshold**: Orders above ₹1000
+- **Express Shipping**: ₹99 (Mumbai only)
+
+### Shiprocket Integration (`/app/backend/server.py`)
+- FastAPI backend for Shiprocket API integration
+- Real-time tracking by AWB code
+- Tracking by order ID
+- Courier serviceability check
+- Shipment creation with automatic AWB assignment
+- AWB generation
+
+**API Endpoints:**
+- `GET /api/shiprocket/tracking/{awb_code}` - Track by AWB
+- `GET /api/shiprocket/tracking/order/{order_id}` - Track by order ID
+- `POST /api/shiprocket/shipment/create` - Create shipment
+- `POST /api/shiprocket/order/create-with-awb` - Create order + assign AWB automatically
+- `GET /api/shiprocket/couriers` - Check courier availability
+- `POST /api/shiprocket/awb/generate` - Generate AWB
+- `GET /api/shiprocket/pickup-locations` - Get pickup locations
+
+### Email Notification Service (`/app/backend/server.py`)
+- Resend API integration for transactional emails
+- Beautiful HTML email templates with status-based styling
+- Non-blocking async email sending
+
+**Email Endpoints:**
+- `POST /api/notifications/shipment-status` - Send shipment status update email
+- `POST /api/notifications/order-confirmation` - Send order confirmation email
+
+### Shiprocket Webhook Integration (`/app/backend/server.py`)
+- Receives real-time status updates from Shiprocket
+- Automatically sends email notifications on status change
+- Caches customer info for webhook notifications
+
+**Webhook Endpoints:**
+- `POST /api/webhooks/shiprocket` - Receives Shiprocket status webhooks
+- `GET /api/webhooks/shiprocket/info` - Webhook setup instructions
+
+**Shiprocket Credentials:**
+- Stored in `/app/backend/.env` (SHIPROCKET_EMAIL, SHIPROCKET_PASSWORD)
+
+**Resend Email Credentials:**
+- API Key: Stored in `/app/backend/.env` (RESEND_API_KEY)
+- Sender: onboarding@resend.dev (Test mode)
+
+### Delivery Zones
+| Zone | Pincodes | Standard Days | Express Available | Express Days |
+|------|----------|---------------|-------------------|--------------|
+| Mumbai | 400001-400104, 401101-401210 | 2-3 | Yes | 1 |
+| Metro Cities | Delhi, Bangalore, Chennai, Kolkata, Hyderabad, Pune, Ahmedabad | 3-5 | No | - |
+| Rest of India | All others | 5-7 | No | - |
+
+### Product Weight
+All products have a `weight` property (in grams):
+- Latte Concentrate: 100g
+- Americano: 100g
+- Cold Brew: 120g
+- Mocha: 110g
+- Jasmine Tea: 80g
+- Espresso Shot: 50g
+- Corn Silk: 50g
+- Trial Pack: 300g
+
+### Updated Files
+1. `/app/src/data/products.ts` - Added weight property to all products
+2. `/app/src/context/CartContextOptimized.tsx` - Added weight to CartItem interface
+3. `/app/src/utils/shippingCalculator.ts` - Shipping calculation with pincode zones & express option
+4. `/app/src/pages/CartPage.tsx` - Shows shipping with weight breakdown
+5. `/app/src/pages/CheckoutPage.tsx` - Delivery options UI + Shiprocket order creation + Email notifications
+6. `/app/src/pages/ThankYouPage.tsx` - Shows shipping in order confirmation
+7. `/app/src/pages/OrderDetailsPage.tsx` - Shows shipping breakdown
+8. `/app/src/pages/OrderTrackingPage.tsx` - Real-time Shiprocket tracking page
+9. `/app/backend/server.py` - FastAPI backend for Shiprocket + Email + Webhook integration
+10. `/app/src/App.tsx` - Added /track route
+11. `/app/src/components/Footer.tsx` - Added "Track Your Order" link
+12. `/app/src/services/shiprocketService.ts` - Frontend service for Shiprocket API calls
+13. `/app/src/services/emailService.ts` - **NEW** - Frontend service for email notifications
+
+## What's Been Implemented
+- [x] Weight-based shipping calculation
+- [x] Quantity-based shipping calculation  
+- [x] Free shipping for orders above ₹1000
+- [x] Pincode validation (6-digit Indian pincodes)
+- [x] Zone-based delivery estimates
+- [x] Express Delivery option for Mumbai (₹99, next day)
+- [x] Delivery date estimates shown at checkout
+- [x] Dynamic shipping option selection
+- [x] Order summary updates with selected shipping method
+- [x] Shiprocket API integration for tracking
+- [x] Real-time shipment tracking page
+- [x] Tracking timeline with checkpoints
+- [x] Auto-refresh tracking option
+- [x] Automatic Shiprocket order creation on checkout
+- [x] **NEW** Email notifications for shipment status updates (via Resend)
+- [x] **NEW** Order confirmation emails sent on checkout
+- [x] **NEW** Shiprocket webhook receiver for automatic status updates
 
 ## User Personas
 1. **Premium Frequent Travellers** - Flights, remote locations, hotels
@@ -17,81 +118,44 @@ Implement comprehensive SEO strategy for Coffee@Once (cafeatonce.com) - India's 
 3. **Coffee Purists** - Refuse to compromise on taste
 
 ## Core Requirements (Static)
-- Meta titles & descriptions for all pages
-- Organization, Product, HowTo, FAQPage schema (JSON-LD)
-- Internal linking with exact anchor text
-- Blog post stubs with SEO metadata
-- Image alt text optimization
-
-## What's Been Implemented (Jan 2026)
-
-### 1. Meta Tags & Schema Markup
-- [x] Updated `index.html` with new meta title, description, and Organization schema
-- [x] Enhanced `SEO.tsx` component with:
-  - Organization schema
-  - Product schema with additionalProperty
-  - HowTo schema
-  - FAQPage schema
-  - Breadcrumb schema
-  - Updated brand name from "@once Business" to "Coffee@Once"
-
-### 2. Homepage SEO Optimization
-- [x] Core tagline: "Real Coffee. No Machine. No Compromise. Just Press."
-- [x] Updated hero copy with nitrogen-preservation messaging
-- [x] Added key product benefits: 12-month shelf life, TSA safe, any water temp
-- [x] HowTo schema for using press tube
-
-### 3. FAQ Page Created
-- [x] New `/faq` route with 8 comprehensive FAQs
-- [x] FAQPage schema markup
-- [x] Covers: product basics, nitrogen preservation, shelf life, TSA compliance, ingredients
-
-### 4. Blog Post Stubs Created (5 posts)
-1. `/blog/what-is-nitrogen-preserved-coffee` - Featured article
-2. `/blog/best-portable-coffee-travellers-india` - Travel guide
-3. `/blog/instant-vs-brewed-coffee-difference` - Education
-4. `/blog/how-to-make-coffee-without-machine` - Brewing guide with HowTo schema
-5. `/blog/why-arabica-coffee-matters` - Coffee knowledge
-
-### 5. Internal Linking Strategy
-- [x] Homepage links to FAQ and blog posts
-- [x] Footer includes FAQ and top 3 blog posts
-- [x] Insights page links to all blog articles
-- [x] Product pages link to FAQ
-- [x] About page links to nitrogen preservation blog post
-- [x] Shop page links to FAQ
-
-### 6. Page-Specific SEO
-- [x] Products page: Updated title, description
-- [x] Product detail pages: Product + HowTo + FAQ schema
-- [x] About page: SEO meta tags and internal links
-- [x] Insights/Blog page: SEO meta and article links
-
-### 7. Image Alt Text
-- [x] Hero image: "Coffee@Once nitrogen-preserved Arabica coffee press tube being held"
-- [x] Product images: Descriptive alt text pattern
+- Shipping calculated based on product weight and quantity
+- Free shipping threshold at ₹1000
+- Express delivery ONLY for Mumbai addresses
+- Display delivery estimates based on pincode
+- Real-time order tracking via Shiprocket
+- Email notifications when shipment status changes
 
 ## Prioritized Backlog
 
-### P0 - Critical (Next Sprint)
-- [ ] Write full body content for "What Is Nitrogen-Preserved Coffee?" blog post
-- [ ] Submit sitemap to Google Search Console
-- [ ] Verify rich results with Google's Rich Results Test
+### P0 - Completed
+- Weight-based shipping calculation
+- Free shipping threshold
+- Pincode-based delivery estimates
+- Express shipping for Mumbai
+- Shiprocket tracking integration
+- Shiprocket order creation on checkout
+- Email notifications (Resend integration)
+- Shiprocket webhook for automatic status updates
 
-### P1 - High Priority
-- [ ] Write remaining blog post body content
-- [ ] Add product-specific FAQs to each product page
-- [ ] Implement product comparison table
-- [ ] Add testimonials with Review schema
+### P1 - In Progress / Next
+- [ ] Order History Tracking - Show AWB number and tracking link in user's order history page
+- [ ] Pickup location configuration in admin panel
 
-### P2 - Medium Priority
-- [ ] Create dedicated landing pages for variants (Americano, Latte, Mocha)
-- [ ] Add collection/category page copy
-- [ ] Implement breadcrumb navigation UI
+### P2 - Future
+- [ ] SMS notifications for delivery updates (Twilio integration)
+- [ ] Multiple delivery addresses per user
+- [ ] Gift wrapping option
+- [ ] Delivery notes/instructions
+- [ ] Live map tracking
 
-## Next Tasks
-1. Test all schema markup with Google's Rich Results Test
-2. Verify meta tags with metatags.io
-3. Write complete blog post content (priority: nitrogen-preserved coffee)
-4. Publish second blog post within 2 weeks
-5. Commit to monthly blog publishing schedule
+## Notes
+- Shiprocket integration is fully functional with live credentials
+- Order creation automatically assigns AWB when couriers are available
+- If AWB assignment fails, orders are still created and AWB can be assigned manually
+- The tracking page gracefully handles "AWB not found" errors
+- Email notifications use Resend API in test mode (only verified emails work)
+- Webhook URL must be configured in Shiprocket Dashboard: Settings > API > Webhooks
+- **IMPORTANT**: Shiprocket account lacks warehouse configuration, so AWB/shipment_id may be null
+
+---
+Last Updated: 2026-08-16

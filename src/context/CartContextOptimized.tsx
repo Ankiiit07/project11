@@ -7,7 +7,6 @@ export interface CartItem {
   image: string;
   quantity: number;
   type: 'single' | 'subscription';
-  weight?: number; // Weight in grams for shipping calculation
 }
 
 interface CartState {

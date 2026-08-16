@@ -12,22 +12,21 @@ import {
 } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import { useOrders } from "../hooks/useOrders";
-import { useAppActions } from "../store";
 
 const AccountPage: React.FC = () => {
- console.log("AccountPage loaded successfully!");
+  // Scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
-  const { user, login, register, isAuthenticated, loading, logout } = useUser();
-const { getOrdersByCustomer, loading: ordersLoading } = useOrders();
-const [userOrders, setUserOrders] = useState([]);
+  const { user, logout, login, register, isAuthenticated, loading } = useUser();
+  const { orders, loading: ordersLoading } = useOrders();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(
     searchParams.get("tab") || "profile"
   );
   const [isLogin, setIsLogin] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formMessage, setFormMessage] = useState(""); // Add this
-const [messageType, setMessageType] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,70 +34,19 @@ const [messageType, setMessageType] = useState("");
   });
   // For order details modal
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  
-  // Scroll to top when component mounts
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-  
-React.useEffect(() => {
-    const fetchUserOrders = async () => {
-      if (user?.email) {
-        try {
-          const orders = await getOrdersByCustomer(user.email);
-          setUserOrders(orders);
-        } catch (error) {
-          console.error('Error fetching user orders:', error);
-          setUserOrders([]);
-        }
-      }
-    };
-    
-    fetchUserOrders();
-  }, [user?.email, getOrdersByCustomer]);
-  
-React.useEffect(() => {
-    if (!isAuthenticated) {
-      setFormData({ name: "", email: "", password: "" });
-      setFormMessage("");
-      setMessageType("");
-    }
-  }, [isAuthenticated]);
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setFormMessage("");
     try {
       if (isLogin) {
         await login(formData.email, formData.password);
-        // Login success - user will be redirected automatically by UserContext
-      setFormMessage("Login successful! Welcome back.");
-      setMessageType("success");
       } else {
         await register(formData.name, formData.email, formData.password);
-        setFormMessage("Registration successful! Please check your email to verify your account before signing in.");
-      setMessageType("success");
-
-        setFormData({ name: "", email: "", password: "" });
       }
     } catch (error) {
       console.error("Authentication error:", error);
-       let errorMessage = "An error occurred. Please try again.";
-    
-    if (error?.message?.includes("Invalid login credentials")) {
-      errorMessage = "Invalid email or password. Please check and try again.";
-    } else if (error?.message?.includes("Email not confirmed")) {
-      errorMessage = "Please check your email and click the verification link before signing in.";
-    } else if (error?.message?.includes("User already registered")) {
-      errorMessage = "An account with this email already exists. Try signing in instead.";
-    } else if (error?.message) {
-      errorMessage = error.message;
-    }
-    
-    setFormMessage(errorMessage);
-    setMessageType("error");
+      // You could add error state here to show to user
     } finally {
       setIsSubmitting(false);
     }
@@ -134,16 +82,6 @@ React.useEffect(() => {
                   ? "Sign in to manage your coffee subscriptions"
                   : "Join us for exclusive benefits and personalized coffee delivery"}
               </p>
-              {/* Add this message display */}
-  {formMessage && (
-    <div className={`mt-4 p-3 rounded-lg text-sm ${
-      messageType === "success" 
-        ? "bg-green-100 text-green-800 border border-green-200" 
-        : "bg-red-100 text-red-800 border border-red-200"
-    }`}>
-      {formMessage}
-    </div>
-  )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -205,15 +143,10 @@ React.useEffect(() => {
             </form>
 
             <div className="mt-6 text-center">
-              
-<button
-  onClick={() => {
-    setIsLogin(!isLogin);
-    setFormMessage(""); // Clear messages when switching
-    setFormData({ name: "", email: "", password: "" }); // Clear form too
-  }}
-  className="text-primary hover:text-primary-dark font-medium"
->
+              <button
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-primary hover:text-primary-dark font-medium"
+              >
                 {isLogin
                   ? "Don't have an account? Sign up"
                   : "Already have an account? Sign in"}
@@ -272,19 +205,12 @@ React.useEffect(() => {
               })}
 
               <button
-  onClick={async () => {
-    // Clear form state immediately
-    setFormData({ name: "", email: "", password: "" });
-    setFormMessage("");
-    setMessageType("");
-    // Then logout
-    await logout();
-  }}
-  className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors mt-6"
->
-  <LogOut className="h-5 w-5" />
-  <span>Logout</span>
-</button>
+                onClick={logout}
+                className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors mt-6"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Logout</span>
+              </button>
             </nav>
           </div>
 
@@ -348,9 +274,9 @@ React.useEffect(() => {
                   <div className="flex justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                ) : userOrders.length > 0 ? (
+                ) : orders.length > 0 ? (
                   <div className="space-y-4">
-                    {userOrders.map((order) => (
+                    {orders.map((order) => (
                       <div
                         key={order.id}
                         className="border border-gray-200 rounded-lg p-4"
@@ -358,11 +284,11 @@ React.useEffect(() => {
                         <div className="flex justify-between items-start mb-3">
                           <div>
                             <p className="font-medium text-gray-900">
-                              Order #{order.id.slice(-8)}
+                              Order #{order.orderNumber}
                             </p>
                             <p className="text-sm text-gray-600">
                               Placed on{" "}
-                             {new Date(order.created_at).toLocaleDateString()}
+                              {new Date(order.date).toLocaleDateString()}
                             </p>
                           </div>
                           <span

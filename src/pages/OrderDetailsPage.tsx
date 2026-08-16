@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
@@ -13,21 +13,59 @@ import { Order } from "../services/orderService";
 import { createShiprocketOrder } from "../services/shiprocketService";
 
 const OrderDetailsPage: React.FC = () => {
+  const handleShipOrder = async () => {
+    if (!order) return;
+
+    try {
+      const response = await fetch("/api/shiprocket/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          order_id: order.id,
+          order_date: new Date().toISOString(),
+          pickup_location: "Primary",
+          billing_customer_name: order.customerInfo?.firstName || "",
+          billing_last_name: order.customerInfo?.lastName || "",
+          billing_address: order.customerInfo?.address || "",
+          billing_city: order.customerInfo?.city || "",
+          billing_pincode: order.customerInfo?.pincode || "000000",
+          billing_state: order.customerInfo?.state || "",
+          billing_country: "India",
+          billing_email: order.customerInfo?.email || "",
+          billing_phone: order.customerInfo?.phone || "",
+          order_items: order.items.map((item) => ({
+            name: item.name,
+            sku: item.id,
+            units: item.quantity,
+            selling_price: item.price,
+          })),
+          payment_method:
+            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
+          sub_total: order.total,
+          length: 10,
+          breadth: 10,
+          height: 10,
+          weight: 0.5,
+        }),
+      }).then((res) => res.json());
+
+      console.log("🚚 Shiprocket Order Created:", response);
+      alert("Shiprocket order created successfully!");
+    } catch (error) {
+      console.error("Shiprocket error:", error);
+      alert("Failed to create Shiprocket order.");
+    }
+  };
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { orders, updateOrderStatus, deleteOrder } = useOrders();
 
   const order = orders.find((o) => o.id === id);
+
   const [status, setStatus] = useState<Order["status"]>(
     order?.status || "pending"
   );
-  const [shiprocketData, setShiprocketData] = useState<any>(null);
-
-  useEffect(() => {
-    if (order && (order as any).shiprocket_data) {
-      setShiprocketData((order as any).shiprocket_data);
-    }
-  }, [order]);
 
   if (!order) {
     return (
@@ -42,41 +80,46 @@ const OrderDetailsPage: React.FC = () => {
     );
   }
 
-  
-  // Map fields to UI-friendly variables
-const customer = order.customer_info || {};
-const shipping = order.shipping_address || {};
-
   const handleStatusChange = async () => {
     try {
-      // 1️⃣ Update local order status
-      await updateOrderStatus(order.id, status);
+      // 1️⃣ Update order status in your local system
+      updateOrderStatus(order.id, status);
 
-      // 2️⃣ If status is shipped → send to Shiprocket
+      // 2️⃣ If status is shipped → also create Shiprocket order
       if (status === "shipped") {
-        try {
-          const payloadResponse = await createShiprocketOrder(order);
-          setShiprocketData(payloadResponse);
+        const response = await createShiprocketOrder({
+          order_id: order.id,
+          order_date: new Date().toISOString(),
+          pickup_location: "Primary", // must match pickup location in Shiprocket panel
+          billing_customer_name: order.customerInfo?.firstName || "",
+          billing_last_name: order.customerInfo?.lastName || "",
+          billing_address: order.customerInfo?.address || "",
+          billing_city: order.customerInfo?.city || "",
+          billing_pincode: order.customerInfo?.pincode || "000000",
+          billing_state: order.customerInfo?.state || "",
+          billing_country: "India",
+          billing_email: order.customerInfo?.email || "",
+          billing_phone: order.customerInfo?.phone || "",
+          order_items: order.items.map((item) => ({
+            name: item.name,
+            sku: item.id,
+            units: item.quantity,
+            selling_price: item.price,
+          })),
+          payment_method:
+            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
+          sub_total: order.total,
+          length: 10,
+          breadth: 10,
+          height: 10,
+          weight: 0.5,
+        });
 
-          // 3️⃣ Save Shiprocket response in Supabase
-          await updateOrderStatus(order.id, status); // already updated status
-          await fetch("/.netlify/functions/updateOrderShiprocket", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              orderId: order.id,
-              shiprocketData: payloadResponse,
-            }),
-          });
-
-          alert("Shiprocket order created successfully!");
-        } catch (err) {
-          console.error("❌ Shiprocket error:", err);
-          alert("Failed to create Shiprocket order.");
-        }
+        console.log("🚚 Shiprocket order created:", response);
+        alert("Shiprocket order created successfully!");
       }
 
-      // 4️⃣ Navigate back to orders
+      // 3️⃣ Navigate back to orders list
       navigate("/orders");
     } catch (error) {
       console.error("Error updating order:", error);
@@ -113,91 +156,45 @@ const shipping = order.shipping_address || {};
           <h2 className="text-2xl font-bold mb-4">Order #{order.id}</h2>
 
           {/* Customer Info */}
-<div className="mb-4">
-  <h4 className="font-semibold text-gray-800 mb-2">Customer Info</h4>
-  <p>
-    <span className="font-medium">Name:</span> {customer.firstName}{" "}
-    {customer.lastName}
-  </p>
-  <p>
-    <span className="font-medium">Email:</span> {customer.email}
-  </p>
-  <p>
-    <span className="font-medium">Phone:</span> {customer.phone}
-  </p>
-</div>
+          <div className="mb-6">
+            <h3 className="font-semibold text-lg mb-2">Customer</h3>
+            <p>
+              {order.customerInfo?.firstName} {order.customerInfo?.lastName}
+            </p>
+            <p>{order.customerInfo?.email}</p>
+            <p>{order.customerInfo?.phone}</p>
+            <p>{order.customerInfo?.address}</p>
+          </div>
 
-{/* Shipping Info */}
-<div className="mb-4">
-  <h4 className="font-semibold text-gray-800 mb-2">Shipping Address</h4>
-  <p>{shipping?.address || 'No address provided'}</p>
-  <p>
-    {shipping?.city || ''}{shipping?.city && shipping?.state ? ', ' : ''}{shipping?.state || ''}{(shipping?.city || shipping?.state) && shipping?.zipCode ? ' - ' : ''}{shipping?.zipCode || ''}
-  </p>
-  <p>{shipping?.country || ''}</p>
-</div>
-
-          {/* Order Items */}
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2">Items</h4>
+          {/* Items */}
+          <div className="mb-6">
+            <h3 className="font-semibold text-lg mb-2">Items</h3>
             <ul className="list-disc list-inside text-gray-700">
               {order.items.map((item, idx) => (
                 <li key={idx}>
-                  {item.name} × {item.quantity} — ₹{item.price.toFixed(2)}
+                  {item.name} × {item.quantity} — ₹{item.price}
                 </li>
               ))}
             </ul>
           </div>
 
-         {/* Payment Info */}
-<div className="mb-4">
-  <h4 className="font-semibold text-gray-800 mb-2">Payment & Charges</h4>
-  <p>
-    <span className="font-medium">Method:</span>{" "}
-    {order.payment_method?.toUpperCase() || "N/A"}
-  </p>
-  <p>
-    <span className="font-medium">Status:</span>{" "}
-    {order.payment_status || "N/A"}
-  </p>
-  <div className="mt-2 pt-2 border-t border-gray-100">
-    <p>
-      <span className="font-medium">Subtotal:</span> ₹{order.subtotal?.toFixed(2) || '0.00'}
-    </p>
-    <p>
-      <span className="font-medium">Shipping:</span>{" "}
-      <span className={order.shipping === 0 ? "text-green-600" : ""}>
-        {order.shipping === 0 ? "Free" : `₹${order.shipping?.toFixed(2) || '0.00'}`}
-      </span>
-    </p>
-    {order.tax > 0 && (
-      <p>
-        <span className="font-medium">Tax:</span> ₹{order.tax?.toFixed(2) || '0.00'}
-      </p>
-    )}
-    {order.discount > 0 && (
-      <p>
-        <span className="font-medium">Discount:</span> -₹{order.discount?.toFixed(2) || '0.00'}
-      </p>
-    )}
-    <p className="text-lg font-semibold mt-2">
-      <span className="font-medium">Total:</span> ₹{order.total.toFixed(2)}
-    </p>
-  </div>
-</div>
-
-          {/* Shiprocket Payload Preview */}
-          {shiprocketData && (
-            <div className="mt-4 bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h4 className="font-semibold mb-2">Mapped Shiprocket Payload</h4>
-              <pre className="text-xs text-gray-700 overflow-x-auto">
-                {JSON.stringify(shiprocketData, null, 2)}
-              </pre>
-            </div>
-          )}
+          {/* Payment Info */}
+          <div className="mb-6">
+            <h3 className="font-semibold text-lg mb-2">Payment</h3>
+            <p>
+              Method:{" "}
+              <span className="font-medium">
+                {order.paymentInfo?.method
+                  ? order.paymentInfo.method.toUpperCase()
+                  : "N/A"}
+              </span>
+            </p>
+            <p>Status: {order.paymentInfo?.status || "unknown"}</p>
+            <p>Total: ₹{order.total.toFixed(2)}</p>
+          </div>
 
           {/* Order Status Update */}
-          <div className="mt-6">
+          <div className="mb-6">
             <h3 className="font-semibold text-lg mb-2">Update Status</h3>
             <select
               value={status}

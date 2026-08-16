@@ -64,8 +64,13 @@ const OrderTrackingPage: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Get backend URL - shiprocket API runs on port 8001
-  const SHIPROCKET_API_URL = import.meta.env.VITE_SHIPROCKET_API_URL || 'http://localhost:8001';
+  // Get backend URL dynamically
+  const getApiUrl = () => {
+    if (typeof window !== 'undefined' && window.location.hostname.includes('preview.emergentagent.com')) {
+      return `https://${window.location.hostname}`;
+    }
+    return import.meta.env.VITE_SHIPROCKET_API_URL || 'http://localhost:8001';
+  };
 
   const fetchTracking = useCallback(async (code: string) => {
     if (!code.trim()) return;
@@ -74,7 +79,8 @@ const OrderTrackingPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`${SHIPROCKET_API_URL}/api/shiprocket/tracking/${code.trim()}`);
+      const apiUrl = getApiUrl();
+      const response = await fetch(`${apiUrl}/api/shiprocket/tracking/${code.trim()}`);
       const data = await response.json();
       
       if (data.success) {
@@ -90,7 +96,7 @@ const OrderTrackingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [SHIPROCKET_API_URL]);
+  }, []);
 
   // Auto-refresh effect
   useEffect(() => {

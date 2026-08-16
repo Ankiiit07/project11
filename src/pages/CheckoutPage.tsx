@@ -37,6 +37,12 @@ import {
   ShippingMethod,
   ShippingOption,
 } from "../utils/shippingCalculator";
+import { 
+  createShiprocketOrder, 
+  calculateShippingWeight, 
+  formatOrderDate 
+} from "../services/shiprocketService";
+import { sendOrderConfirmationEmail } from "../services/emailService";
 
 const CheckoutPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -190,7 +196,71 @@ const CheckoutPage: React.FC = () => {
     setOrderDetails(newOrder);
     setPaymentSuccess(true);
 
-    await sendOrderConfirmationEmail(newOrder, customerInfo);
+    // Create order in Shiprocket for shipping
+    let shiprocketResult = { awb_code: undefined, courier_name: undefined, estimated_delivery: undefined };
+    try {
+      const shiprocketOrderData = {
+        order_id: newOrder.id,
+        order_date: formatOrderDate(new Date()),
+        customer_name: `${formData.firstName} ${formData.lastName}`,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        customer_address: formData.address,
+        customer_city: formData.city,
+        customer_state: formData.state,
+        customer_pincode: formData.zipCode,
+        customer_country: "India",
+        items: cartState.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          sku: `CAO-${item.id}`,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        payment_method: 'prepaid' as const,
+        sub_total: cartState.total,
+        shipping_charges: shipping,
+        weight: calculateShippingWeight(cartState.items),
+      };
+
+      console.log("📦 Creating Shiprocket order:", shiprocketOrderData);
+      shiprocketResult = await createShiprocketOrder(shiprocketOrderData);
+      
+      if (shiprocketResult.success) {
+        console.log("✅ Shiprocket order created:", shiprocketResult);
+        notification.success(`Order shipped via ${shiprocketResult.courier_name || 'courier'}. AWB: ${shiprocketResult.awb_code || 'Pending'}`);
+      } else {
+        console.warn("⚠️ Shiprocket order creation failed:", shiprocketResult);
+        // Don't fail the main order - shipping will be handled manually
+      }
+    } catch (shiprocketError) {
+      console.error("❌ Shiprocket integration error:", shiprocketError);
+      // Don't fail the main order - shipping will be handled manually
+    }
+
+    // Send order confirmation email via new email service
+    try {
+      const emailResult = await sendOrderConfirmationEmail({
+        recipient_email: formData.email,
+        customer_name: `${formData.firstName} ${formData.lastName}`,
+        order_id: newOrder.id,
+        awb_code: shiprocketResult.awb_code,
+        status: 'PENDING',
+        status_description: 'Order Confirmed',
+        courier_name: shiprocketResult.courier_name,
+        estimated_delivery: shiprocketResult.estimated_delivery || deliveryEstimate.replace('Delivery by ', '').replace('Delivery between ', ''),
+        tracking_url: shiprocketResult.awb_code ? `https://www.shiprocket.in/shipment-tracking/?awb=${shiprocketResult.awb_code}` : undefined,
+      });
+      
+      if (emailResult.success) {
+        console.log("📧 Order confirmation email sent:", emailResult);
+      } else {
+        console.warn("⚠️ Email notification failed:", emailResult);
+      }
+    } catch (emailError) {
+      console.error("❌ Email service error:", emailError);
+      // Don't fail the main order - email is non-critical
+    }
 
     await updateProfile({
       name: `${formData.firstName} ${formData.lastName}`,
@@ -623,7 +693,7 @@ const CheckoutPage: React.FC = () => {
                     </h3>
                     <p className="text-sm text-amber-700 leading-relaxed">
                       Your payment information is encrypted and secure. We use
-                      Razorpay's industry-leading security measures to protect
+                      Razorpay&apos;s industry-leading security measures to protect
                       your data. We never store your card details.
                     </p>
                   </div>
@@ -878,7 +948,7 @@ const CheckoutPage: React.FC = () => {
                       </span>
                     </div>
                     <p className="text-sm text-green-700 mt-1">
-                      You're saving ₹{shippingResult.breakdown.discount} on shipping
+                      You&apos;re saving ₹{shippingResult.breakdown.discount} on shipping
                     </p>
                   </div>
                 )}

@@ -1,0 +1,47 @@
+{
+  "summary": "Backend-only testing of Shiprocket integration on http://localhost:8001 (preview URL is unavailable per agent note). Executed 8 pytest tests covering health, pickup locations, courier serviceability, tracking, and create-order-with-AWB endpoints. All 8 tests passed. Shiprocket authentication and API calls work end-to-end; order creation returns success=True but shipment_id/AWB are null (expected due to unconfigured warehouse per agent note).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "/api/shiprocket/order/create-with-awb",
+        "issue": "Shiprocket returns null shiprocket_order_id AND null shipment_id because no warehouse is configured on the Shiprocket account. Endpoint responds success=True with message 'Order created but shipment ID not generated'. This is an account/config issue, not a code bug, but end-users will not get AWB. Consider adding a clearer error/warning when shipment_id is null."
+      },
+      {
+        "endpoint": "/api/shiprocket/order/create-with-awb",
+        "issue": "Shiprocket rejects order_date older than 6 months. Frontend should always send current date (currently only checked implicitly). Also strict phone-number validation upstream — invalid phone (e.g. all 9s) is rejected with 422 by Shiprocket; wrap this into a clean 400 response for the client."
+      },
+      {
+        "endpoint": "/api/shiprocket/couriers",
+        "issue": "Endpoint uses query params pickup_pincode/delivery_pincode while Shiprocket upstream uses pickup_postcode/delivery_postcode. Inconsistent naming may confuse frontend devs — document or rename."
+      }
+    ]
+  },
+  "frontend_issues": {},
+  "test_report_links": [
+    "/app/backend/tests/test_shiprocket.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Configure a pickup/warehouse location in Shiprocket dashboard so shipment_id and AWB can be generated. Without this, the entire AWB flow is a no-op in production.",
+    "In /api/shiprocket/order/create-with-awb, forward upstream 4xx validation errors (invalid phone, stale order_date) as structured 400 responses instead of returning success=False + generic message so the frontend can show actionable errors.",
+    "Consider marking response as success=False when shiprocket_order_id is null; currently returns success=True even when nothing shippable was created."
+  ],
+  "critical_code_review_comments": [
+    "server.py is 885 lines — should be split into routers (health, tracking, orders, couriers) and a shiprocket client module.",
+    "Hardcoded pickup_pincode='400001' in create_order_with_awb (line 732). Should come from actual pickup location settings or request payload.",
+    "Duplicate order-creation branches (lines 722-728, 749-756, 780-789, 804-815) can be consolidated with a helper — DRY violation.",
+    "get_shiprocket_token has no in-memory cache visible in the reviewed slice; if not cached, every request triggers a fresh login (Shiprocket tokens are valid for 10 days).",
+    "Bare `except Exception as e` swallows details in multiple places; add structured logging.",
+    "No pydantic validation on customer_phone / customer_pincode / customer_email in CreateOrderWithAWBRequest — leads to opaque 422 from Shiprocket instead of clean 400 to caller."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_shiprocket.py"
+  ],
+  "success_rate": {"backend": "100% (8/8 pytest tests)", "frontend": "N/A (backend-only run)"},
+  "seed_data_creation": "None. Tests create ephemeral TEST_ORDER_<ts> orders via Shiprocket; not persisted locally.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Preview URL was unavailable during this run; used http://localhost:8001. Pytest installed via pip --break-system-packages because system Python is used (per agent note about corrupted venv). Test file at /app/backend/tests/test_shiprocket.py can be reused. Shiprocket account has NO warehouse configured — expect null AWB/shipment_id in create-order response until fixed on the Shiprocket dashboard. Frontend was not tested in this iteration.",
+  "rca of the issue": "N/A — no functional bugs found in code. AWB=null is an external Shiprocket account configuration issue (no warehouse) confirmed by main agent."
+}

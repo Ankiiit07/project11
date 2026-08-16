@@ -26,231 +26,91 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  console.log("UserProvider component is rendering");
-  const { user, isLoading, setUser, setLoading, setAuthenticated } = useAppStore((state) => ({
-  user: state.user,
-  isLoading: state.isLoading,
-  setUser: state.setUser,
-  setLoading: state.setLoading,
-  setAuthenticated: state.setAuthenticated,
-}));
-  console.log("UserContext render - isLoading:", isLoading); // Add this
-console.log("UserContext render - user:", user); // Add this
+  const { user, isLoading, setUser, setLoading, setAuthenticated } =
+    useAppStore();
   const {
     setUser: setStoreUser,
     setAuthenticated: setStoreAuthenticated,
     logout: clearStore,
   } = useAppActions();
 
-  // ✅ refresh user and ensure profile row exists
-  // Around line 35, replace the entire refreshUser function:
-const refreshUser = async () => {
-  console.log("refreshUser START"); // Add this
-  setLoading(true);
-  
-  // Add timeout to prevent infinite loading
-  const timeoutId = setTimeout(() => {
-    console.log("refreshUser TIMEOUT - forcing loading to false");
-    setLoading(false);
-  }, 5000); // 5 second timeout
-  
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    console.log("supabase user:", user); // Add this
+  // Load user session + profile on mount
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      console.log("profile data:", profile); // Add this
-
-      if (!profile) {
-        const { data: newProfile, error: insertError } = await supabase
-          .from("profiles")
-          .insert([{ id: user.id, email: user.email, role: "customer" }])
-          .select()
-          .single();
-
-        if (insertError) {
-          console.error("Profile insert error:", insertError);
-          setStoreUser({ id: user.id, email: user.email, name: "" });
-        } else {
-          setStoreUser(newProfile);
-        }
-      } else {
-        setStoreUser(profile);
-      }
-
-      setStoreAuthenticated(true);
-    } else {
-      setStoreUser(null);
-      setStoreAuthenticated(false);
-    }
-  } catch (error) {
-    console.error("Refresh user error:", error);
-    setStoreUser(null);
-    setStoreAuthenticated(false);
-  } finally {
-    clearTimeout(timeoutId); // Clear timeout if completed normally
-    console.log("refreshUser END - setting loading to false"); // Add this
-    setLoading(false);
-  }
-};
-
-  // ✅ Load user session + profile on mount
- useEffect(() => {
-  console.log("UserContext useEffect running");
-  
-  const initUser = async () => {
-    try {
-      // Handle email verification redirect with hash
-      if (window.location.hash.includes("access_token")) {
-        console.log("Email verification redirect detected");
-        const { data, error } = await supabase.auth.getSessionFromUrl({
-          storeSession: true,
-        });
-        if (error) {
-          console.error("Error restoring session:", error);
-        } else {
-          // Successfully verified - set user immediately
-          if (data.session?.user) {
-            setStoreUser({ 
-              id: data.session.user.id, 
-              email: data.session.user.email || "", 
-              name: data.session.user.user_metadata?.name || "" 
-            });
+        if (user) {
+          const profile = await userService.getProfile();
+          if (profile) {
+            setStoreUser(profile);
             setStoreAuthenticated(true);
-            setLoading(false);
           }
+        } else {
+          setStoreUser(null);
+          setStoreAuthenticated(false);
         }
-        // Clear hash from URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        return; // Exit early after verification
-      } else {
-        await refreshUser();
+      } catch (error) {
+        console.error("Error loading user:", error);
+        setStoreUser(null);
+        setStoreAuthenticated(false);
       }
+    };
+
+    loadUser();
+
+    // 🔄 listen to supabase auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange(() => {
+      loadUser();
+    });
+
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
+  }, [setStoreUser, setStoreAuthenticated]);
+
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    try {
+      await userService.login(email, password);
+      await refreshUser();
     } catch (error) {
-      console.error("Error loading user:", error);
-      setStoreUser(null);
-      setStoreAuthenticated(false);
+      console.error("Login error:", error);
+      throw error;
+    } finally {
       setLoading(false);
     }
   };
-  
-  initUser();
 
-  // Listen to auth state changes for email verification
-  // In the useEffect, update the onAuthStateChange listener:
-const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-  console.log("Auth state change:", event, session?.user?.email_confirmed_at);
-  
-  if (event === 'SIGNED_IN' && session?.user?.email_confirmed_at) {
-    // User is signed in and verified
-    setStoreUser({ 
-      id: session.user.id, 
-      email: session.user.email || "", 
-      name: session.user.user_metadata?.name || "" 
-    });
-    setStoreAuthenticated(true);
-  } else if (event === 'SIGNED_OUT' || !session) {
-    // Clear everything on sign out or no session
-    setStoreUser(null);
-    setStoreAuthenticated(false);
-  }
-  setLoading(false);
-});
-
-  return () => {
-    listener?.subscription.unsubscribe();
+  const logout = async () => {
+    try {
+      await userService.logout();
+      clearStore();
+      setStoreAuthenticated(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
-}, []);
-
-
-  const login = async (email: string, password: string) => {
-  setLoading(true);
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) throw error;
-    
-    // Check if user is verified
-    if (data.user && !data.user.email_confirmed_at) {
-      throw new Error("Please check your email and click the verification link before signing in.");
-    }
-    
-    // User is verified, set them in store
-    if (data.user) {
-      setStoreUser({ 
-        id: data.user.id, 
-        email: data.user.email || "", 
-        name: data.user.user_metadata?.name || "" 
-      });
-      setStoreAuthenticated(true);
-    }
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // REPLACE the current logout function (around line 165) with:
-const logout = async () => {
-  setLoading(true); // Add loading state
-  try {
-    // First sign out from Supabase
-    await supabase.auth.signOut();
-    
-    // Then clear the store
-    clearStore();
-    setStoreAuthenticated(false);
-    setStoreUser(null);
-  } catch (error) {
-    console.error("Logout error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
 
   const register = async (
-  name: string,
-  email: string,
-  password: string,
-  phone?: string
-) => {
-  setLoading(true);
-  try {
-    // Create auth user with email confirmation required
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { name, phone },
-        emailRedirectTo: `${window.location.origin}/account`, // Redirect after verification
-      },
-    });
-    if (error) throw error;
-
-    // Don't create profile yet - wait for email verification
-    console.log("Registration successful - check email for verification");
-    
-    // You might want to show a message to user to check their email
-    return { message: "Please check your email to verify your account before signing in." };
-    
-  } catch (error) {
-    console.error("Registration error:", error);
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+    name: string,
+    email: string,
+    password: string,
+    phone?: string
+  ) => {
+    setLoading(true);
+    try {
+      await userService.register(email, password, name, phone);
+      await refreshUser();
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const updateProfile = async (userData: Partial<User>) => {
     try {
@@ -260,6 +120,24 @@ const logout = async () => {
     } catch (error) {
       console.error("Update profile error:", error);
       throw error;
+    }
+  };
+
+  const refreshUser = async () => {
+    setLoading(true);
+    try {
+      const profile = await userService.getProfile();
+      if (profile) {
+        setStoreUser(profile);
+        setStoreAuthenticated(true);
+      } else {
+        setStoreUser(null);
+        setStoreAuthenticated(false);
+      }
+    } catch (error) {
+      console.error("Refresh user error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -273,7 +151,7 @@ const logout = async () => {
         register,
         updateProfile,
         refreshUser,
-        isAuthenticated: !!(user && user.id),
+        isAuthenticated: !!user,
       }}
     >
       {children}

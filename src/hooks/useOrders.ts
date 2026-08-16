@@ -15,45 +15,28 @@ export interface CustomerInfo {
 }
 
 export interface PaymentInfo {
-  method: "online" | "cod"; // ✅ Changed from "razorpay" | "cod"
+  method: "razorpay" | "cod";
   paymentId?: string;
-  orderId?: string;
+  orderId: string;
   signature?: string;
   status: "pending" | "completed" | "failed";
 }
+
 export interface Order {
   id: string;
-  order_number: string;
   user_id?: string;
   items: CartItem[];
   customer_info: CustomerInfo;
-  shipping_address: {
-    address: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
-  payment_method: string;
-  payment_status: string;
-  payment_details: any;
   payment_info: PaymentInfo;
   subtotal: number;
   shipping: number;
   tax: number;
-  discount: number;
   total: number;
-  order_status: string;
+  status: "placed" | "shipped" | "delivered" | "cancelled";
   tracking_number?: string;
-  estimated_delivery?: string;
-  actual_delivery?: string;
-  notes?: string;
-  cancellation_reason?: string;
-  refund_amount?: number;
-  refund_status?: string;
   created_at: string;
-  updated_at?: string;
 }
+
 
 interface UseOrdersReturn {
   orders: Order[];
@@ -69,7 +52,7 @@ interface UseOrdersReturn {
   ) => Promise<Order>;
   updateOrderStatus: (
     orderId: string,
-    status: string,
+    status: Order["status"],
     trackingNumber?: string
   ) => Promise<Order | null>;
   updatePaymentInfo: (
@@ -79,7 +62,7 @@ interface UseOrdersReturn {
   getOrderById: (orderId: string) => Promise<Order | null>;
   getOrdersByCustomer: (email: string) => Promise<Order[]>;
   getRecentOrders: (limit?: number) => Promise<Order[]>;
-  getOrdersByStatus: (status: string) => Promise<Order[]>;
+  getOrdersByStatus: (status: Order["status"]) => Promise<Order[]>;
   deleteOrder: (orderId: string) => Promise<boolean>;
   refreshOrders: () => void;
 }
@@ -89,7 +72,7 @@ export const useOrders = (): UseOrdersReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load all orders
+  // Load all orders (for admin or debugging)
   const loadOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -112,146 +95,67 @@ export const useOrders = (): UseOrdersReturn => {
   }, [loadOrders]);
 
   // Create order
-const createOrder = useCallback(
-  async (
-    cartItems: CartItem[],
-    customerInfo: CustomerInfo,
-    paymentInfo: PaymentInfo,
-    subtotal: number,
-    shipping: number,
-    tax: number
-  ): Promise<Order> => {
-    try {
-      setError(null);
-      
-      console.log("🔵 createOrder called with:", {
-        cartItems: cartItems.length,
-        customerInfo,
-        paymentInfo,
-        subtotal,
-        shipping,
-        tax
-      });
+  const createOrder = useCallback(
+    async (
+      cartItems: CartItem[],
+      customerInfo: CustomerInfo,
+      paymentInfo: PaymentInfo,
+      subtotal: number,
+      shipping: number,
+      tax: number
+    ): Promise<Order> => {
+      try {
+        setError(null);
+        const total = subtotal + shipping + tax;
 
-      const total = subtotal + shipping + tax;
+        const { data, error } = await supabase
+          .from("orders")
+          .insert([
+            {
+              items: cartItems,
+              customer_info: customerInfo,
+              payment_info: paymentInfo,
+              subtotal,
+              shipping,
+              tax,
+              total,
+              status: "placed",
+            },
+          ])
+          .select()
+          .single();
 
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      console.log("🔵 Current user:", user?.id || "No user");
+        if (error) throw error;
+        if (!data) throw new Error("Order creation failed");
 
-      // Generate order number
-      const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+        // Refresh local state
+        await loadOrders();
 
-      // Build shipping address from customer info
-      const shippingAddress = {
-        address: customerInfo.address,
-        city: customerInfo.city,
-        state: customerInfo.state,
-        zipCode: customerInfo.zipCode,
-        country: customerInfo.country,
-      };
-
-      // ✅ Map payment method to match database constraint
-      const paymentMethod = paymentInfo.method === 'razorpay' ? 'online' : paymentInfo.method;
-
-      // Build order data matching your Supabase schema exactly
-      const orderData = {
-        order_number: orderNumber,
-        user_id: user?.id || null,
-        customer_info: {
-          email: customerInfo.email,
-          firstName: customerInfo.firstName,
-          lastName: customerInfo.lastName,
-          phone: customerInfo.phone,
-        },
-        shipping_address: shippingAddress,
-        items: cartItems.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image,
-          type: item.type || 'one-time'
-        })),
-        subtotal: Number(subtotal.toFixed(2)),
-        shipping: Number(shipping.toFixed(2)),
-        tax: Number(tax.toFixed(2)),
-        discount: 0, // Must be >= 0
-        total: Number(total.toFixed(2)),
-        payment_method: paymentMethod, // ✅ Must be 'online' or 'cod'
-        payment_status: paymentInfo.status, // ✅ 'pending', 'completed', 'failed', 'refunded'
-        payment_details: {
-          paymentId: paymentInfo.paymentId || null,
-          orderId: paymentInfo.orderId || null,
-          signature: paymentInfo.signature || null,
-        },
-        payment_info: paymentInfo,
-        order_status: "pending", // ✅ Must be one of the allowed values
-        tracking_number: null,
-        estimated_delivery: null,
-        actual_delivery: null,
-        notes: null,
-        cancellation_reason: null,
-        refund_amount: 0, // ✅ Must be >= 0, using 0 instead of null
-        refund_status: 'none', // ✅ Must be 'none', 'requested', 'processing', or 'completed'
-      };
-
-      console.log("🔵 Inserting order data:", JSON.stringify(orderData, null, 2));
-
-      const { data, error } = await supabase
-        .from("orders")
-        .insert([orderData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error("❌ Supabase insertion error:", error);
-        console.error("❌ Error message:", error.message);
-        console.error("❌ Error details:", error.details);
-        console.error("❌ Error hint:", error.hint);
-        console.error("❌ Error code:", error.code);
-        throw new Error(`Database error: ${error.message}`);
+        return data as Order;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to create order";
+        setError(errorMessage);
+        throw new Error(errorMessage);
       }
-
-      if (!data) {
-        throw new Error("Order creation failed - no data returned");
-      }
-
-      console.log("✅ Order created successfully:", data.id);
-      
-      await loadOrders();
-      return data as Order;
-    } catch (err) {
-      console.error("❌ createOrder error:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to create order";
-      setError(errorMessage);
-      throw new Error(errorMessage);
-    }
-  },
-  [loadOrders]
-);
+    },
+    [loadOrders]
+  );
 
   // Update order status
   const updateOrderStatus = useCallback(
     async (
       orderId: string,
-      status: string,
+      status: Order["status"],
       trackingNumber?: string
     ): Promise<Order | null> => {
       try {
-        const updateData: any = { order_status: status };
-        if (trackingNumber) {
-          updateData.tracking_number = trackingNumber;
-        }
-
         const { data, error } = await supabase
           .from("orders")
-          .update(updateData)
+          .update({ status, tracking_number: trackingNumber })
           .eq("id", orderId)
           .select()
           .single();
-          
         if (error) throw error;
         await loadOrders();
         return data as Order;
@@ -276,7 +180,6 @@ const createOrder = useCallback(
           .eq("id", orderId)
           .select()
           .single();
-          
         if (error) throw error;
         await loadOrders();
         return data as Order;
@@ -295,7 +198,6 @@ const createOrder = useCallback(
       .select("*")
       .eq("id", orderId)
       .single();
-      
     if (error) throw error;
     return data as Order;
   }, []);
@@ -307,7 +209,6 @@ const createOrder = useCallback(
       .select("*")
       .eq("customer_info->>email", email)
       .order("created_at", { ascending: false });
-      
     if (error) throw error;
     return data as Order[];
   }, []);
@@ -319,19 +220,17 @@ const createOrder = useCallback(
       .select("*")
       .order("created_at", { ascending: false })
       .limit(limit);
-      
     if (error) throw error;
     return data as Order[];
   }, []);
 
   // Get by status
-  const getOrdersByStatus = useCallback(async (status: string) => {
+  const getOrdersByStatus = useCallback(async (status: Order["status"]) => {
     const { data, error } = await supabase
       .from("orders")
       .select("*")
-      .eq("order_status", status)
+      .eq("status", status)
       .order("created_at", { ascending: false });
-      
     if (error) throw error;
     return data as Order[];
   }, []);
@@ -339,11 +238,7 @@ const createOrder = useCallback(
   // Delete order
   const deleteOrder = useCallback(async (orderId: string) => {
     try {
-      const { error } = await supabase
-        .from("orders")
-        .delete()
-        .eq("id", orderId);
-        
+      const { error } = await supabase.from("orders").delete().eq("id", orderId);
       if (error) throw error;
       await loadOrders();
       return true;
