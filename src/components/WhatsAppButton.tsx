@@ -10,8 +10,8 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   phoneNumber, 
   message = "Hi! I'm interested in Cafe at Once products." 
 }) => {
-  // Format phone number (remove spaces and special characters except +)
-  const formattedPhone = phoneNumber.replace(/[^\d+]/g, '');
+  // Format phone number (remove all non-digit characters for wa.me URL)
+  const formattedPhone = phoneNumber.replace(/\D/g, '');
   
   // Create WhatsApp URL
   const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
@@ -21,7 +21,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
+      className="relative group flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110"
       aria-label="Chat with us on WhatsApp"
       data-testid="whatsapp-button"
     >

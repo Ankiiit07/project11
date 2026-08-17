@@ -155,7 +155,7 @@ function App() {
                 <ChatBot />
                 
                 {/* WhatsApp Business Button */}
-                <div className="fixed bottom-6 right-6 z-40">
+                <div className="fixed bottom-6 right-6 z-50">
                   <WhatsAppButton 
                     phoneNumber="+917979837079" 
                     message="Hi! I'm interested in Cafe at Once products."
