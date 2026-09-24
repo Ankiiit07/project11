@@ -19,6 +19,7 @@ interface ProductCardProps {
   category?: 'concentrate' | 'flavored' | 'tea' | 'cold-brew';
   viewMode?: 'grid' | 'list';
   inStock?: boolean;
+  weight?: number; // Weight in grams for shipping calculation
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -34,6 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   category,
   viewMode = 'grid',
   inStock = true,
+  weight = 100, // Default 100g
 }) => {
   // Input validation
   if (!id || !name || price < 0 || originalPrice < 0) {
@@ -73,6 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       price,
       image,
       type: 'single',
+      weight,
     });
     
     // Show notification
@@ -87,7 +90,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     
     // Cleanup timeout on unmount
     return () => clearTimeout(timeoutId);
-  }, [addItem, clearLastAdded, id, name, price, image, inStock, isAddingToCart]);
+  }, [addItem, clearLastAdded, id, name, price, image, weight, inStock, isAddingToCart]);
 
 
 
