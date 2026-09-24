@@ -32,28 +32,58 @@ export interface EmailResponse {
   error?: string;
 }
 
+export interface OrderConfirmationRequest {
+  // Razorpay proof of payment — the server verifies these before sending anything
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  orderId: string;
+  customer: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  items: { name: string; quantity: number; price: number; type?: 'single' | 'subscription' }[];
+  subtotal: number;
+  discount?: number;
+  shipping: number;
+  tax: number;
+  awbCode?: string;
+  courierName?: string;
+  estimatedDelivery?: string;
+}
+
+export interface OrderConfirmationResponse {
+  success: boolean;
+  customer?: { sent: boolean; id?: string; duplicate?: boolean; error?: string } | null;
+  admin?: { sent: boolean; id?: string; duplicate?: boolean; error?: string } | null;
+  error?: string;
+}
+
 /**
- * Send order confirmation email
+ * Send the order confirmation email (customer + store-owner alert).
+ * Handled by the Netlify function `order-confirmation`, which verifies the
+ * Razorpay payment server-side and sends at most one email per payment.
  */
-export async function sendOrderConfirmationEmail(data: EmailNotificationRequest): Promise<EmailResponse> {
-  const apiUrl = getApiUrl();
-  
+export async function sendOrderConfirmationEmail(
+  data: OrderConfirmationRequest
+): Promise<OrderConfirmationResponse> {
   try {
-    const response = await fetch(`${apiUrl}/api/notifications/order-confirmation`, {
+    const response = await fetch('/.netlify/functions/order-confirmation', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-
-    const result = await response.json();
-    return result;
+    return (await response.json()) as OrderConfirmationResponse;
   } catch (error) {
     console.error('Order confirmation email error:', error);
     return {
       success: false,
-      message: 'Failed to send order confirmation email',
       error: error instanceof Error ? error.message : 'Network error',
     };
   }
