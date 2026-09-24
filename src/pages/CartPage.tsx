@@ -9,7 +9,6 @@ import {
   ArrowLeft,
   Truck,
   CreditCard,
-  Package,
 } from "lucide-react";
 import { useCart } from "../context/CartContextOptimized";
 import {
@@ -18,7 +17,6 @@ import {
   ProgressBar,
   StepProgress,
 } from "../components/LoadingSystem";
-import { calculateShipping, formatWeight, DEFAULT_SHIPPING_RATES } from "../utils/shippingCalculator";
 
 const CartPage: React.FC = () => {
   const { state: cartState, dispatch } = useCart();
@@ -74,18 +72,9 @@ const CartPage: React.FC = () => {
     );
   };
 
-  // Calculate shipping based on weight and quantity
-  const shippingResult = calculateShipping(
-    cartState.items.map(item => ({
-      weight: item.weight || 100, // Default 100g if not specified
-      quantity: item.quantity,
-      price: item.price,
-    })),
-    calculateSubtotal()
-  );
-
-  const calculateShippingAmount = () => {
-    return shippingResult.shippingCharge;
+  const calculateShipping = () => {
+    const subtotal = calculateSubtotal();
+    return subtotal >= 1000 ? 0 : 0; // Free shipping over ₹1000
   };
 
   const calculateTax = () => {
@@ -93,7 +82,7 @@ const CartPage: React.FC = () => {
   };
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShippingAmount() + calculateTax();
+    return calculateSubtotal() + calculateShipping() + calculateTax();
   };
 
   if (isLoading) {
@@ -307,14 +296,11 @@ const CartPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 flex items-center">
-                    <Truck className="h-4 w-4 mr-1" />
-                    Shipping ({formatWeight(shippingResult.totalWeight)})
-                  </span>
+                  <span className="text-gray-600">Shipping</span>
                   <span className="font-medium">
-                    {shippingResult.isFreeShipping
-                      ? <span className="text-green-600">Free</span>
-                      : `₹${calculateShippingAmount().toFixed(2)}`}
+                    {calculateShipping() === 0
+                      ? "Free"
+                      : `₹${calculateShipping().toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -336,7 +322,7 @@ const CartPage: React.FC = () => {
               </div>
 
               {/* Shipping info */}
-              {shippingResult.isFreeShipping ? (
+              {calculateShipping() === 0 ? (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
                   <div className="flex items-center space-x-2">
                     <Truck className="h-5 w-5 text-green-600" />
@@ -345,24 +331,21 @@ const CartPage: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-green-700 text-sm mt-1">
-                    Your order qualifies for free shipping (saved ₹{shippingResult.breakdown.discount})
+                    Your order qualifies for free shipping
                   </p>
                 </div>
               ) : (
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
                   <div className="flex items-center space-x-2">
-                    <Package className="h-5 w-5 text-blue-600" />
+                    <Truck className="h-5 w-5 text-blue-600" />
                     <span className="text-blue-800 font-medium">
-                      Shipping: ₹{calculateShippingAmount().toFixed(0)}
+                      Shipping: ₹{calculateShipping()}
                     </span>
                   </div>
-                  <div className="text-blue-700 text-sm mt-1 space-y-1">
-                    <p>Weight: {formatWeight(shippingResult.totalWeight)} | Items: {shippingResult.itemCount}</p>
-                    <p>
-                      Add ₹{(DEFAULT_SHIPPING_RATES.freeShippingThreshold - calculateSubtotal()).toFixed(2)} more for free
-                      shipping
-                    </p>
-                  </div>
+                  <p className="text-blue-700 text-sm mt-1">
+                    Add ₹{(1000 - calculateSubtotal()).toFixed(2)} more for free
+                    shipping
+                  </p>
                 </div>
               )}
 
