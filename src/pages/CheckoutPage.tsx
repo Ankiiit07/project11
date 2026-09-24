@@ -229,17 +229,34 @@ const CheckoutPage: React.FC = () => {
     // Send order confirmation email via new email service
     try {
       const emailResult = await sendOrderConfirmationEmail({
-        recipient_email: formData.email,
-        customer_name: `${formData.firstName} ${formData.lastName}`,
-        order_id: newOrder.id,
-        awb_code: shiprocketResult.awb_code,
-        status: 'PENDING',
-        status_description: 'Order Confirmed',
-        courier_name: shiprocketResult.courier_name,
-        estimated_delivery: shiprocketResult.estimated_delivery || deliveryEstimate.replace('Delivery by ', '').replace('Delivery between ', ''),
-        tracking_url: shiprocketResult.awb_code ? `https://www.shiprocket.in/shipment-tracking/?awb=${shiprocketResult.awb_code}` : undefined,
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
+        orderId: newOrder.id,
+        customer: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          zipCode: formData.zipCode,
+        },
+        items: cartState.items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          type: item.type,
+        })),
+        subtotal: cartState.total,
+        shipping,
+        tax,
+        awbCode: shiprocketResult.awb_code,
+        courierName: shiprocketResult.courier_name,
+        estimatedDelivery: shiprocketResult.estimated_delivery || deliveryEstimate.replace('Delivery by ', '').replace('Delivery between ', ''),
       });
-      
+
       if (emailResult.success) {
         console.log("📧 Order confirmation email sent:", emailResult);
       } else {
@@ -311,34 +328,6 @@ const CheckoutPage: React.FC = () => {
   const shipping = getShippingCharge();
   const tax = calculateTax();
   const finalTotal = (cartState.total || 0) + tax + shipping;
-
-  const sendOrderConfirmationEmail = async (orderDetails: any, customerInfo: any) => {
-  try {
-    const response = await fetch('/.netlify/functions/send-order-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        orderDetails,
-        customerInfo
-      })
-    });
-
-    const result = await response.json();
-    
-    if (response.ok) {
-      console.log('✅ Order confirmation email sent successfully');
-      notification.success('Order confirmation email sent to your email address');
-    } else {
-      console.error('❌ Failed to send confirmation email:', result.error);
-      // Don't show error to user as order is still successful
-    }
-  } catch (error) {
-    console.error('❌ Email service error:', error);
-    // Don't show error to user as order is still successful
-  }
-};
 
   if (cartState.items.length === 0) {
     return (
