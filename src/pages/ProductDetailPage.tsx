@@ -7,7 +7,6 @@ import ProductCard from '../components/ProductCard';
 import { useProductsByCategory } from '../hooks/useProducts';
 import ProductImageGallery from '../components/ProductImageGallery';
 import SEO from '../components/SEO';
-import PageWrapper from '../components/PageWrapper';
 
 const ProductDetailPage: React.FC = () => {
   // Scroll to top when component mounts
@@ -21,7 +20,7 @@ const ProductDetailPage: React.FC = () => {
   // Debug logs removed for production
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('nutrition');
+  const [activeTab, setActiveTab] = useState('description');
   
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
@@ -32,32 +31,28 @@ const ProductDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <PageWrapper padding="medium">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading product details"></div>
-        </div>
-      </PageWrapper>
+      <div className="min-h-screen bg-cream page-container flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading product details"></div>
+      </div>
     );
   }
 
   if (error || !product) {
     return (
-      <PageWrapper padding="medium">
+      <div className="min-h-screen bg-cream page-container flex items-center justify-center">
         <SEO 
           title="Product Not Found - @once Business"
           description="The product you're looking for doesn't exist."
         />
-        <div className="text-center min-h-[60vh] flex items-center justify-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {error || 'Product Not Found'}
-            </h1>
-            <Link to="/products" className="text-primary hover:underline">
-              ← Back to Products
-            </Link>
-          </div>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            {error || 'Product Not Found'}
+          </h1>
+          <Link to="/products" className="text-primary hover:underline">
+            ← Back to Products
+          </Link>
         </div>
-      </PageWrapper>
+      </div>
     );
   }
 
@@ -75,7 +70,6 @@ const ProductDetailPage: React.FC = () => {
           price: product.price,
           image: product.image,
           type: 'single',
-          weight: product.weight || 100, // Include weight for shipping
         },
       });
     }
@@ -122,7 +116,7 @@ const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <PageWrapper padding="medium">
+    <div className="min-h-screen bg-cream py-8">
       <SEO 
         title={`${product.name} - @once Business`}
         description={product.description}
@@ -146,7 +140,7 @@ const ProductDetailPage: React.FC = () => {
           { name: product.name, url: `https://tranquil-bonbon-7645e7.netlify.app/product/${product.id}` }
         ]}
       />
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 text-sm">
@@ -180,11 +174,10 @@ const ProductDetailPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           {/* Product Image */}
           <div className="space-y-6">
-            {/* Image Gallery with Video */}
+            {/* Image Gallery */}
             <ProductImageGallery 
               images={product.images || [product.image]} 
-              productName={product.name}
-              videoUrl={product.video}
+              productName={product.name} 
             />
             
             {/* Product Badges */}
@@ -349,9 +342,9 @@ const ProductDetailPage: React.FC = () => {
           <div className="border-b border-gray-200">
             <nav className="flex">
               {[
-                { id: 'nutrition', label: 'Nutrition' },
                 { id: 'description', label: 'Description' },
                 { id: 'ingredients', label: 'Ingredients' },
+                { id: 'nutrition', label: 'Nutrition' },
                 { id: 'instructions', label: 'Instructions' },
                 { id: 'reviews', label: 'Reviews' },
               ].map((tab) => (
@@ -371,12 +364,29 @@ const ProductDetailPage: React.FC = () => {
           </div>
 
           <div className="p-6">
+            {activeTab === 'description' && (
+              <div className="prose max-w-none">
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              </div>
+            )}
+
+            {activeTab === 'ingredients' && (
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Ingredients</h3>
+                <ul className="space-y-2">
+                  {product.ingredients.map((ingredient: string, index: number) => (
+                    <li key={index} className="flex items-center text-gray-700">
+                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
+                      {ingredient}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {activeTab === 'nutrition' && (
               <div>
-                <div className="mb-6">
-                  <h3 className="font-semibold text-gray-900 text-xl mb-2">Nutrition Facts (per 100ml)</h3>
-                  <p className="text-gray-600 text-sm">Complete nutritional information for your coffee concentrate</p>
-                </div>
+                <h3 className="font-semibold text-gray-900 mb-3">Nutrition Facts (per 100ml)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   <div className="text-center p-4 bg-cream rounded-lg">
                     <div className="text-xl font-bold text-primary">{product.nutrition.energy}</div>
@@ -411,26 +421,6 @@ const ProductDetailPage: React.FC = () => {
                     <div className="text-sm text-gray-600">Sugar (g)</div>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {activeTab === 'description' && (
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed">{product.description}</p>
-              </div>
-            )}
-
-            {activeTab === 'ingredients' && (
-              <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Ingredients</h3>
-                <ul className="space-y-2">
-                  {product.ingredients.map((ingredient: string, index: number) => (
-                    <li key={index} className="flex items-center text-gray-700">
-                      <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
-                      {ingredient}
-                    </li>
-                  ))}
-                </ul>
               </div>
             )}
 
@@ -595,7 +585,7 @@ const ProductDetailPage: React.FC = () => {
           </div>
         )}
       </div>
-    </PageWrapper>
+    </div>
   );
 };
 

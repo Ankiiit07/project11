@@ -1,77 +1,86 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
   Truck,
+  Clock,
+  MapPin,
+  Phone,
+  Mail,
   ArrowLeft,
   Home,
-  Package,
 } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import { useOrders } from "../hooks/useOrders";
-import { PaymentInfo } from "../hooks/useOrders"; 
-import { useUser } from "../context/UserContext";
 
 interface OrderDetails {
   orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   total: number;
-  subtotal?: number;
-  shipping?: number;
-  tax?: number;
   items: Array<{
     name: string;
     quantity: number;
     price: number;
   }>;
+  shippingAddress: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
   estimatedDelivery: string;
-  paymentInfo: PaymentInfo;
+  paymentInfo: data.payment_info,
 }
 
+
 const ThankYouPage: React.FC = () => {
-  console.log("ThankYouPage rendered");
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  const { getOrderById } = useOrders();
-  const { isAuthenticated, loading, refreshUser } = useUser();
-
- useEffect(() => {
-    refreshUser();
-  }, []);
-  
-
+  console.log("🔥 ThankYouPage orderDetails:", orderDetails);
   useEffect(() => {
     const loadOrder = async () => {
+      // 1. Try from location.state
       let details = location.state?.orderDetails;
 
-      const params = new URLSearchParams(location.search);
-      const orderId = params.get("orderId");
+      // 2. Fallback to localStorage
+      if (!details) {
+        details = JSON.parse(localStorage.getItem("codOrderDetails") || "null");
+      }
 
-      if (!details && orderId) {
-        try {
-          const orderData = await getOrderById(orderId);
+      // 3. Fallback to Supabase (Netlify-safe)
+      if (!details) {
+        const params = new URLSearchParams(location.search);
+        const orderId = params.get("orderId");
 
-          if (orderData) {
+        if (orderId) {
+          const { data, error } = await supabase
+            .from("orders")
+            .select("*")
+            .eq("id", orderId)
+            .single();
+
+          if (!error && data) {
             details = {
-              orderNumber: orderData.id,
-              total: orderData.total || 0,
-              subtotal: orderData.subtotal || 0,
-              shipping: orderData.shipping || 0,
-              tax: orderData.tax || 0,
-              items: orderData.items || [],
+              orderNumber: data.id,
+              customerName: data.customer_info?.name,
+              customerEmail: data.customer_info?.email,
+              customerPhone: data.customer_info?.phone,
+              total: data.total,
+              items: data.items,
+              shippingAddress: data.customer_info?.address || {
+                street: "",
+                city: "",
+                state: "",
+                zipCode: "",
+              },
               estimatedDelivery: new Date(
                 Date.now() + 3 * 24 * 60 * 60 * 1000
               ).toISOString(),
-              paymentInfo: orderData.payment_info ?? { 
-                method: orderData.payment_info?.method || orderData.payment_info?.payment_method || "cod", 
-                status: "pending", 
-                orderId: orderData.id 
-              },
             };
           }
-        } catch (error) {
-          console.error("Error fetching order:", error);
         }
       }
 
@@ -79,9 +88,10 @@ const ThankYouPage: React.FC = () => {
     };
 
     loadOrder();
-  }, [location, getOrderById]);
+  }, [location]);
 
   useEffect(() => {
+    // Scroll to top when component mounts
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -112,13 +122,23 @@ const ThankYouPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12 success-header"
-          style={{ paddingTop: "20px", marginTop: "20px" }}
+          style={{
+            // Add top padding to prevent icon cut off on mobile
+            paddingTop: "20px",
+            // Ensure proper spacing from header
+            marginTop: "20px",
+          }}
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 icon-container"
+            style={{
+              // Ensure icon container doesn't get cut off
+              position: "relative",
+              zIndex: 1,
+            }}
           >
             <Truck className="h-12 w-12 text-green-600" />
           </motion.div>
@@ -126,8 +146,123 @@ const ThankYouPage: React.FC = () => {
             Thank You for Your Order!
           </h1>
           <p className="text-xl text-gray-600">
-  Your order has been confirmed and will be delivered soon.
+            Your COD order has been confirmed and will be delivered soon.
           </p>
+        </motion.div>
+
+        {/* Order Details Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-2xl shadow-xl p-8 mb-8"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Order Information */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Order Information
+              </h2>
+
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Order Number</p>
+                    <p className="text-gray-600">{orderDetails.orderNumber}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Clock className="w-5 h-5 text-amber-500 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      Estimated Delivery
+                    </p>
+                    <p className="text-gray-600">
+                      {orderDetails?.estimatedDelivery
+                        ? new Date(
+                            orderDetails.estimatedDelivery
+                          ).toLocaleDateString("en-IN", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "Will be updated soon"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+  <Truck className="w-5 h-5 text-orange-500 mr-3" />
+  <div>
+    <p className="font-medium text-gray-900">Payment Method</p>
+    <p className="text-gray-600">
+  {orderDetails?.payment_info?.method === "razorpay"
+    ? "Razorpay (Paid Online)"
+    : "Cash on Delivery (COD)"}
+</p>
+  </div>
+</div>
+
+              </div>
+            </div>
+
+            {/* Customer Information */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Customer Information
+              </h2>
+
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Name</p>
+                    <p className="text-gray-600">{orderDetails.customerName}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Mail className="w-5 h-5 text-amber-500 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Email</p>
+                    <p className="text-gray-600">
+                      {orderDetails.customerEmail}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <Phone className="w-5 h-5 text-green-500 mr-3" />
+                  <div>
+                    <p className="font-medium text-gray-900">Phone</p>
+                    <p className="text-gray-600">
+                      {orderDetails.customerPhone}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <MapPin className="w-5 h-5 text-red-500 mr-3 mt-1" />
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      Delivery Address
+                    </p>
+                    <p className="text-gray-600">
+                      {orderDetails.shippingAddress?.street || "N/A"},{" "}
+                      {orderDetails.shippingAddress?.city || ""},{" "}
+                      {orderDetails.shippingAddress?.state || ""}{" "}
+                      {orderDetails.shippingAddress?.zipCode
+                        ? `- ${orderDetails.shippingAddress.zipCode}`
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Order Items */}
@@ -161,36 +296,8 @@ const ThankYouPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
-            {/* Subtotal */}
-            {orderDetails.subtotal !== undefined && orderDetails.subtotal > 0 && (
-              <div className="flex justify-between items-center text-gray-600">
-                <span>Subtotal</span>
-                <span>₹{orderDetails.subtotal.toFixed(2)}</span>
-              </div>
-            )}
-            
-            {/* Shipping */}
-            <div className="flex justify-between items-center text-gray-600">
-              <span className="flex items-center">
-                <Package className="h-4 w-4 mr-1" />
-                Shipping
-              </span>
-              <span className={orderDetails.shipping === 0 ? "text-green-600 font-medium" : ""}>
-                {orderDetails.shipping === 0 ? "Free" : `₹${orderDetails.shipping?.toFixed(2) || '0.00'}`}
-              </span>
-            </div>
-            
-            {/* Tax */}
-            {orderDetails.tax !== undefined && orderDetails.tax > 0 && (
-              <div className="flex justify-between items-center text-gray-600">
-                <span>Tax (GST)</span>
-                <span>₹{orderDetails.tax.toFixed(2)}</span>
-              </div>
-            )}
-            
-            {/* Total */}
-            <div className="flex justify-between items-center pt-3 border-t">
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="flex justify-between items-center">
               <span className="text-xl font-bold text-gray-900">
                 Total Amount
               </span>
@@ -198,11 +305,9 @@ const ThankYouPage: React.FC = () => {
                 ₹{orderDetails.total.toFixed(2)}
               </span>
             </div>
-            {orderDetails.paymentInfo?.method === "cod" && (
-              <p className="text-sm text-gray-600 mt-2">
-                *
-              </p>
-            )}
+            <p className="text-sm text-gray-600 mt-2">
+              *Including ₹25 COD charges
+            </p>
           </div>
         </motion.div>
 
@@ -218,26 +323,30 @@ const ThankYouPage: React.FC = () => {
           </h3>
           <ul className="space-y-3 text-amber-800">
             <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
-              <span>Please keep the exact amount ready for cash payment upon delivery.</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
-              <span>Our delivery partner will contact you before delivery.</span>
-            </li>
-            <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
               <span>
-                Track your shipment in real-time using our{' '}
-                <Link to="/track" className="text-primary font-semibold underline hover:text-primary/80">
-                  Order Tracking
-                </Link>{' '}
-                page once shipped.
+                Please keep the exact amount ready for cash payment upon
+                delivery.
               </span>
             </li>
             <li className="flex items-start">
-              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
-              <span>For any queries, contact us at cafeatonce@gmail.com or call +91 7979837079</span>
+              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
+              <span>
+                Our delivery partner will contact you before delivery.
+              </span>
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
+              <span>
+                You can track your order status in your account dashboard.
+              </span>
+            </li>
+            <li className="flex items-start">
+              <CheckCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5 flex-shrink-0" />
+              <span>
+                For any queries, contact us at cafeatonce@gmail.com or call +91
+                7979837079
+              </span>
             </li>
           </ul>
         </motion.div>
@@ -257,15 +366,13 @@ const ThankYouPage: React.FC = () => {
             Continue Shopping
           </button>
 
-          {!loading && isAuthenticated && (
-            <button
-              onClick={() => navigate("/account?tab=orders")}
-              className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              View My Orders
-            </button>
-          )}
+          <button
+            onClick={() => navigate("/account?tab=orders")}
+            className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            View My Orders
+          </button>
         </motion.div>
       </div>
     </div>
