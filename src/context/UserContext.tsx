@@ -1,157 +1,171 @@
 // src/context/UserContext.tsx
-import React, { createContext, useContext, useEffect, ReactNode } from "react";
-import { useAppStore, useAppActions } from "../store";
-import { User } from "../store"; // local type
-import { supabase } from "../supabaseClient";
-import { userService } from "../services/userService"; // helper we built for supabase
+// Sign-in is handled by Firebase Auth; the customer's profile (name, phone,
+// saved address) lives in MongoDB behind the `profile` Netlify function.
+
+import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile as updateFirebaseProfile,
+  type User as FirebaseUser,
+} from "firebase/auth";
+import { auth, isFirebaseConfigured } from "../lib/firebase";
+import { accountApi } from "../services/accountApi";
+import type { User } from "../store";
 
 interface UserContextType {
   user: User | null;
   loading: boolean;
+  /** False until Firebase has told us whether someone is signed in. */
+  ready: boolean;
+  isAuthenticated: boolean;
+  emailVerified: boolean;
+  authAvailable: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  register: (name: string, email: string, password: string, phone?: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  resendVerification: () => Promise<void>;
   logout: () => Promise<void>;
-  register: (
-    name: string,
-    email: string,
-    password: string,
-    phone?: string
-  ) => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<void>;
   refreshUser: () => Promise<void>;
-  isAuthenticated: boolean;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({
-  children,
-}) => {
-  const { user, isLoading, setUser, setLoading, setAuthenticated } =
-    useAppStore();
-  const {
-    setUser: setStoreUser,
-    setAuthenticated: setStoreAuthenticated,
-    logout: clearStore,
-  } = useAppActions();
+const FRIENDLY_ERRORS: Record<string, string> = {
+  "auth/invalid-credential": "That email and password don't match. Please try again.",
+  "auth/wrong-password": "That email and password don't match. Please try again.",
+  "auth/user-not-found": "That email and password don't match. Please try again.",
+  "auth/invalid-email": "Please enter a valid email address.",
+  "auth/email-already-in-use": "An account with this email already exists. Try signing in instead.",
+  "auth/weak-password": "Please choose a password with at least 6 characters.",
+  "auth/too-many-requests": "Too many attempts. Please wait a few minutes and try again.",
+  "auth/popup-closed-by-user": "Google sign-in was closed before it finished.",
+  "auth/popup-blocked": "Your browser blocked the Google sign-in window. Please allow pop-ups and try again.",
+  "auth/network-request-failed": "Network error. Please check your connection and try again.",
+  "auth/account-exists-with-different-credential":
+    "This email is already registered with a password. Sign in with your password instead.",
+};
 
-  // Load user session + profile on mount
+export function friendlyAuthError(err: unknown): Error {
+  const code = (err as { code?: string })?.code;
+  if (code && FRIENDLY_ERRORS[code]) return new Error(FRIENDLY_ERRORS[code]);
+  return err instanceof Error ? err : new Error("Something went wrong. Please try again.");
+}
+
+function requireAuth() {
+  if (!auth) throw new Error("Sign-in isn't available right now. Please try again later.");
+  return auth;
+}
+
+// Used when the profile service can't be reached, so sign-in still works.
+const fallbackProfile = (fbUser: FirebaseUser): User => ({
+  id: fbUser.uid,
+  email: fbUser.email || "",
+  name: fbUser.displayName || "",
+  phone: "",
+  role: "customer",
+});
+
+export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(!isFirebaseConfigured);
+
+  const loadProfile = useCallback(async (fbUser: FirebaseUser) => {
+    try {
+      setUser(await accountApi.getProfile());
+    } catch (error) {
+      console.error("Could not load profile:", error);
+      setUser(fallbackProfile(fbUser));
+    }
+  }, []);
+
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+    if (!auth) return;
+    return onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseUser(fbUser);
+      if (fbUser) await loadProfile(fbUser);
+      else setUser(null);
+      setReady(true);
+    });
+  }, [loadProfile]);
 
-        if (user) {
-          const profile = await userService.getProfile();
-          if (profile) {
-            setStoreUser(profile);
-            setStoreAuthenticated(true);
-          }
-        } else {
-          setStoreUser(null);
-          setStoreAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Error loading user:", error);
-        setStoreUser(null);
-        setStoreAuthenticated(false);
-      }
-    };
+  const run = async (fn: () => Promise<unknown>) => {
+    setLoading(true);
+    try {
+      await fn();
+    } catch (error) {
+      throw friendlyAuthError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    loadUser();
+  const login = (email: string, password: string) =>
+    run(() => signInWithEmailAndPassword(requireAuth(), email.trim(), password));
 
-    // 🔄 listen to supabase auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      loadUser();
+  const loginWithGoogle = () => run(() => signInWithPopup(requireAuth(), new GoogleAuthProvider()));
+
+  const register = (name: string, email: string, password: string, phone?: string) =>
+    run(async () => {
+      const { user: fbUser } = await createUserWithEmailAndPassword(requireAuth(), email.trim(), password);
+      await updateFirebaseProfile(fbUser, { displayName: name.trim() });
+      sendEmailVerification(fbUser).catch((e) => console.warn("Verification email failed:", e));
+      setUser(await accountApi.updateProfile({ name: name.trim(), phone: phone?.trim() || "" }));
     });
 
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, [setStoreUser, setStoreAuthenticated]);
+  const resetPassword = (email: string) => run(() => sendPasswordResetEmail(requireAuth(), email.trim()));
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      await userService.login(email, password);
-      await refreshUser();
-    } catch (error) {
-      console.error("Login error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const resendVerification = () =>
+    run(async () => {
+      if (auth?.currentUser) await sendEmailVerification(auth.currentUser);
+    });
 
   const logout = async () => {
-    try {
-      await userService.logout();
-      clearStore();
-      setStoreAuthenticated(false);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    if (auth) await signOut(auth);
+    setUser(null);
   };
 
-  const register = async (
-    name: string,
-    email: string,
-    password: string,
-    phone?: string
-  ) => {
-    setLoading(true);
-    try {
-      await userService.register(email, password, name, phone);
-      await refreshUser();
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Saves to the account when signed in; does nothing for guests.
   const updateProfile = async (userData: Partial<User>) => {
-    try {
-      // just update in local state, skip supabase call
-      setStoreUser((prev) => ({ ...prev, ...userData }));
-      return { success: true };
-    } catch (error) {
-      console.error("Update profile error:", error);
-      throw error;
-    }
+    if (!firebaseUser) return;
+    const { name, phone, address } = userData;
+    setUser(await accountApi.updateProfile({ name, phone, address }));
   };
 
   const refreshUser = async () => {
-    setLoading(true);
-    try {
-      const profile = await userService.getProfile();
-      if (profile) {
-        setStoreUser(profile);
-        setStoreAuthenticated(true);
-      } else {
-        setStoreUser(null);
-        setStoreAuthenticated(false);
-      }
-    } catch (error) {
-      console.error("Refresh user error:", error);
-    } finally {
-      setLoading(false);
-    }
+    if (!auth?.currentUser) return;
+    await auth.currentUser.reload();
+    setFirebaseUser(auth.currentUser);
+    await loadProfile(auth.currentUser);
   };
 
   return (
     <UserContext.Provider
       value={{
         user,
-        loading: isLoading,
+        loading,
+        ready,
+        isAuthenticated: !!user,
+        emailVerified: !!firebaseUser?.emailVerified,
+        authAvailable: isFirebaseConfigured,
         login,
-        logout,
+        loginWithGoogle,
         register,
+        resetPassword,
+        resendVerification,
+        logout,
         updateProfile,
         refreshUser,
-        isAuthenticated: !!user,
       }}
     >
       {children}

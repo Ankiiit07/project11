@@ -12,8 +12,10 @@
 //   VITE_RAZORPAY_KEY_ID already used by create-order
 //   URL                 set automatically by Netlify (site URL)
 
-import crypto from 'node:crypto';
 import { renderCustomerEmail, renderAdminEmail } from '../emails/orderConfirmation.mjs';
+import { isValidSignature, fetchRazorpayPayment } from '../lib/razorpay.mjs';
+
+export { isValidSignature };
 
 const HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -26,25 +28,6 @@ const reply = (statusCode, body) => ({ statusCode, headers: HEADERS, body: JSON.
 
 const str = (v, max = 300) => String(v ?? '').trim().slice(0, max);
 const num = (v) => (Number.isFinite(Number(v)) ? Number(v) : 0);
-
-export function isValidSignature(orderId, paymentId, signature, secret) {
-  if (!orderId || !paymentId || !signature || !secret) return false;
-  const expected = crypto.createHmac('sha256', secret).update(`${orderId}|${paymentId}`).digest('hex');
-  const a = Buffer.from(expected);
-  const b = Buffer.from(String(signature));
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
-}
-
-async function fetchRazorpayPayment(paymentId) {
-  const keyId = process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID;
-  const secret = process.env.RAZORPAY_SECRET;
-  if (!keyId || !secret) return null;
-  const res = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(paymentId)}`, {
-    headers: { Authorization: 'Basic ' + Buffer.from(`${keyId}:${secret}`).toString('base64') },
-  });
-  if (!res.ok) throw new Error(`Razorpay payment lookup failed (${res.status})`);
-  return res.json();
-}
 
 // Resend's Idempotency-Key guarantees one email per key for 24h, so page reloads,
 // double clicks and retries can't send duplicates. We don't need a database for this.

@@ -17,7 +17,7 @@ import { useCart } from "../context/CartContextOptimized";
 import { useUser } from "../context/UserContext";
 import PaymentOptions from "../components/PaymentOptions";
 import { RazorpayResponse } from "../types/razorpay";
-import { useOrders } from "../hooks/useOrders";
+import { useOrders, type Order } from "../hooks/useOrders";
 import { useNotification } from "../components/NotificationSystem";
 import {
   LoadingSpinner,
@@ -129,6 +129,10 @@ const CheckoutPage: React.FC = () => {
     }
   }, [formData.zipCode, selectedShippingMethod]);
 
+  const REQUIRED_FIELDS = ["email", "firstName", "lastName", "phone", "address", "city", "state", "zipCode"] as const;
+  const isComplete = (data: typeof formData) =>
+    REQUIRED_FIELDS.every((field) => data[field].trim() !== "");
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -137,23 +141,32 @@ const CheckoutPage: React.FC = () => {
       [e.target.name]: e.target.value,
     };
     setFormData(newFormData);
-
-    // Check if form is valid
-    const required = [
-      "email",
-      "firstName",
-      "lastName",
-      "phone",
-      "address",
-      "city",
-      "state",
-      "zipCode",
-    ];
-    const isValid = required.every(
-      (field) => newFormData[field as keyof typeof newFormData].trim() !== ""
-    );
-    setIsFormValid(isValid);
+    setIsFormValid(isComplete(newFormData));
   };
+
+  // Signed-in customers: fill any empty fields from their saved account details.
+  useEffect(() => {
+    if (!user) return;
+    const [firstName = "", ...rest] = (user.name || "").trim().split(/\s+/);
+    const saved = {
+      email: user.email || "",
+      firstName,
+      lastName: rest.join(" "),
+      phone: user.phone || "",
+      address: user.address?.street || "",
+      city: user.address?.city || "",
+      state: user.address?.state || "",
+      zipCode: user.address?.zipCode || "",
+    };
+    setFormData((current) => {
+      const next = { ...current };
+      (Object.keys(saved) as (keyof typeof saved)[]).forEach((key) => {
+        if (!next[key].trim() && saved[key]) next[key] = saved[key];
+      });
+      setIsFormValid(isComplete(next));
+      return next;
+    });
+  }, [user]);
 
   const handlePaymentSuccess = async (response: RazorpayResponse) => {
   console.log("🔥 Payment success raw response:", response);
@@ -161,37 +174,54 @@ const CheckoutPage: React.FC = () => {
   setCurrentStep(3);
 
   try {
-    const customerInfo = {
-      email: formData.email,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      address: formData.address,
-      city: formData.city,
-      state: formData.state,
-      zipCode: formData.zipCode,
-      country: formData.country,
-    };
-
-    const paymentInfo = {
-      method: "online",
-      paymentId: response.razorpay_payment_id,
-      status: "completed",
-    };
-
-    console.log("💡 Data being sent to createOrder:");
-    console.log("- cartItems:", JSON.stringify(cartState.items, null, 2));
-    console.log("- customerInfo:", JSON.stringify(customerInfo, null, 2));
-    console.log("- paymentInfo:", JSON.stringify(paymentInfo, null, 2));
-
-    const newOrder = await createOrder(
-      cartState.items,
-      customerInfo,
-      paymentInfo,
-      cartState.total,
+    const orderRequest = {
+      razorpay_order_id: response.razorpay_order_id,
+      razorpay_payment_id: response.razorpay_payment_id,
+      razorpay_signature: response.razorpay_signature,
+      customer: {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
+      },
+      items: cartState.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        image: item.image,
+        quantity: item.quantity,
+        price: item.price,
+        type: item.type,
+      })),
+      subtotal: cartState.total,
+      discount: discountAmount,
+      discountCode: appliedDiscount?.code,
       shipping,
-      tax
-    );
+      shippingMethod: selectedShippingMethod,
+      tax,
+    };
+
+    // The payment has already gone through, so never stop here: if saving the order
+    // fails, carry on (confirmation email, Shiprocket, thank-you page) using the
+    // Razorpay payment ID as the reference, and the store alert still reaches you.
+    let newOrder: Order;
+    try {
+      newOrder = await createOrder(orderRequest);
+    } catch (saveError) {
+      console.error("❌ Could not save order, continuing with payment reference:", saveError);
+      newOrder = {
+        ...orderRequest,
+        id: response.razorpay_payment_id,
+        status: "placed",
+        total: cartState.total - discountAmount + shipping + tax,
+        payment: { method: "razorpay", paymentId: response.razorpay_payment_id, status: "captured" },
+        createdAt: new Date().toISOString(),
+      };
+    }
 
     setOrderDetails(newOrder);
     setPaymentSuccess(true);
@@ -280,11 +310,18 @@ const CheckoutPage: React.FC = () => {
       // Don't fail the main order - email is non-critical
     }
 
-    await updateProfile({
-      name: `${formData.firstName} ${formData.lastName}`,
-      email: formData.email,
+    // Save these details to the customer's account for next time (no-op for guests).
+    updateProfile({
+      name: user?.name || `${formData.firstName} ${formData.lastName}`.trim(),
       phone: formData.phone,
-    });
+      address: {
+        street: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
+      },
+    }).catch((err) => console.warn("Could not save profile:", err));
 
     setTimeout(() => {
       cartDispatch({ type: "CLEAR_CART" });
