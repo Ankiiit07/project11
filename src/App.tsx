@@ -70,7 +70,7 @@ const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPageTechForward'));
 const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
 const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForward'));
-const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const AdminOrdersPage = lazy(() => import('./pages/AdminOrdersPage'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
 const SitemapPage = lazy(() => import('./pages/SitemapPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
@@ -136,7 +136,7 @@ function App() {
                         <Route path="/track" element={<OrderTrackingPage />} />
                         <Route path="/track/:awb" element={<OrderTrackingPage />} />
                         {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
-                        <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/admin" element={<AdminOrdersPage />} />
                         <Route path="/sitemap.xml" element={<SitemapPage />} />
                         <Route path="/faq" element={<FAQPage />} />
                         <Route path="/blog/what-is-nitrogen-preserved-coffee" element={<NitrogenPreservedCoffee />} />

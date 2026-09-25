@@ -41,6 +41,31 @@ export interface Order {
   createdAt: string;
 }
 
+export interface AdminOrder extends Order {
+  awbCode?: string;
+  statusHistory?: { status: Order['status']; at: string; by: string }[];
+}
+
+export interface AdminOrdersResponse {
+  orders: AdminOrder[];
+  total: number;
+  page: number;
+  pageSize: number;
+  summary: {
+    counts: Record<Order['status'], number>;
+    totalOrders: number;
+    revenue: number;
+    todayOrders: number;
+    todayRevenue: number;
+  };
+}
+
+export class ApiError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+  }
+}
+
 export interface NewOrderRequest {
   razorpay_order_id: string;
   razorpay_payment_id: string;
@@ -63,7 +88,7 @@ async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`/.netlify/functions/${path}`, { ...init, headers });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || data.success === false) {
-    throw new Error(data.error || `Request failed (${res.status})`);
+    throw new ApiError(data.error || `Request failed (${res.status})`, res.status);
   }
   return data as T;
 }
@@ -78,6 +103,19 @@ export const accountApi = {
     call<{ order: Order }>('orders', { method: 'POST', body: JSON.stringify(order) }).then((d) => d.order),
 
   listOrders: () => call<{ orders: Order[] }>('orders').then((d) => d.orders),
+
+  adminListOrders: (params: { status?: string; q?: string; page?: number }) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set('status', params.status);
+    if (params.q) qs.set('q', params.q);
+    if (params.page && params.page > 1) qs.set('page', String(params.page));
+    return call<AdminOrdersResponse>(`admin-orders${qs.toString() ? `?${qs}` : ''}`);
+  },
+
+  adminUpdateOrder: (id: string, update: { status: Order['status']; awbCode?: string }) =>
+    call<{ order: AdminOrder }>('admin-orders', { method: 'POST', body: JSON.stringify({ id, ...update }) }).then(
+      (d) => d.order
+    ),
 
   getOrder: (id: string) => call<{ order: Order }>(`orders?id=${encodeURIComponent(id)}`).then((d) => d.order),
 };

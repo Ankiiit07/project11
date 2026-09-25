@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test:functions": "node --experimental-test-module-mocks --test tests/*.test.mjs"
+    "test:functions": "node --experimental-test-module-mocks --test tests/*.test.mjs",
+    "migrate:supabase-orders": "node scripts/migrate-supabase-orders.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
