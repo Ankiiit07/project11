@@ -5,9 +5,15 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 
+// On the live site, run the sign-in helper (/__/auth/handler) on our own domain;
+// public/_redirects proxies it to Firebase. Browsers that block third-party
+// storage (Safari, iOS, private windows) break Google sign-in otherwise.
+// Locally there is no proxy, so use Firebase's own domain.
+const isLocal = typeof window === 'undefined' || /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+
 const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  authDomain: isLocal ? import.meta.env.VITE_FIREBASE_AUTH_DOMAIN : window.location.host,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };

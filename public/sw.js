@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cafe-at-once-v6';
+const CACHE_NAME = 'cafe-at-once-v7';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
@@ -34,6 +34,9 @@ self.addEventListener('fetch', (event) => {
 
   // Skip API and querystring requests
   if (url.pathname.startsWith('/api') || url.search) return;
+
+  // Firebase Auth helper (proxied to Firebase): never cache it
+  if (url.pathname.startsWith('/__/')) return;
 
   // HTML navigations: network-first
   if (request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html')) {

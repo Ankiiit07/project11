@@ -1,1 +1,6 @@
+# Firebase Auth sign-in helper, served from our own domain so Google sign-in
+# works in browsers that block third-party storage (Safari, iOS, private windows).
+/__/auth/*      https://cafe-at-once.firebaseapp.com/__/auth/:splat      200!
+/__/firebase/*  https://cafe-at-once.firebaseapp.com/__/firebase/:splat  200!
+
 /*    /index.html   200
