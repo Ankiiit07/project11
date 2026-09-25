@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import { Package, Clock, CheckCircle, Truck, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useOrders } from '../hooks/useOrders';
+import { useUser } from '../context/UserContext';
 
 const OrdersPageTechForward: React.FC = () => {
-  const { orders, loading } = useOrders();
+  const { user } = useUser();
+  const { orders, loading, error } = useOrders();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -37,6 +39,33 @@ const OrdersPageTechForward: React.FC = () => {
     return (
       <div className="min-h-screen bg-background pt-20 pb-16 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h2 className="font-heading text-3xl font-bold text-foreground mb-4">Sign in to see your orders</h2>
+          <p className="text-foreground/70 mb-8">
+            Your order history is saved to your account. Checked out as a guest? Create an account with the same email.
+          </p>
+          <Link
+            to="/account"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all"
+          >
+            Sign in
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-16 flex items-center justify-center px-4">
+        <p className="text-foreground/70 text-center">We couldn't load your orders right now. Please refresh the page to try again.</p>
       </div>
     );
   }
@@ -117,7 +146,7 @@ const OrdersPageTechForward: React.FC = () => {
                     </div>
                     <div className="text-right">
                       <div className="font-heading text-2xl font-bold text-foreground mb-1">
-                        ₹{order.totalAmount?.toFixed(2) || '0.00'}
+                        ₹{order.total?.toFixed(2) || '0.00'}
                       </div>
                       <p className="text-sm text-foreground/60">
                         {order.items?.length || 0} items

@@ -1,221 +1,110 @@
-import React, { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Package,
-  Truck,
-  CheckCircle,
-  Clock,
-  AlertCircle,
-} from "lucide-react";
-import { useOrders } from "../hooks/useOrders";
-import { Order } from "../services/orderService";
-import { createShiprocketOrder } from "../services/shiprocketService";
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, Truck } from "lucide-react";
+import { useUser } from "../context/UserContext";
+import { accountApi, type Order } from "../services/accountApi";
+
+const inr = (n: number) => `₹${(n || 0).toFixed(2)}`;
 
 const OrderDetailsPage: React.FC = () => {
-  const handleShipOrder = async () => {
-    if (!order) return;
-
-    try {
-      const response = await fetch("/api/shiprocket/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          order_id: order.id,
-          order_date: new Date().toISOString(),
-          pickup_location: "Primary",
-          billing_customer_name: order.customerInfo?.firstName || "",
-          billing_last_name: order.customerInfo?.lastName || "",
-          billing_address: order.customerInfo?.address || "",
-          billing_city: order.customerInfo?.city || "",
-          billing_pincode: order.customerInfo?.pincode || "000000",
-          billing_state: order.customerInfo?.state || "",
-          billing_country: "India",
-          billing_email: order.customerInfo?.email || "",
-          billing_phone: order.customerInfo?.phone || "",
-          order_items: order.items.map((item) => ({
-            name: item.name,
-            sku: item.id,
-            units: item.quantity,
-            selling_price: item.price,
-          })),
-          payment_method:
-            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
-          sub_total: order.total,
-          length: 10,
-          breadth: 10,
-          height: 10,
-          weight: 0.5,
-        }),
-      }).then((res) => res.json());
-
-      console.log("🚚 Shiprocket Order Created:", response);
-      alert("Shiprocket order created successfully!");
-    } catch (error) {
-      console.error("Shiprocket error:", error);
-      alert("Failed to create Shiprocket order.");
-    }
-  };
-
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { orders, updateOrderStatus, deleteOrder } = useOrders();
+  const { user, ready } = useUser();
+  const [order, setOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const order = orders.find((o) => o.id === id);
+  useEffect(() => {
+    if (!ready || !id) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    accountApi
+      .getOrder(id)
+      .then(setOrder)
+      .catch(() => setOrder(null))
+      .finally(() => setLoading(false));
+  }, [id, ready, user]);
 
-  const [status, setStatus] = useState<Order["status"]>(
-    order?.status || "pending"
-  );
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-16 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading" />
+      </div>
+    );
+  }
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center">
+      <div className="min-h-screen bg-background pt-20 flex items-center justify-center px-4">
         <div className="text-center">
-          <p className="text-lg text-gray-700 mb-4">Order not found.</p>
-          <Link to="/orders" className="text-primary hover:underline">
-            ← Back to Orders
+          <p className="text-lg text-foreground/70 mb-4">
+            {user ? "Order not found." : "Please sign in to see this order."}
+          </p>
+          <Link to={user ? "/orders" : "/account"} className="text-primary hover:underline">
+            {user ? "← Back to Orders" : "Sign in"}
           </Link>
         </div>
       </div>
     );
   }
 
-  const handleStatusChange = async () => {
-    try {
-      // 1️⃣ Update order status in your local system
-      updateOrderStatus(order.id, status);
-
-      // 2️⃣ If status is shipped → also create Shiprocket order
-      if (status === "shipped") {
-        const response = await createShiprocketOrder({
-          order_id: order.id,
-          order_date: new Date().toISOString(),
-          pickup_location: "Primary", // must match pickup location in Shiprocket panel
-          billing_customer_name: order.customerInfo?.firstName || "",
-          billing_last_name: order.customerInfo?.lastName || "",
-          billing_address: order.customerInfo?.address || "",
-          billing_city: order.customerInfo?.city || "",
-          billing_pincode: order.customerInfo?.pincode || "000000",
-          billing_state: order.customerInfo?.state || "",
-          billing_country: "India",
-          billing_email: order.customerInfo?.email || "",
-          billing_phone: order.customerInfo?.phone || "",
-          order_items: order.items.map((item) => ({
-            name: item.name,
-            sku: item.id,
-            units: item.quantity,
-            selling_price: item.price,
-          })),
-          payment_method:
-            order.paymentInfo?.method === "razorpay" ? "Prepaid" : "COD",
-          sub_total: order.total,
-          length: 10,
-          breadth: 10,
-          height: 10,
-          weight: 0.5,
-        });
-
-        console.log("🚚 Shiprocket order created:", response);
-        alert("Shiprocket order created successfully!");
-      }
-
-      // 3️⃣ Navigate back to orders list
-      navigate("/orders");
-    } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Failed to update order.");
-    }
-  };
+  const c = order.customer;
 
   return (
-    <div className="min-h-screen bg-cream py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <Link
-            to="/orders"
-            className="inline-flex items-center text-primary hover:text-primary-dark"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" /> Back to Orders
-          </Link>
-          <button
-            onClick={() => {
-              if (window.confirm("Delete this order?")) {
-                deleteOrder(order.id);
-                navigate("/orders");
-              }
-            }}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            Delete Order
-          </button>
-        </div>
+    <div className="min-h-screen bg-background pt-20 pb-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Link to="/orders" className="inline-flex items-center text-primary hover:text-primary/80 mb-6">
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Orders
+        </Link>
 
-        {/* Order Details Card */}
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4">Order #{order.id}</h2>
-
-          {/* Customer Info */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Customer</h3>
-            <p>
-              {order.customerInfo?.firstName} {order.customerInfo?.lastName}
-            </p>
-            <p>{order.customerInfo?.email}</p>
-            <p>{order.customerInfo?.phone}</p>
-            <p>{order.customerInfo?.address}</p>
+        <div className="bg-card border border-border rounded-xl p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h1 className="font-heading text-2xl font-bold text-foreground">Order #{order.id}</h1>
+              <p className="text-sm text-foreground/60">
+                Placed on{" "}
+                {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+              </p>
+            </div>
+            <span className="self-start px-3 py-1 text-sm font-medium rounded-full border border-border capitalize">
+              {order.status}
+            </span>
           </div>
 
-          {/* Items */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Items</h3>
-            <ul className="list-disc list-inside text-gray-700">
+          <div>
+            <h2 className="font-heading font-bold text-foreground mb-3">Items</h2>
+            <ul className="divide-y divide-border">
               {order.items.map((item, idx) => (
-                <li key={idx}>
-                  {item.name} × {item.quantity} — ₹{item.price}
+                <li key={idx} className="flex justify-between py-2 text-foreground/80">
+                  <span>{item.name} × {item.quantity}</span>
+                  <span>{inr(item.price * item.quantity)}</span>
                 </li>
               ))}
             </ul>
+            <dl className="mt-3 space-y-1 text-sm text-foreground/70">
+              <div className="flex justify-between"><dt>Subtotal</dt><dd>{inr(order.subtotal)}</dd></div>
+              {order.discount > 0 && (
+                <div className="flex justify-between"><dt>Discount{order.discountCode ? ` (${order.discountCode})` : ""}</dt><dd>−{inr(order.discount)}</dd></div>
+              )}
+              <div className="flex justify-between"><dt>Shipping</dt><dd>{order.shipping ? inr(order.shipping) : "Free"}</dd></div>
+              <div className="flex justify-between font-bold text-foreground text-base pt-1"><dt>Total paid</dt><dd>{inr(order.total)}</dd></div>
+            </dl>
           </div>
 
-          {/* Payment Info */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Payment</h3>
-            <p>
-              Method:{" "}
-              <span className="font-medium">
-                {order.paymentInfo?.method
-                  ? order.paymentInfo.method.toUpperCase()
-                  : "N/A"}
-              </span>
-            </p>
-            <p>Status: {order.paymentInfo?.status || "unknown"}</p>
-            <p>Total: ₹{order.total.toFixed(2)}</p>
+          <div>
+            <h2 className="font-heading font-bold text-foreground mb-2">Delivery address</h2>
+            <p className="text-foreground/80">{c.firstName} {c.lastName}</p>
+            <p className="text-foreground/70">{c.address}, {c.city}, {c.state} {c.zipCode}</p>
+            <p className="text-foreground/70">{c.phone}</p>
           </div>
 
-          {/* Order Status Update */}
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg mb-2">Update Status</h3>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as Order["status"])}
-              className="border border-gray-300 rounded-lg px-4 py-2"
-            >
-              <option value="pending">Pending</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-
-            <button
-              onClick={handleStatusChange}
-              className="ml-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
-            >
-              Save
-            </button>
-          </div>
+          <Link
+            to={`/track?orderId=${order.id}`}
+            className="h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-full transition-all inline-flex items-center justify-center gap-2"
+          >
+            <Truck className="h-5 w-5" /> Track Order
+          </Link>
         </div>
       </div>
     </div>

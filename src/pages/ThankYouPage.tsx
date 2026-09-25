@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CheckCircle,
@@ -11,7 +11,8 @@ import {
   ArrowLeft,
   Home,
 } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { accountApi, type Order } from "../services/accountApi";
+import { useUser } from "../context/UserContext";
 
 interface OrderDetails {
   orderNumber: string;
@@ -31,55 +32,53 @@ interface OrderDetails {
     zipCode: string;
   };
   estimatedDelivery: string;
-  paymentInfo: data.payment_info,
+  paymentMethod?: string;
 }
+
+const toOrderDetails = (order: Order): OrderDetails => ({
+  orderNumber: order.id,
+  customerName: `${order.customer.firstName} ${order.customer.lastName}`.trim(),
+  customerEmail: order.customer.email,
+  customerPhone: order.customer.phone,
+  total: order.total,
+  items: order.items,
+  shippingAddress: {
+    street: order.customer.address,
+    city: order.customer.city,
+    state: order.customer.state,
+    zipCode: order.customer.zipCode,
+  },
+  estimatedDelivery: new Date(
+    new Date(order.createdAt).getTime() + 3 * 24 * 60 * 60 * 1000
+  ).toISOString(),
+  paymentMethod: order.payment?.method,
+});
 
 
 const ThankYouPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, ready } = useUser();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
-  console.log("🔥 ThankYouPage orderDetails:", orderDetails);
   useEffect(() => {
     const loadOrder = async () => {
-      // 1. Try from location.state
-      let details = location.state?.orderDetails;
+      // 1. The order checkout just saved (passed through navigation)
+      const fromCheckout: Order | undefined = location.state?.orderDetails;
+      let details: OrderDetails | null = fromCheckout?.customer ? toOrderDetails(fromCheckout) : null;
 
       // 2. Fallback to localStorage
       if (!details) {
         details = JSON.parse(localStorage.getItem("codOrderDetails") || "null");
       }
 
-      // 3. Fallback to Supabase (Netlify-safe)
-      if (!details) {
-        const params = new URLSearchParams(location.search);
-        const orderId = params.get("orderId");
-
+      // 3. Page reloaded: fetch it (works for the signed-in owner of the order)
+      if (!details && ready) {
+        const orderId = new URLSearchParams(location.search).get("orderId");
         if (orderId) {
-          const { data, error } = await supabase
-            .from("orders")
-            .select("*")
-            .eq("id", orderId)
-            .single();
-
-          if (!error && data) {
-            details = {
-              orderNumber: data.id,
-              customerName: data.customer_info?.name,
-              customerEmail: data.customer_info?.email,
-              customerPhone: data.customer_info?.phone,
-              total: data.total,
-              items: data.items,
-              shippingAddress: data.customer_info?.address || {
-                street: "",
-                city: "",
-                state: "",
-                zipCode: "",
-              },
-              estimatedDelivery: new Date(
-                Date.now() + 3 * 24 * 60 * 60 * 1000
-              ).toISOString(),
-            };
+          try {
+            details = toOrderDetails(await accountApi.getOrder(orderId));
+          } catch {
+            details = null;
           }
         }
       }
@@ -88,7 +87,7 @@ const ThankYouPage: React.FC = () => {
     };
 
     loadOrder();
-  }, [location]);
+  }, [location, ready]);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -150,6 +149,24 @@ const ThankYouPage: React.FC = () => {
           </p>
         </motion.div>
 
+        {/* Guests: invite them to create an account for order tracking */}
+        {ready && !user && (
+          <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-bold text-gray-900">Track this order anytime</p>
+              <p className="text-gray-600 text-sm">
+                Create an account with {orderDetails.customerEmail} to see all your orders in one place.
+              </p>
+            </div>
+            <Link
+              to={`/account?signup=1&email=${encodeURIComponent(orderDetails.customerEmail)}`}
+              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors text-center"
+            >
+              Create account
+            </Link>
+          </div>
+        )}
+
         {/* Order Details Card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -199,7 +216,7 @@ const ThankYouPage: React.FC = () => {
   <div>
     <p className="font-medium text-gray-900">Payment Method</p>
     <p className="text-gray-600">
-  {orderDetails?.payment_info?.method === "razorpay"
+  {orderDetails.paymentMethod === "razorpay"
     ? "Razorpay (Paid Online)"
     : "Cash on Delivery (COD)"}
 </p>
