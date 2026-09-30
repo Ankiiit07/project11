@@ -11,7 +11,7 @@ import {
   CreditCard, 
   Truck, 
   Coffee,
-  MapPin,
+  
   Star
 } from 'lucide-react';
 

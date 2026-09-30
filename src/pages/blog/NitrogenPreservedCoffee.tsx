@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 

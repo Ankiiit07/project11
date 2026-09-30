@@ -10,14 +10,8 @@
     "migrate:supabase-orders": "node scripts/migrate-supabase-orders.mjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
-    "@tanstack/react-query": "^5.0.0",
-    "axios": "^1.6.0",
-    "clsx": "^2.0.0",
-    "date-fns": "^3.0.0",
     "firebase": "^12.19.0",
     "framer-motion": "^10.16.0",
-    "immer": "^11.1.4",
     "jose": "^6.2.12",
     "lucide-react": "^0.294.0",
     "mongodb": "^7.6.0",
@@ -27,10 +21,7 @@
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.4",
     "react-hot-toast": "^2.4.1",
-    "react-query": "^3.39.3",
-    "react-router-dom": "^6.20.0",
-    "resend": "^3.0.0",
-    "zustand": "^4.4.0"
+    "react-router-dom": "^6.20.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
