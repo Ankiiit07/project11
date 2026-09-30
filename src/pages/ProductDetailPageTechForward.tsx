@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Star, ShoppingCart, Heart, Share2, Plus, Minus, Check, Package, Shield, Truck } from 'lucide-react';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, ShoppingCart, Heart, Share2, Plus, Minus, Check, Package, Shield, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
 import ProductCardTechForward from '../components/ProductCardTechForward';
 import SEO from '../components/SEO';
 import { toShareImage } from '../utils/shareImage';
+import ProductReviews, { Stars, useProductReviews } from '../components/ProductReviews';
 
 const ProductDetailPageTechForward: React.FC = () => {
   React.useEffect(() => {
@@ -15,6 +16,7 @@ const ProductDetailPageTechForward: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { product, loading, error } = useProduct(id || '');
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
@@ -24,6 +26,20 @@ const ProductDetailPageTechForward: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   
   const { products: relatedProducts } = useProductsByCategory(product?.category || '');
+  const { data: reviewData, reload: reloadReviews } = useProductReviews(id || '');
+  const reviewSummary = reviewData?.summary;
+  const wantsReviews = new URLSearchParams(location.search).has('review');
+
+  const openReviews = () => {
+    setActiveTab('reviews');
+    setTimeout(() => document.getElementById('product-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  };
+
+  // "Write a review" links from My Orders land here with ?review=1
+  React.useEffect(() => {
+    if (wantsReviews && product) openReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantsReviews, product?.id]);
 
   if (loading) {
     return (
@@ -96,8 +112,8 @@ const ProductDetailPageTechForward: React.FC = () => {
           images: product.images || [product.image],
           category: product.category,
           brand: "Cafe at Once",
-          // Ratings are left out until they come from real customer reviews:
-          // Google penalises review data that isn't genuine.
+          // Only genuine, verified-purchase reviews (Google penalises anything else)
+          ...(reviewSummary?.count ? { rating: reviewSummary.average, reviewCount: reviewSummary.count } : {}),
           availability: product.isPreOrder ? "PreOrder" : product.inStock ? "InStock" : "OutOfStock",
           sku: product.id
         }}
@@ -197,9 +213,13 @@ const ProductDetailPageTechForward: React.FC = () => {
               <span className="text-sm font-medium text-primary uppercase tracking-wider">
                 {product.category?.replace('-', ' ')}
               </span>
-              <span className="text-sm px-3 py-1 bg-green-50 text-green-700 rounded-full font-medium">
-                In Stock
-              </span>
+              {product.isPreOrder ? (
+                <span className="text-sm px-3 py-1 bg-amber-50 text-amber-800 rounded-full font-medium">Pre-order</span>
+              ) : product.inStock ? (
+                <span className="text-sm px-3 py-1 bg-green-50 text-green-700 rounded-full font-medium">In Stock</span>
+              ) : (
+                <span className="text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Out of stock</span>
+              )}
             </div>
 
             {/* Title */}
@@ -208,20 +228,15 @@ const ProductDetailPageTechForward: React.FC = () => {
                 {product.name}
               </h1>
               
-              {/* Rating */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${i < Math.floor(product.rating) ? 'fill-primary text-primary' : 'text-foreground/20'}`}
-                    />
-                  ))}
-                </div>
-                <span className="text-foreground/70">
-                  {product.rating} ({product.reviews} reviews)
-                </span>
-              </div>
+              {/* Rating: only from real, verified-purchase reviews */}
+              {reviewSummary?.count ? (
+                <button type="button" onClick={openReviews} className="flex items-center gap-3 hover:opacity-80">
+                  <Stars value={reviewSummary.average} size="h-5 w-5" />
+                  <span className="text-foreground/70">
+                    {reviewSummary.average.toFixed(1)} ({reviewSummary.count} {reviewSummary.count === 1 ? 'review' : 'reviews'})
+                  </span>
+                </button>
+              ) : null}
             </div>
 
             {/* Price */}
@@ -332,7 +347,7 @@ const ProductDetailPageTechForward: React.FC = () => {
         </div>
 
         {/* Tabs Section */}
-        <div className="mb-16">
+        <div id="product-tabs" className="mb-16 scroll-mt-24">
           <div className="border-b border-border mb-6">
             <div className="flex gap-8">
               {['description', 'nutrition', 'reviews'].map((tab) => (
@@ -368,10 +383,7 @@ const ProductDetailPageTechForward: React.FC = () => {
               </div>
             )}
             {activeTab === 'reviews' && (
-              <div>
-                <h3 className="font-heading text-xl font-bold text-foreground mb-4">Customer Reviews</h3>
-                <p className="text-foreground/70">No reviews yet. Be the first to review this product!</p>
-              </div>
+              <ProductReviews productId={product.id} data={reviewData} reload={reloadReviews} />
             )}
           </div>
         </div>

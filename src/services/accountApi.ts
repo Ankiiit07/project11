@@ -60,6 +60,33 @@ export interface AdminOrdersResponse {
   };
 }
 
+export interface Review {
+  id: string;
+  productId: string;
+  name: string;
+  rating: number;
+  title: string;
+  text: string;
+  verifiedPurchase: boolean;
+  status: 'published' | 'hidden';
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ReviewSummary {
+  count: number;
+  average: number;
+}
+
+export interface ProductReviewsResponse {
+  reviews: Review[];
+  summary: ReviewSummary;
+  /** Only present when signed in. */
+  mine?: Review | null;
+  canReview?: boolean;
+  isAdmin?: boolean;
+}
+
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
@@ -116,6 +143,18 @@ export const accountApi = {
     call<{ order: AdminOrder }>('admin-orders', { method: 'POST', body: JSON.stringify({ id, ...update }) }).then(
       (d) => d.order
     ),
+
+  getReviewSummaries: () =>
+    call<{ summary: Record<string, ReviewSummary> }>('reviews?summary=1').then((d) => d.summary),
+
+  getReviews: (productId: string) =>
+    call<ProductReviewsResponse>(`reviews?productId=${encodeURIComponent(productId)}`),
+
+  writeReview: (review: { productId: string; rating: number; title?: string; text: string }) =>
+    call<{ review: Review }>('reviews', { method: 'POST', body: JSON.stringify(review) }).then((d) => d.review),
+
+  moderateReview: (id: string, action: 'hide' | 'show') =>
+    call<{ review: Review }>('reviews', { method: 'POST', body: JSON.stringify({ id, action }) }).then((d) => d.review),
 
   getOrder: (id: string) => call<{ order: Order }>(`orders?id=${encodeURIComponent(id)}`).then((d) => d.order),
 };

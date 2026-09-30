@@ -25,6 +25,9 @@ export async function getDb() {
       db.collection('orders').createIndex({ 'payment.paymentId': 1 }, { unique: true, sparse: true }),
       db.collection('orders').createIndex({ userId: 1, createdAt: -1 }),
       db.collection('orders').createIndex({ 'customer.email': 1, createdAt: -1 }),
+      db.collection('reviews').createIndex({ productId: 1, uid: 1 }, { unique: true }),
+      db.collection('reviews').createIndex({ id: 1 }, { unique: true }),
+      db.collection('reviews').createIndex({ productId: 1, status: 1, createdAt: -1 }),
     ]).catch((err) => {
       indexesReady = null;
       console.warn('db: index creation failed:', err.message);

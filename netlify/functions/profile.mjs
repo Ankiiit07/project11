@@ -8,15 +8,16 @@
 import { getDb } from '../lib/db.mjs';
 import { getAuthUser } from '../lib/auth.mjs';
 import { reply, str, parseBody } from '../lib/http.mjs';
+import { isAdmin } from '../lib/admin.mjs';
 
-export function toProfile(doc) {
+export function toProfile(doc, user) {
   return {
     id: doc.uid,
     email: doc.email,
     name: doc.name || '',
     phone: doc.phone || '',
     address: doc.address || null,
-    role: 'customer',
+    role: isAdmin(user) ? 'admin' : 'customer',
   };
 }
 
@@ -55,7 +56,7 @@ export const handler = async (event) => {
         },
         { upsert: true, returnDocument: 'after' }
       );
-      return reply(200, { success: true, profile: toProfile(doc) });
+      return reply(200, { success: true, profile: toProfile(doc, user) });
     }
 
     if (event.httpMethod === 'PUT') {
@@ -69,7 +70,7 @@ export const handler = async (event) => {
         },
         { upsert: true, returnDocument: 'after' }
       );
-      return reply(200, { success: true, profile: toProfile(doc) });
+      return reply(200, { success: true, profile: toProfile(doc, user) });
     }
 
     return reply(405, { success: false, error: 'Method not allowed' });

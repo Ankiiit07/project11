@@ -147,8 +147,8 @@ const HomePageTechForward: React.FC = () => {
                     <div className="text-sm text-foreground/60">Shelf Life</div>
                   </div>
                   <div className="space-y-1">
-                    <div className="font-heading text-3xl font-bold text-foreground">4.9<span className="text-primary">★</span></div>
-                    <div className="text-sm text-foreground/60">843 Reviews</div>
+                    <div className="font-heading text-3xl font-bold text-foreground">100<span className="text-primary">%</span></div>
+                    <div className="text-sm text-foreground/60">Arabica</div>
                   </div>
                 </div>
               </motion.div>
