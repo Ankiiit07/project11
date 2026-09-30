@@ -235,6 +235,10 @@ test('reviews: public list and summary; no account details leak', async () => {
     assert.equal(r.orderId, undefined);
     assert.equal(r._id, undefined);
   }
+  const recent = await call(reviews, 'GET', { qs: { recent: '1' } });
+  assert.equal(recent.reviews.length, 2);
+  assert.deepEqual(recent.summary, { count: 2, average: 3.5 });
+  assert.equal(recent.reviews[0].uid, undefined);
   const all = await call(reviews, 'GET', { qs: { summary: '1' } });
   assert.deepEqual(all.summary, { latte: { count: 2, average: 3.5 } });
 

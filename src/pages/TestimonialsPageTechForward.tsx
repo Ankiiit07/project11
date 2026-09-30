@@ -1,61 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Star, Quote } from 'lucide-react';
+import { BadgeCheck, MessageSquare, Quote } from 'lucide-react';
+import SEO from '../components/SEO';
+import { Stars } from '../components/ProductReviews';
+import { accountApi, type Review, type ReviewSummary } from '../services/accountApi';
+import { getProductById } from '../data/products';
 
+// Reviews from verified buyers only (see netlify/functions/reviews.mjs).
 const TestimonialsPageTechForward: React.FC = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: 'Rahul Sharma',
-      role: 'Fitness Enthusiast',
-      rating: 5,
-      text: 'Perfect for my gym sessions! I can have quality coffee anywhere without carrying bulky equipment. The taste is amazing!',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80',
-    },
-    {
-      id: 2,
-      name: 'Priya Patel',
-      role: 'Working Professional',
-      rating: 5,
-      text: 'Being sugar-free and gluten-free makes this perfect for my health-conscious lifestyle. Love the convenience!',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
-    },
-    {
-      id: 3,
-      name: 'Arjun Mehta',
-      role: 'Travel Blogger',
-      rating: 5,
-      text: 'As someone always on the move, Cafe at Once is a game-changer. Compact, convenient, and consistently great taste.',
-      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80',
-    },
-    {
-      id: 4,
-      name: 'Sneha Reddy',
-      role: 'Entrepreneur',
-      rating: 5,
-      text: 'The 5-second promise is real! Perfect for busy mornings when I need quality coffee fast.',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80',
-    },
-    {
-      id: 5,
-      name: 'Vikram Singh',
-      role: 'Software Engineer',
-      rating: 5,
-      text: 'Finally, a coffee solution that matches my tech-savvy lifestyle. Innovative, convenient, and tastes great!',
-      image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80',
-    },
-    {
-      id: 6,
-      name: 'Ananya Iyer',
-      role: 'Content Creator',
-      rating: 5,
-      text: 'Love carrying this during shoots! Quick, mess-free, and delivers cafe-quality coffee every time.',
-      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80',
-    },
-  ];
+  const [reviews, setReviews] = useState<Review[] | null>(null);
+  const [summary, setSummary] = useState<ReviewSummary>({ count: 0, average: 0 });
+
+  useEffect(() => {
+    accountApi
+      .getRecentReviews()
+      .then((d) => {
+        setReviews(d.reviews);
+        setSummary(d.summary);
+      })
+      .catch(() => setReviews([]));
+  }, []);
+
+  const productsReviewed = new Set((reviews || []).map((r) => r.productId)).size;
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
+      <SEO
+        title="Customer Reviews | Cafe at Once"
+        description="Reviews of Cafe at Once nitrogen-preserved Arabica coffee from verified buyers."
+        url="https://cafeatonce.com/testimonials"
+        breadcrumbs={[
+          { name: 'Home', url: 'https://cafeatonce.com' },
+          { name: 'Reviews', url: 'https://cafeatonce.com/testimonials' },
+        ]}
+      />
+
       {/* Hero */}
       <section className="bg-gradient-to-b from-secondary to-background py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,80 +44,104 @@ const TestimonialsPageTechForward: React.FC = () => {
               Customer <span className="text-primary">Reviews</span>
             </h1>
             <p className="text-lg text-foreground/70">
-              See what our customers are saying about their Cafe at Once experience
+              Every review here comes from someone who bought from us, marked as a verified purchase.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {[
-              { number: '50K+', label: 'Happy Customers' },
-              { number: '4.9', label: 'Average Rating', icon: '⭐' },
-              { number: '98%', label: 'Would Recommend' },
-              { number: '10K+', label: 'Five Star Reviews' },
-            ].map((stat, index) => (
-              <motion.div
-                key={stat.label}
-                className="bg-card border border-border rounded-xl p-6 text-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-              >
-                <div className="font-heading text-3xl sm:text-4xl font-bold text-primary mb-2">
-                  {stat.number}
-                  {stat.icon && <span className="ml-1">{stat.icon}</span>}
+      {/* Stats: only real numbers, only once there are reviews */}
+      {summary.count > 0 && (
+        <section className="py-12">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6">
+              {[
+                { number: summary.average.toFixed(1), label: 'Average rating', stars: true },
+                { number: String(summary.count), label: summary.count === 1 ? 'Verified review' : 'Verified reviews' },
+                { number: String(productsReviewed), label: productsReviewed === 1 ? 'Product reviewed' : 'Products reviewed' },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-card border border-border rounded-xl p-4 sm:p-6 text-center">
+                  <div className="font-heading text-3xl sm:text-4xl font-bold text-primary mb-1">{stat.number}</div>
+                  {stat.stars && (
+                    <div className="flex justify-center mb-1">
+                      <Stars value={summary.average} />
+                    </div>
+                  )}
+                  <div className="text-sm text-foreground/70">{stat.label}</div>
                 </div>
-                <div className="text-sm text-foreground/70">{stat.label}</div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Testimonials Grid */}
-      <section className="pb-16">
+      <section className="pb-16 pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.4 }}
-              >
-                <div className="flex items-start gap-4 mb-4">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-heading font-bold text-foreground">
-                      {testimonial.name}
-                    </h3>
-                    <p className="text-sm text-foreground/60">{testimonial.role}</p>
-                  </div>
-                  <Quote className="h-6 w-6 text-primary/20" />
-                </div>
-
-                <div className="flex items-center gap-1 mb-3">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
-                  ))}
-                </div>
-
-                <p className="text-foreground/70 leading-relaxed">
-                  "{testimonial.text}"
-                </p>
-              </motion.div>
-            ))}
-          </div>
+          {reviews === null ? (
+            <div className="flex justify-center py-16">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" aria-label="Loading reviews" />
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="max-w-xl mx-auto text-center bg-card border border-border rounded-2xl p-10">
+              <MessageSquare className="h-12 w-12 text-primary mx-auto mb-4" />
+              <h2 className="font-heading text-2xl font-bold text-foreground mb-2">Our first reviews are on their way</h2>
+              <p className="text-foreground/70 mb-6">
+                We only show reviews from verified buyers, so this page fills up as customers share their experience.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/orders" className="px-6 py-3 bg-primary text-white font-bold rounded-full">
+                  Bought from us? Write a review
+                </Link>
+                <Link to="/products" className="px-6 py-3 border border-border rounded-full text-foreground">
+                  Shop coffee
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {reviews.map((review, index) => {
+                  const product = getProductById(review.productId);
+                  return (
+                    <motion.article
+                      key={review.id}
+                      className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all flex flex-col"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: Math.min(index, 6) * 0.08, duration: 0.4 }}
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <Stars value={review.rating} />
+                        <Quote className="h-6 w-6 text-primary/20 flex-shrink-0" />
+                      </div>
+                      {review.title && <h3 className="font-heading font-bold text-foreground mb-2">{review.title}</h3>}
+                      <p className="text-foreground/70 leading-relaxed flex-1 whitespace-pre-line">"{review.text}"</p>
+                      <div className="mt-4 pt-4 border-t border-border text-sm">
+                        <p className="font-medium text-foreground">{review.name}</p>
+                        <p className="inline-flex items-center gap-1 text-green-700">
+                          <BadgeCheck className="h-3.5 w-3.5" /> Verified purchase
+                        </p>
+                        {product && (
+                          <p>
+                            <Link to={`/products/${product.id}`} className="text-primary hover:underline">
+                              {product.name}
+                            </Link>
+                          </p>
+                        )}
+                      </div>
+                    </motion.article>
+                  );
+                })}
+              </div>
+              <p className="text-center mt-10 text-foreground/70">
+                Bought from us?{' '}
+                <Link to="/orders" className="text-primary font-medium hover:underline">
+                  Review your order
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </section>
     </div>

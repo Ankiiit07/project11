@@ -4,6 +4,7 @@
 // published review is a verified purchase.
 //
 // GET  ?summary=1                  { summary: { [productId]: { count, average } } }
+// GET  ?recent=1                   latest published reviews across all products + overall summary
 // GET  ?productId=X                published reviews + summary (admins also get hidden ones);
 //                                  when signed in, also `mine` and `canReview` (they bought it)
 // POST { productId, rating, title?, text }   write or update your review
@@ -61,6 +62,26 @@ async function getReviews(event, db) {
 
   if (q.summary) {
     const res = reply(200, { success: true, summary: await summaryFor(reviews, {}) });
+    res.headers = { ...res.headers, 'Cache-Control': 'public, max-age=300' };
+    return res;
+  }
+
+  if (q.recent) {
+    const [list, overall] = await Promise.all([
+      reviews.find({ status: 'published' }).sort({ createdAt: -1 }).limit(60).toArray(),
+      reviews
+        .aggregate([
+          { $match: { status: 'published' } },
+          { $group: { _id: null, count: { $sum: 1 }, total: { $sum: '$rating' } } },
+        ])
+        .toArray(),
+    ]);
+    const o = overall[0];
+    const res = reply(200, {
+      success: true,
+      reviews: list.map(toPublic),
+      summary: o ? { count: o.count, average: round1(o.total / o.count) } : { count: 0, average: 0 },
+    });
     res.headers = { ...res.headers, 'Cache-Control': 'public, max-age=300' };
     return res;
   }

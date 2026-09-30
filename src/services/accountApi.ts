@@ -147,6 +147,8 @@ export const accountApi = {
   getReviewSummaries: () =>
     call<{ summary: Record<string, ReviewSummary> }>('reviews?summary=1').then((d) => d.summary),
 
+  getRecentReviews: () => call<{ reviews: Review[]; summary: ReviewSummary }>('reviews?recent=1'),
+
   getReviews: (productId: string) =>
     call<ProductReviewsResponse>(`reviews?productId=${encodeURIComponent(productId)}`),
 

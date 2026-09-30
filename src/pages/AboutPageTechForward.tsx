@@ -161,10 +161,10 @@ const AboutPageTechForward: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { number: '50K+', label: 'Happy Customers' },
               { number: '5s', label: 'Brew Time' },
               { number: '100%', label: 'Natural Ingredients' },
-              { number: '4.9★', label: 'Average Rating' },
+              { number: '12mo', label: 'Shelf Life' },
+              { number: '0', label: 'Fridge Needed' },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
