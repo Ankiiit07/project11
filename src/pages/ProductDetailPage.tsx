@@ -6,7 +6,7 @@ import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
 import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
-import { toShareImage } from '../utils/shareImage';
+import { cld, cldSrcSet, toShareImage } from '../utils/cloudinary';
 import ProductReviews, { Stars, useProductReviews } from '../components/ProductReviews';
 
 const ProductDetailPage: React.FC = () => {
@@ -171,7 +171,9 @@ const ProductDetailPage: React.FC = () => {
             {/* Main Image */}
             <div className="bg-card border border-border rounded-2xl overflow-hidden aspect-square">
               <img
-                src={selectedImage || product.image}
+                src={cld(selectedImage || product.image, 960)}
+                srcSet={cldSrcSet(selectedImage || product.image, [480, 720, 960, 1200])}
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -191,8 +193,9 @@ const ProductDetailPage: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={img}
+                      src={cld(img, 160)}
                       alt={`${product.name} - Image ${index + 1}`}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   </button>

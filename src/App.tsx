@@ -1,13 +1,13 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
+import { MotionConfig } from 'framer-motion';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { CartProvider } from './context/CartContextOptimized';
 import { UserProvider } from './context/UserContext';
-import ChatBot from './components/ChatBot';
-import WhatsAppButton from './components/WhatsAppButton';
+import HelpButton from './components/HelpButton';
 import NotificationSystem from './components/NotificationSystem';
 import { PageLoader } from './components/OptimizedLoader';
 import SkipLink from './components/SkipLink';
@@ -65,6 +65,8 @@ function App() {
     <Router>
       <ErrorBoundary>
         <HelmetProvider>
+          {/* Animations follow the visitor's "reduce motion" setting */}
+          <MotionConfig reducedMotion="user">
           <UserProvider>
             <CartProvider>
               <ScrollToTop />
@@ -108,14 +110,12 @@ function App() {
                   </ErrorBoundary>
                 </main>
                 <Footer />
-                <ChatBot />
-                <div className="fixed bottom-6 right-6 z-50">
-                  <WhatsAppButton phoneNumber="+917979837079" message="Hi! I'm interested in Cafe at Once products." />
-                </div>
+                <HelpButton />
                 <NotificationSystem />
               </div>
             </CartProvider>
           </UserProvider>
+          </MotionConfig>
         </HelmetProvider>
       </ErrorBoundary>
     </Router>
