@@ -1,11 +1,20 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { generateSitemapXML } from './src/utils/sitemapGenerator';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
+    // Write dist/sitemap.xml from the page and product lists
+    {
+      name: 'sitemap',
+      apply: 'build',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: generateSitemapXML() });
+      },
+    },
     // Bundle analyzer for development
     ...(process.env.ANALYZE ? [visualizer({
       open: true,

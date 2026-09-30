@@ -1,5 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { toShareImage } from '../utils/shareImage';
+
+const DEFAULT_SHARE_IMAGE = toShareImage(
+  'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186149/DSC00887-scaled_ddzxox.jpg'
+);
 
 interface SEOProps {
   title?: string;
@@ -44,7 +49,7 @@ const SEO: React.FC<SEOProps> = ({
   title = 'Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India',
   description = "India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds — no machine, no fridge, no compromise. Just press and go.",
   keywords = 'nitrogen preserved coffee, instant arabica coffee, coffee press tube, portable coffee India, travel coffee, nitro washed coffee, premium coffee concentrate',
-  image = 'https://cafeatonce.com/og-image.jpg',
+  image = DEFAULT_SHARE_IMAGE,
   url = 'https://cafeatonce.com',
   type = 'website',
   product,
@@ -264,12 +269,11 @@ const SEO: React.FC<SEOProps> = ({
       <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
       
       {/* Structured Data */}
+      {/* Helmet only renders a script's children (it ignores dangerouslySetInnerHTML) */}
       {structuredData.map((data, index) => (
-        <script
-          key={index}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-        />
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(data)}
+        </script>
       ))}
     </Helmet>
   );

@@ -6,6 +6,7 @@ import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
 import ProductCardTechForward from '../components/ProductCardTechForward';
 import SEO from '../components/SEO';
+import { toShareImage } from '../utils/shareImage';
 
 const ProductDetailPageTechForward: React.FC = () => {
   React.useEffect(() => {
@@ -85,6 +86,7 @@ const ProductDetailPageTechForward: React.FC = () => {
         title={`${product.name} — Nitrogen-Preserved Press Tube | Cafe at Once`}
         description={seoDescription}
         url={`https://cafeatonce.com/products/${product.id}`}
+        image={toShareImage(product.images?.[0] || product.image)}
         type="product"
         product={{
           name: `Cafe at Once ${product.name} — Nitrogen-Preserved Press Tube`,
@@ -94,9 +96,9 @@ const ProductDetailPageTechForward: React.FC = () => {
           images: product.images || [product.image],
           category: product.category,
           brand: "Cafe at Once",
-          rating: product.rating,
-          reviewCount: product.reviews || 843,
-          availability: "InStock",
+          // Ratings are left out until they come from real customer reviews:
+          // Google penalises review data that isn't genuine.
+          availability: product.isPreOrder ? "PreOrder" : product.inStock ? "InStock" : "OutOfStock",
           sku: product.id
         }}
         breadcrumbs={[

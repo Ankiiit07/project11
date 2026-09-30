@@ -72,7 +72,6 @@ const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
 const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPageTechForward'));
 const AdminOrdersPage = lazy(() => import('./pages/AdminOrdersPage'));
 const EmailNotificationDemo = lazy(() => import('./components/EmailNotificationDemo'));
-const SitemapPage = lazy(() => import('./pages/SitemapPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 
 // Blog Posts
@@ -137,7 +136,6 @@ function App() {
                         <Route path="/track/:awb" element={<OrderTrackingPage />} />
                         {/*<Route path="/order-demo" element={<OrderSystemDemo />} /> */}
                         <Route path="/admin" element={<AdminOrdersPage />} />
-                        <Route path="/sitemap.xml" element={<SitemapPage />} />
                         <Route path="/faq" element={<FAQPage />} />
                         <Route path="/blog/what-is-nitrogen-preserved-coffee" element={<NitrogenPreservedCoffee />} />
                         <Route path="/blog/best-portable-coffee-travellers-india" element={<BestPortableCoffeeTravellers />} />
