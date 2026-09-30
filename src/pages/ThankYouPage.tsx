@@ -145,7 +145,7 @@ const ThankYouPage: React.FC = () => {
             Thank You for Your Order!
           </h1>
           <p className="text-xl text-gray-600">
-            Your COD order has been confirmed and will be delivered soon.
+            Your order is confirmed and will be delivered soon.
           </p>
         </motion.div>
 
@@ -322,9 +322,6 @@ const ThankYouPage: React.FC = () => {
                 ₹{orderDetails.total.toFixed(2)}
               </span>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
-              *Including ₹25 COD charges
-            </p>
           </div>
         </motion.div>
 
