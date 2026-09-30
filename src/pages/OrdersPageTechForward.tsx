@@ -170,6 +170,11 @@ const OrdersPageTechForward: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-foreground truncate">{item.name}</h4>
                           <p className="text-sm text-foreground/60">Qty: {item.quantity}</p>
+                          {order.status !== 'cancelled' && item.id && (
+                            <Link to={`/products/${item.id}?review=1`} className="text-sm text-primary font-medium hover:underline">
+                              Write a review
+                            </Link>
+                          )}
                         </div>
                         <div className="font-medium text-foreground">
                           ₹{(item.price * item.quantity).toFixed(2)}

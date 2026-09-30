@@ -4,6 +4,7 @@ import { ShoppingCart, Star, Plus, Check, Eye, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContextOptimized';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartNotification from './CartNotification';
+import { useReviewSummaries } from '../hooks/useReviewSummaries';
 
 interface ProductCardProps {
   id: string;
@@ -11,8 +12,6 @@ interface ProductCardProps {
   price: number;
   originalPrice: number;
   image: string;
-  rating: number;
-  reviews: number;
   badges?: string[];
   description: string;
   category?: 'concentrate' | 'flavored' | 'tea' | 'cold-brew' | 'preorder';
@@ -29,8 +28,6 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
   price,
   originalPrice,
   image,
-  rating,
-  reviews,
   badges = [],
   description,
   category,
@@ -46,6 +43,7 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
   }
 
   const { addItem, clearLastAdded, state } = useCart();
+  const reviewSummary = useReviewSummaries()[id];
   const [showNotification, setShowNotification] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -171,11 +169,14 @@ const ProductCardTechForward: React.FC<ProductCardProps> = ({
                 {category.replace('-', ' ')}
               </span>
             )}
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-primary text-primary" />
-              <span className="text-sm font-medium text-foreground">{rating.toFixed(1)}</span>
-              <span className="text-xs text-foreground/60">({reviews})</span>
-            </div>
+            {/* Only real customer reviews are shown */}
+            {reviewSummary?.count ? (
+              <div className="flex items-center gap-1" aria-label={`Rated ${reviewSummary.average} out of 5 from ${reviewSummary.count} reviews`}>
+                <Star className="h-4 w-4 fill-primary text-primary" />
+                <span className="text-sm font-medium text-foreground">{reviewSummary.average.toFixed(1)}</span>
+                <span className="text-xs text-foreground/60">({reviewSummary.count})</span>
+              </div>
+            ) : null}
           </div>
 
           {/* Product Name */}

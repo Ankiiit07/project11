@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { products } from '../data/products';
 import ProductCardTechForward from '../components/ProductCardTechForward';
+import { useReviewSummaries } from '../hooks/useReviewSummaries';
 import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 
@@ -31,18 +32,24 @@ const ProductsPageTechForward: React.FC = () => {
     });
   }, [searchTerm, selectedCategory]);
 
+  const reviewSummaries = useReviewSummaries();
+
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
       switch (sortBy) {
         case 'price':
           return a.price - b.price;
         case 'rating':
-          return b.rating - a.rating;
+          // Real review averages; products without reviews go last, by name.
+          return (
+            (reviewSummaries[b.id]?.average || 0) - (reviewSummaries[a.id]?.average || 0) ||
+            a.name.localeCompare(b.name)
+          );
         default:
           return a.name.localeCompare(b.name);
       }
     });
-  }, [filteredProducts, sortBy]);
+  }, [filteredProducts, sortBy, reviewSummaries]);
 
   return (
     <div className="min-h-screen bg-background pb-16">

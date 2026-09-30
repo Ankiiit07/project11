@@ -84,8 +84,6 @@ export class SupabaseService {
               return a.price - b.price;
             case 'price-high':
               return b.price - a.price;
-            case 'rating':
-              return b.rating - a.rating;
             case 'name':
             default:
               return a.name.localeCompare(b.name);

@@ -1,4 +1,4 @@
-// Tests for the orders, profile and admin-orders Netlify functions.
+// Tests for the orders, profile, admin-orders and reviews Netlify functions.
 // MongoDB is replaced by a small in-memory stand-in, and Firebase ID tokens are
 // signed with a local key served through a mocked JWKS fetch.
 // Run with: npm run test:functions
@@ -9,8 +9,10 @@ import crypto from 'node:crypto';
 import { generateKeyPair, exportJWK, SignJWT } from 'jose';
 
 // ---- tiny in-memory stand-in for the MongoDB driver ----
-const get = (o, path) => path.split('.').reduce((v, k) => (v == null ? v : v[k]), o);
+// Like MongoDB, a path through an array ("items.id") matches if any element matches.
+const get = (o, path) => path.split('.').reduce((v, k) => (v == null ? v : Array.isArray(v) ? v.map((x) => x?.[k]) : v[k]), o);
 const cond = (val, v) => {
+  if (Array.isArray(val) && !(v && typeof v === 'object' && '$ne' in v)) return val.some((x) => cond(x, v));
   if (v && typeof v === 'object' && !(v instanceof Date)) {
     if ('$regex' in v) return new RegExp(v.$regex, v.$options).test(String(val ?? ''));
     if ('$ne' in v) return val !== v.$ne;
@@ -75,6 +77,7 @@ const token = (sub, email, verified, aud = 'cafe-test') => new SignJWT({ email, 
 const { handler: orders } = await import('../netlify/functions/orders.mjs');
 const { handler: profile } = await import('../netlify/functions/profile.mjs');
 const { handler: adminOrders, startOfDayIST } = await import('../netlify/functions/admin-orders.mjs');
+const { handler: reviews, displayName } = await import('../netlify/functions/reviews.mjs');
 const call = async (h, method, { body, tok, qs } = {}) => {
   const r = await h({ httpMethod: method, body: body && JSON.stringify(body), queryStringParameters: qs, headers: tok ? { authorization: `Bearer ${tok}` } : {} });
   return { status: r.statusCode, ...JSON.parse(r.body) };
@@ -195,4 +198,91 @@ test('startOfDayIST is midnight in India', () => {
   assert.equal(startOfDayIST(Date.parse('2026-09-24T19:30:00Z')).toISOString(), '2026-09-24T18:30:00.000Z');
   // 2026-09-25 23:00 IST == 2026-09-25T17:30Z -> same day's midnight
   assert.equal(startOfDayIST(Date.parse('2026-09-25T17:30:00Z')).toISOString(), '2026-09-24T18:30:00.000Z');
+});
+
+test('reviews: only buyers can review; one review per customer per product', async () => {
+  const asha = await token('uid-asha', 'asha@x.com', false); // bought 2x latte (pay_asha)
+  const stranger = await token('uid-new', 'new@x.com', true);
+  const body = { productId: 'latte', rating: 5, title: 'Great', text: 'Smooth and quick, perfect for the office.' };
+
+  assert.equal((await call(reviews, 'POST', { body })).status, 401);
+  const denied = await call(reviews, 'POST', { tok: stranger, body });
+  assert.equal(denied.status, 403);
+  assert.equal((await call(reviews, 'POST', { tok: asha, body: { ...body, productId: 'mocha' } })).status, 403);
+  assert.equal((await call(reviews, 'POST', { tok: asha, body: { ...body, rating: 6 } })).status, 400);
+  assert.equal((await call(reviews, 'POST', { tok: asha, body: { ...body, text: 'ok' } })).status, 400);
+
+  const first = await call(reviews, 'POST', { tok: asha, body });
+  assert.equal(first.status, 200);
+  assert.equal(first.review.verifiedPurchase, true);
+  assert.equal(first.review.name, 'Asha K.'); // from the saved profile name "Asha K"
+  const edited = await call(reviews, 'POST', { tok: asha, body: { ...body, rating: 4 } });
+  assert.equal(edited.review.id, first.review.id);
+  assert.equal(coll('reviews').docs.filter((d) => d.productId === 'latte').length, 1);
+
+  // the guest who later verified their email can review what they bought as a guest
+  const guest = await token('uid-g', 'guest@x.com', true);
+  assert.equal((await call(reviews, 'POST', { tok: guest, body: { ...body, rating: 3 } })).status, 200);
+});
+
+test('reviews: public list and summary; no account details leak', async () => {
+  const pub = await call(reviews, 'GET', { qs: { productId: 'latte' } });
+  assert.equal(pub.reviews.length, 2);
+  assert.deepEqual(pub.summary, { count: 2, average: 3.5 });
+  assert.equal(pub.canReview, undefined);
+  for (const r of pub.reviews) {
+    assert.equal(r.uid, undefined);
+    assert.equal(r.orderId, undefined);
+    assert.equal(r._id, undefined);
+  }
+  const recent = await call(reviews, 'GET', { qs: { recent: '1' } });
+  assert.equal(recent.reviews.length, 2);
+  assert.deepEqual(recent.summary, { count: 2, average: 3.5 });
+  assert.equal(recent.reviews[0].uid, undefined);
+  const all = await call(reviews, 'GET', { qs: { summary: '1' } });
+  assert.deepEqual(all.summary, { latte: { count: 2, average: 3.5 } });
+
+  const mine = await call(reviews, 'GET', { qs: { productId: 'latte' }, tok: await token('uid-asha', 'asha@x.com', false) });
+  assert.equal(mine.canReview, true);
+  assert.equal(mine.mine.rating, 4);
+  const other = await call(reviews, 'GET', { qs: { productId: 'latte' }, tok: await token('uid-new', 'new@x.com', true) });
+  assert.equal(other.canReview, false);
+  assert.equal(other.mine, null);
+});
+
+test('reviews: admins can hide and show; hidden reviews stay hidden when edited', async () => {
+  const owner = await token('uid-owner', 'owner@cafe.com', true);
+  const asha = await token('uid-asha', 'asha@x.com', false);
+  const id = coll('reviews').docs.find((d) => d.uid === 'uid-asha').id;
+  assert.equal((await call(reviews, 'POST', { tok: asha, body: { action: 'hide', id } })).status, 403);
+  assert.equal((await call(reviews, 'POST', { tok: owner, body: { action: 'hide', id } })).review.status, 'hidden');
+  assert.deepEqual((await call(reviews, 'GET', { qs: { productId: 'latte' } })).summary, { count: 1, average: 3 });
+  const publicView = await call(reviews, 'GET', { qs: { productId: 'latte' } });
+  assert.equal(publicView.reviews.some((r) => r.id === id), false);
+  const adminView = await call(reviews, 'GET', { qs: { productId: 'latte' }, tok: owner });
+  assert.equal(adminView.reviews.find((r) => r.id === id).status, 'hidden');
+  await call(reviews, 'POST', { tok: asha, body: { productId: 'latte', rating: 5, text: 'Editing my review again.' } });
+  assert.equal(coll('reviews').docs.find((d) => d.id === id).status, 'hidden');
+  assert.equal((await call(reviews, 'POST', { tok: owner, body: { action: 'show', id } })).review.status, 'published');
+  assert.equal((await call(reviews, 'GET', { qs: { productId: 'latte' } })).summary.count, 2);
+});
+
+test('reviews: cancelled orders do not count as a purchase', async () => {
+  const owner = await token('uid-owner', 'owner@cafe.com', true);
+  const t = await token('uid-c', 'cancel@x.com', false);
+  const placed = await call(orders, 'POST', { tok: t, body: order('pay_cancel', 'cancel@x.com', { items: [{ id: 'mocha', name: 'Mocha', quantity: 1, price: 199 }] }) });
+  await call(adminOrders, 'POST', { tok: owner, body: { id: placed.order.id, status: 'cancelled' } });
+  assert.equal((await call(reviews, 'POST', { tok: t, body: { productId: 'mocha', rating: 5, text: 'Should not be allowed.' } })).status, 403);
+});
+
+test('displayName shortens names for privacy', () => {
+  assert.equal(displayName('Priya Sharma', 'p@x.com'), 'Priya S.');
+  assert.equal(displayName('Rahul Kumar verma', 'r@x.com'), 'Rahul V.');
+  assert.equal(displayName('Neha', 'n@x.com'), 'Neha');
+  assert.equal(displayName('', 'coffee.lover@x.com'), 'coffee.lover');
+});
+
+test('profile marks admins', async () => {
+  const p = await call(profile, 'GET', { tok: await token('uid-owner', 'owner@cafe.com', true) });
+  assert.equal(p.profile.role, 'admin');
 });

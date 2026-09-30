@@ -7,8 +7,6 @@ export interface Product {
   image: string;
   images: string[];
   category: 'concentrate' | 'flavored' | 'tea' | 'cold-brew' | 'preorder';
-  rating: number;
-  reviews: number;
   badges: string[];
   description: string;
   ingredients: string[];
@@ -46,8 +44,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
     category: 'concentrate',
-    rating: 4.8,
-    reviews: 234,
     badges: ['No Sugar', 'Gluten Free', 'Nitrogen-Sealed', '100% Arabica'],
     description:
       'Barista-style latte concentrate, 100% Arabica, nitrogen-preserved. Add 150–300ml hot or cold milk (or milk + water mix), press, stir. Smooth, creamy, low-acidity. Same 16g tube format, 1–2 servings, 12 months shelf life. Best for: travel, hotel stays, office, daily latte drinkers.',
@@ -88,8 +84,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755111981/IMG_8590_jzfp5t.mov',
     category: 'concentrate',
-    rating: 4.7,
-    reviews: 189,
     badges: ['No Sugar', 'Gluten Free', 'Nitrogen-Sealed', '100% Arabica'],
     description:
       'Real brewed Americano concentrate in a portable press tube. Made from 100% Arabica beans, nitrogen-sealed to lock in aroma and prevent oxidation. No powders, no machine. Add 150–300ml hot or cold water, press, stir, done. Makes 1–2 cups per 16g tube. 12-month shelf life, no refrigeration, no preservatives. Best for: flights, hotels, office, outdoor travel.',
@@ -129,8 +123,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1751395895/526c3573288b46a0a85fec27d8630925.HD-1080p-7.2Mbps-15882571_1_lxeljd.mp4',
     category: 'cold-brew',
-    rating: 4.9,
-    reviews: 312,
     badges: ['No Sugar', 'Nitrogen-Sealed', 'Cold Brew', '100% Arabica'],
     description:
       'Real cold brew concentrate, bold and naturally smooth with low acidity. 100% Arabica, nitrogen-sealed. Add cold water and ice (150–300ml), press, stir. No brewing time, no refrigeration needed. 16g tube, 1–2 servings, 12 months shelf life. Best for: gym, summer travel, outdoor adventures, cold brew fans.',
@@ -171,8 +163,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755111986/IMG_9079_z2msvm.mov',
     category: 'flavored',
-    rating: 4.6,
-    reviews: 156,
     badges: ['No Added Sugar', 'Real Cocoa', 'Nitrogen-Sealed', '100% Arabica'],
     description: 'Brewed coffee concentrate blended with rich chocolate notes. 100% Arabica, nitrogen-washed. Add 150–300ml hot or cold milk, press, stir. Deep coffee + indulgent chocolate in one tube. 16g, 1–2 servings, 12 months shelf life. Best for: travel, office, outdoor use, chocolate-coffee lovers.',
     ingredients: ['Arabica Coffee', 'Natural Cocoa', 'Natural Flavors'],
@@ -209,8 +199,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755111986/IMG_9079_z2msvm.mov',
     category: 'tea',
-    rating: 4.6,
-    reviews: 89,
     badges: ['Antioxidants', 'Natural', 'Nitrogen-Sealed', 'Rich in Catechins'],
     description:
       'High-quality green tea infused with natural jasmine, nitrogen-sealed to preserve the floral aroma. Rich in catechins (antioxidants). Add 150–300ml hot or cold water, press, stir. Supports metabolism, immunity, digestion, and stress relief. No preservatives, no refrigeration. 1–2 servings per tube, 12 months shelf life. Best for: wellness routines, travel, office, detox, relaxation.',
@@ -248,8 +236,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
     category: 'concentrate',
-    rating: 4.9,
-    reviews: 434,
     badges: ['No Sugar', 'Gluten Free', 'Organic'],
     description:
       '1 Cup Chocolate & Cocoa Flavors, Nutty after Taste.',
@@ -288,8 +274,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
     category: 'concentrate',
-    rating: 4.8,
-    reviews: 214,
     badges: ['No Sugar', 'Gluten Free', 'Organic'],
     description:
       '1 Cup of Corn Coffee and Tea Flavoring Balance and Smooth after Taste.',
@@ -328,8 +312,6 @@ export const products: Product[] = [
     ],
     video: 'https://res.cloudinary.com/dtcsms7zn/video/upload/v1755112010/IMG_8842_hswy5r.mov',
     category: 'concentrate',
-    rating: 4.8,
-    reviews: 234,
     badges: ['No Sugar', 'Gluten Free', 'Organic'],
     description:
       ' 2-3 Cups Rich, bold latte concentrate perfect for your daily coffee ritual. Made from premium Arabica beans.',
@@ -368,8 +350,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Multi-Serve', '8 Servings', 'Free Gift'],
     description: 'The large-format option. 100% Arabica brewed concentrate in a multi-serve bag — yields 8 servings of 300ml each (2.4L total). Nitrogen-washed for freshness. Add 150–300ml water per serving, pour concentrate, stir. Adjustable strength. Room temperature storage, 12 months shelf life, no preservatives. Best for: home, office, group servings, daily use, travel setups. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Nitrogen'],
@@ -409,8 +389,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Classic Italian', 'Concentrated', 'Free Gift'],
     description: 'Classic Italian-style Espresso Concentrated Coffee Beverage. Preserves the original state of coffee extract liquid for an authentic espresso experience. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Natural Espresso Extract'],
@@ -450,8 +428,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Osmanthus Flavor', 'Unique Blend', 'Free Gift'],
     description: 'Osmanthus Flower Flavored Concentrated Coffee Beverage. A unique blend of premium coffee with delicate osmanthus flower notes. Perfect over ice! First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Natural Osmanthus Extract'],
@@ -489,8 +465,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Deep Roast', 'Bold Flavor', 'Free Gift'],
     description: 'Italian Deep Roasting Concentrated Coffee Beverage. Bold, intense flavor from deeply roasted premium beans. For those who love a strong coffee experience. First 5 orders get free gifts!',
     ingredients: ['100% Deep Roasted Arabica Coffee'],
@@ -530,8 +504,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Jasmine Tea', 'Unique Fusion', 'Free Gift'],
     description: 'Jasmine Green Tea Flavored Concentrated Coffee Beverage. A harmonious fusion of premium coffee with delicate jasmine snow bud tea. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Jasmine Green Tea Extract'],
@@ -572,8 +544,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Berry Flavor', 'Fruity', 'Free Gift'],
     description: 'Super Berry Flavored Concentrated Coffee Beverage. A delightful blend of premium coffee with natural berry flavors. Perfect for a refreshing coffee experience. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Natural Berry Extracts'],
@@ -615,8 +585,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Value Pack', '10 Pieces', 'Free Gift'],
     description: 'F5 Score Value Pack - 10 pieces of premium portable coffee. Best value for coffee lovers! First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Nitrogen'],
@@ -655,8 +623,6 @@ export const products: Product[] = [
     ],
     video: '',
     category: 'preorder',
-    rating: 5.0,
-    reviews: 0,
     badges: ['Pre-Order', 'Single Serve', 'Try Me', 'Free Gift'],
     description: 'T Away Single Serve - Try our premium portable coffee at just ₹40 per piece. Perfect for first-time buyers! First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee'],

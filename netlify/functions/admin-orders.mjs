@@ -11,18 +11,10 @@ import { getDb } from '../lib/db.mjs';
 import { getAuthUser } from '../lib/auth.mjs';
 import { reply, str, parseBody } from '../lib/http.mjs';
 import { toClient } from './orders.mjs';
+import { isAdmin } from '../lib/admin.mjs';
 
 export const STATUSES = ['placed', 'processing', 'shipped', 'delivered', 'cancelled'];
 const PAGE_SIZE = 50;
-
-export function adminEmails() {
-  return (process.env.ADMIN_EMAILS || process.env.ADMIN_EMAIL || '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean);
-}
-
-export const isAdmin = (user) => Boolean(user?.emailVerified && user.email && adminEmails().includes(user.email));
 
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
