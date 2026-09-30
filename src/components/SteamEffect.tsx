@@ -12,7 +12,6 @@ const SteamEffect: React.FC<SteamEffectProps> = ({
   className = '',
   intensity = 'medium',
   color = 'rgba(255, 255, 255, 0.8)',
-  size = 'medium'
 }) => {
   const { isMobile } = useDevice();
   const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

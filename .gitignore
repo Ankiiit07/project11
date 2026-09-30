@@ -1,14 +1,13 @@
 node_modules
--e 
-# Environment files
-*.env
-*.env.*
--e 
-# Environment files
-*.env
-*.env.*
+
+# Build output (Netlify builds this)
+dist
+
+# Environment files and credentials
 .env
 .env.*
+*.env
+*.env.*
 credentials.json
 *.pem
 *.key

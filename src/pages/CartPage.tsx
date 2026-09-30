@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Trash2,
   Plus,
@@ -8,61 +8,37 @@ import {
   ShoppingBag,
   ArrowLeft,
   Truck,
-  CreditCard,
-} from "lucide-react";
-import { useCart } from "../context/CartContextOptimized";
-import {
-  LoadingSpinner,
-  CartLoading,
-  ProgressBar,
-  StepProgress,
-} from "../components/LoadingSystem";
+  Package,
+  Tag,
+} from 'lucide-react';
+import { useCart } from '../context/CartContextOptimized';
+import { calculateShipping, DEFAULT_SHIPPING_RATES } from '../utils/shippingCalculator';
 
 const CartPage: React.FC = () => {
   const { state: cartState, dispatch } = useCart();
-  const [isLoading, setIsLoading] = useState(true);
   const [updatingItem, setUpdatingItem] = useState<string | null>(null);
-  const [removingItem, setRemovingItem] = useState<string | null>(null);
-
-  // Simulate loading on component mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const updateQuantity = async (id: string, newQuantity: number) => {
     setUpdatingItem(id);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     if (newQuantity === 0) {
-      dispatch({ type: "REMOVE_ITEM", payload: id });
+      dispatch({ type: 'REMOVE_ITEM', payload: id });
     } else {
       dispatch({
-        type: "UPDATE_QUANTITY",
+        type: 'UPDATE_QUANTITY',
         payload: { id, quantity: newQuantity },
       });
     }
-
     setUpdatingItem(null);
   };
 
   const removeItem = async (id: string) => {
-    setRemovingItem(id);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    dispatch({ type: "REMOVE_ITEM", payload: id });
-    setRemovingItem(null);
+    dispatch({ type: 'REMOVE_ITEM', payload: id });
   };
 
   const clearCart = () => {
-    dispatch({ type: "CLEAR_CART" });
+    dispatch({ type: 'CLEAR_CART' });
   };
 
   const calculateSubtotal = () => {
@@ -72,300 +48,256 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const calculateShipping = () => {
-    const subtotal = calculateSubtotal();
-    return subtotal >= 1000 ? 0 : 0; // Free shipping over ₹1000
-  };
-
-  const calculateTax = () => {
-    return calculateSubtotal() * 0; // 18% GST
-  };
+  const shippingResult = calculateShipping(
+    cartState.items.map(item => ({
+      weight: item.weight || 100,
+      quantity: item.quantity,
+      price: item.price,
+    })),
+    calculateSubtotal()
+  );
+  const amountForFreeShipping = Math.max(0, DEFAULT_SHIPPING_RATES.freeShippingThreshold - calculateSubtotal());
 
   const calculateTotal = () => {
-    return calculateSubtotal() + calculateShipping() + calculateTax();
+    return calculateSubtotal() + shippingResult.shippingCharge;
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-cream pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <LoadingSpinner size="xl" text="Loading your cart..." />
-          </div>
-          <CartLoading />
-        </div>
-      </div>
-    );
-  }
-
+  // Empty cart state
   if (cartState.items.length === 0) {
     return (
-      <div className="min-h-screen bg-cream pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-12"
-          >
-            <div className="text-gray-400 mb-6">
-              <ShoppingBag className="h-24 w-24 mx-auto" />
+      <div className="min-h-screen bg-background pt-20 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center justify-center py-16 sm:py-24">
+            <div className="w-24 h-24 bg-secondary rounded-full flex items-center justify-center mb-6">
+              <ShoppingBag className="h-12 w-12 text-foreground/40" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
-              Your cart is empty
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-3">
+              Your Cart is Empty
             </h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Looks like you haven't added any coffee products to your cart yet.
-              Start shopping to discover our amazing collection!
+            <p className="text-foreground/70 mb-8 text-center max-w-md">
+              Looks like you haven't added any coffee to your cart yet. Start shopping now!
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center space-x-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+              data-testid="empty-cart-shop-button"
             >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Continue Shopping</span>
+              <ShoppingBag className="h-5 w-5" />
+              Start Shopping
             </Link>
-          </motion.div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-cream pt-20">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-background pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between">
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                Shopping Cart
+              <h1 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-2">
+                Shopping <span className="text-primary">Cart</span>
               </h1>
-              <p className="text-gray-600">
-                {cartState.itemCount}{" "}
-                {cartState.itemCount === 1 ? "item" : "items"} in your cart
+              <p className="text-foreground/70">
+                {cartState.itemCount} {cartState.itemCount === 1 ? 'item' : 'items'}
               </p>
             </div>
             <Link
               to="/products"
-              className="flex items-center space-x-2 text-primary hover:text-primary-dark transition-colors"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
+              data-testid="continue-shopping"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Continue Shopping</span>
+              Continue Shopping
             </Link>
           </div>
-        </motion.div>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white rounded-lg shadow-md p-6"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  Cart Items
-                </h2>
-                <button
-                  onClick={clearCart}
-                  className="text-red-600 hover:text-red-800 text-sm font-medium"
-                >
-                  Clear Cart
-                </button>
+          <div className="lg:col-span-2 space-y-4">
+            <div className="bg-card border border-border rounded-xl p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="font-heading text-lg font-bold text-foreground">Cart Items</h2>
+                {cartState.items.length > 0 && (
+                  <button
+                    onClick={clearCart}
+                    className="text-sm text-destructive hover:text-destructive/80 font-medium transition-colors"
+                    data-testid="clear-cart"
+                  >
+                    Clear Cart
+                  </button>
+                )}
               </div>
 
               <div className="space-y-4">
                 <AnimatePresence>
-                  {cartState.items.map((item, index) => (
+                  {cartState.items.map((item) => (
                     <motion.div
                       key={item.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={`flex items-center space-x-4 p-4 border border-gray-200 rounded-lg ${
-                        removingItem === item.id ? "opacity-50" : ""
-                      }`}
+                      initial={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex gap-4 pb-4 border-b border-border last:border-0 last:pb-0"
+                      data-testid={`cart-item-${item.id}`}
                     >
-                      <div className="relative">
+                      {/* Image */}
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 bg-secondary rounded-lg overflow-hidden flex-shrink-0">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="w-20 h-20 object-cover rounded-lg"
+                          className="w-full h-full object-cover"
                         />
-                        {updatingItem === item.id && (
-                          <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-lg">
-                            <LoadingSpinner size="sm" />
-                          </div>
-                        )}
                       </div>
 
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-800">
+                      {/* Details */}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-heading font-bold text-foreground mb-1 truncate">
                           {item.name}
                         </h3>
-                        <p className="text-gray-600 text-sm">₹{item.price}</p>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            {item.type}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
-                          }
-                          disabled={updatingItem === item.id}
-                          className="p-1 rounded-full hover:bg-gray-100 disabled:opacity-50"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="w-8 text-center font-medium">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
-                          }
-                          disabled={updatingItem === item.id}
-                          className="p-1 rounded-full hover:bg-gray-100 disabled:opacity-50"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                      <div className="text-right">
-                        <p className="font-semibold text-gray-800">
-                          ₹{item.price * item.quantity}
+                        <p className="text-sm text-foreground/60 mb-2">
+                          {item.type === 'single' ? 'Single' : 'Subscription'}
                         </p>
-                        <button
-                          onClick={() => removeItem(item.id)}
-                          disabled={removingItem === item.id}
-                          className="text-red-600 hover:text-red-800 text-sm mt-1 disabled:opacity-50"
-                        >
-                          {removingItem === item.id ? (
-                            <LoadingSpinner size="sm" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            {/* Quantity Controls */}
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              disabled={updatingItem === item.id}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                              data-testid={`decrease-${item.id}`}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </button>
+                            <span className="w-8 text-center font-medium" data-testid={`quantity-${item.id}`}>
+                              {item.quantity}
+                            </span>
+                            <button
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              disabled={updatingItem === item.id}
+                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                              data-testid={`increase-${item.id}`}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </button>
+                          </div>
+
+                          {/* Price */}
+                          <div className="flex items-center gap-4">
+                            <p className="font-heading text-lg font-bold text-foreground">
+                              ₹{(item.price * item.quantity).toFixed(0)}
+                            </p>
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="text-destructive hover:text-destructive/80 transition-colors"
+                              data-testid={`remove-${item.id}`}
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
-            </motion.div>
+            </div>
           </div>
 
-          {/* Order Summary */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-1"
-          >
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6">
-                Order Summary
-              </h2>
+          {/* Order Summary - Sticky on desktop */}
+          <div className="lg:col-span-1">
+            <div className="bg-card border border-border rounded-xl p-6 lg:sticky lg:top-24">
+              <h2 className="font-heading text-lg font-bold text-foreground mb-6">Order Summary</h2>
 
-              {/* Progress indicator for checkout steps */}
+              {/* Progress Steps */}
               <div className="mb-6">
-                <StepProgress
-                  steps={["Cart", "Checkout", "Payment", "Complete"]}
-                  currentStep={0}
-                  className="mb-4"
-                />
-                <ProgressBar progress={25} showPercentage={false} />
-              </div>
-
-              {/* Price breakdown */}
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">
-                    ₹{calculateSubtotal().toFixed(2)}
-                  </span>
+                <div className="flex items-center justify-between mb-4">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div key={step} className="flex flex-col items-center">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                          step === 1
+                            ? 'bg-primary text-white'
+                            : 'bg-secondary text-foreground/40'
+                        }`}
+                      >
+                        {step}
+                      </div>
+                      <span className="text-xs text-foreground/60 mt-1">
+                        {step === 1 ? 'Cart' : step === 2 ? 'Checkout' : step === 3 ? 'Payment' : 'Complete'}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="font-medium">
-                    {calculateShipping() === 0
-                      ? "Free"
-                      : `₹${calculateShipping().toFixed(2)}`}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tax (GST)</span>
-                  <span className="font-medium">
-                    ₹{calculateTax().toFixed(2)}
-                  </span>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between">
-                    <span className="text-lg font-semibold text-gray-800">
-                      Total
-                    </span>
-                    <span className="text-lg font-bold text-primary">
-                      ₹{calculateTotal().toFixed(2)}
-                    </span>
-                  </div>
+                <div className="h-1 bg-secondary rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-1/4 transition-all duration-300" />
                 </div>
               </div>
 
-              {/* Shipping info */}
-              {calculateShipping() === 0 ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Truck className="h-5 w-5 text-green-600" />
-                    <span className="text-green-800 font-medium">
-                      Free Shipping!
-                    </span>
-                  </div>
-                  <p className="text-green-700 text-sm mt-1">
-                    Your order qualifies for free shipping
-                  </p>
+              {/* Price Breakdown */}
+              <div className="space-y-3 mb-6 pb-6 border-b border-border">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-foreground/70">Subtotal</span>
+                  <span className="font-medium text-foreground">₹{calculateSubtotal().toFixed(2)}</span>
                 </div>
-              ) : (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Truck className="h-5 w-5 text-blue-600" />
-                    <span className="text-blue-800 font-medium">
-                      Shipping: ₹{calculateShipping()}
-                    </span>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-foreground/70 flex items-center gap-1">
+                    <Truck className="h-4 w-4" />
+                    Shipping ({shippingResult.totalWeight}g)
+                  </span>
+                  <span className="font-medium text-foreground">
+                    {shippingResult.isFreeShipping ? (
+                      <span className="text-green-600 font-bold">FREE</span>
+                    ) : (
+                      `₹${shippingResult.shippingCharge.toFixed(2)}`
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="flex items-center justify-between mb-6">
+                <span className="font-heading text-lg font-bold text-foreground">Total</span>
+                <span className="font-heading text-2xl font-bold text-primary">
+                  ₹{calculateTotal().toFixed(2)}
+                </span>
+              </div>
+
+              {/* Free Shipping Progress */}
+              {!shippingResult.isFreeShipping && amountForFreeShipping > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-start gap-2 mb-2">
+                    <Tag className="h-4 w-4 text-blue-600 mt-0.5" />
+                    <div className="flex-1 text-sm">
+                      <p className="text-blue-900 font-medium mb-1">
+                        Add ₹{amountForFreeShipping.toFixed(0)} more for free shipping
+                      </p>
+                      <p className="text-blue-700 text-xs">
+                        Weight: {shippingResult.totalWeight}g | Items: {cartState.itemCount}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-blue-700 text-sm mt-1">
-                    Add ₹{(1000 - calculateSubtotal()).toFixed(2)} more for free
-                    shipping
-                  </p>
                 </div>
               )}
 
-              {/* Checkout button */}
+              {/* Checkout Button */}
               <Link
                 to="/checkout"
-                className="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center space-x-2"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                data-testid="proceed-to-checkout"
               >
-                <CreditCard className="h-5 w-5" />
-                <span>Proceed to Checkout</span>
+                <Package className="h-5 w-5" />
+                Proceed to Checkout
               </Link>
 
-              {/* Additional info */}
-              <div className="mt-4 text-center">
-                <p className="text-xs text-gray-500">
-                  Secure checkout powered by Razorpay
-                </p>
-              </div>
+              <p className="text-xs text-center text-foreground/60 mt-4">
+                Secure checkout powered by Razorpay
+              </p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

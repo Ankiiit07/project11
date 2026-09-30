@@ -1,88 +1,35 @@
-import { useState, useEffect } from 'react';
-import { useProducts as useSupabaseProducts, useProduct as useSupabaseProduct, useFeaturedProducts as useSupabaseFeaturedProducts } from './useSupabase';
-import { Product } from '../data/products';
-import { supabaseService } from '../services/supabaseService';
+import { useMemo } from 'react';
+import { products, getProductById, type Product } from '../data/products';
 
-interface UseProductsState {
-  products: Product[];
-  loading: boolean;
+// Products are defined in src/data/products.ts, so these hooks are synchronous.
+// `loading` and `error` are kept so pages can stay agnostic about the source.
+
+interface ProductResult {
+  product: Product | null;
+  loading: false;
   error: string | null;
-  totalResults: number;
-  page: number;
-  totalPages: number;
 }
 
-interface UseProductsParams {
-  category?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: string;
+interface ProductsResult {
+  products: Product[];
+  loading: false;
+  error: null;
 }
 
-export function useProducts(params: UseProductsParams = {}) {
-  // Use Supabase hook directly
-  return useSupabaseProducts(params);
+export function useProduct(id: string): ProductResult {
+  return useMemo(() => {
+    const product = getProductById(id) || null;
+    return { product, loading: false, error: product ? null : 'Product not found' };
+  }, [id]);
 }
 
-export function useProduct(id: string) {
-  // Use Supabase hook directly
-  return useSupabaseProduct(id);
+export function useFeaturedProducts(): ProductsResult {
+  return useMemo(() => ({ products: products.filter((p) => p.isFeatured).slice(0, 8), loading: false, error: null }), []);
 }
 
-export function useFeaturedProducts() {
-  // Use Supabase hook directly
-  return useSupabaseFeaturedProducts();
-}
-
-export function useProductsByCategory(category: string) {
-  const [state, setState] = useState<{
-    products: Product[];
-    loading: boolean;
-    error: string | null;
-  }>({
-    products: [],
-    loading: true,
-    error: null,
-  });
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchProductsByCategory = async () => {
-      if (!category) return;
-
-      try {
-        setState(prev => ({ ...prev, loading: true, error: null }));
-        
-        const response = await supabaseService.getProductsByCategory(category);
-        
-        if (isMounted) {
-          setState({
-            products: response || [],
-            loading: false,
-            error: null,
-          });
-        }
-      } catch (error) {
-        if (isMounted) {
-          setState({
-            products: [],
-            loading: false,
-            error: error instanceof Error ? error.message : 'Failed to fetch products by category',
-          });
-        }
-      }
-    };
-
-    fetchProductsByCategory();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [category]);
-
-  return state;
+export function useProductsByCategory(category: string): ProductsResult {
+  return useMemo(
+    () => ({ products: category ? products.filter((p) => p.category === category) : [], loading: false, error: null }),
+    [category]
+  );
 }

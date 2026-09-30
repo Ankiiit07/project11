@@ -2,7 +2,7 @@
 // token when someone is signed in so the server knows who is asking.
 
 import { auth } from '../lib/firebase';
-import type { User } from '../store';
+import type { User } from '../types/user';
 
 export interface OrderItem {
   id: string;

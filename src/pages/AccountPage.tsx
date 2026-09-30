@@ -1,567 +1,368 @@
-import React, { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import {
-  User,
-  Package,
-  Settings,
-  CreditCard,
-  MapPin,
-  Bell,
-  LogOut,
-  Plus,
-} from "lucide-react";
-import { useUser } from "../context/UserContext";
-import { useOrders } from "../hooks/useOrders";
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { User, Mail, MapPin, Package, LogOut, AlertCircle, CheckCircle, ShoppingBag } from 'lucide-react';
+import { useUser } from '../context/UserContext';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 
-const AccountPage: React.FC = () => {
-  // Scroll to top when component mounts
-  React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+type Mode = 'login' | 'signup' | 'reset';
 
-  const { user, logout, login, register, isAuthenticated, loading } = useUser();
-  const { orders, loading: ordersLoading } = useOrders();
-  const [searchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(
-    searchParams.get("tab") || "profile"
-  );
-  const [isLogin, setIsLogin] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
+const inputClass =
+  'w-full h-12 px-4 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground';
+
+const Notice: React.FC<{ kind: 'error' | 'success'; children: React.ReactNode }> = ({ kind, children }) => (
+  <div
+    role={kind === 'error' ? 'alert' : 'status'}
+    className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
+      kind === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
+    }`}
+  >
+    {kind === 'error' ? <AlertCircle className="h-5 w-5 flex-shrink-0" /> : <CheckCircle className="h-5 w-5 flex-shrink-0" />}
+    <span>{children}</span>
+  </div>
+);
+
+const GoogleIcon = () => (
+  <svg className="h-5 w-5" viewBox="0 0 48 48" aria-hidden="true">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+    <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+  </svg>
+);
+
+const ProfileForm: React.FC = () => {
+  const { user, updateProfile } = useUser();
+  const [form, setForm] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || '',
+    zipCode: user?.address?.zipCode || '',
   });
-  // For order details modal
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ kind: 'error' | 'success'; text: string } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm({ ...form, [key]: e.target.value });
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setSaving(true);
+    setMessage(null);
     try {
-      if (isLogin) {
-        await login(formData.email, formData.password);
-      } else {
-        await register(formData.name, formData.email, formData.password);
-      }
-    } catch (error) {
-      console.error("Authentication error:", error);
-      // You could add error state here to show to user
+      await updateProfile({
+        name: form.name,
+        phone: form.phone,
+        address: { street: form.street, city: form.city, state: form.state, zipCode: form.zipCode, country: 'IN' },
+      });
+      setMessage({ kind: 'success', text: 'Your details are saved. We will use them to fill in checkout.' });
+    } catch (err) {
+      setMessage({ kind: 'error', text: err instanceof Error ? err.message : 'Could not save your details.' });
     } finally {
-      setIsSubmitting(false);
+      setSaving(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-cream page-container flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-cream page-container py-8">
-        <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="text-center mb-8">
-              <User className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900">
-                {isLogin ? "Welcome Back" : "Create Account"}
-              </h1>
-              <p className="text-gray-600 mt-2">
-                {isLogin
-                  ? "Sign in to manage your coffee subscriptions"
-                  : "Join us for exclusive benefits and personalized coffee delivery"}
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium transition-colors"
-              >
-                {isSubmitting
-                  ? "Please wait..."
-                  : isLogin
-                  ? "Sign In"
-                  : "Create Account"}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:text-primary-dark font-medium"
-              >
-                {isLogin
-                  ? "Don't have an account? Sign up"
-                  : "Already have an account? Sign in"}
-              </button>
-            </div>
-
-            <div className="mt-6 text-center">
-              <Link
-                to="/"
-                className="text-gray-600 hover:text-gray-900 text-sm"
-              >
-                ← Back to Home
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const tabs = [
-    { id: "profile", label: "Profile", icon: User },
-    { id: "orders", label: "Orders", icon: Package },
-    { id: "subscriptions", label: "Subscriptions", icon: Bell },
-    { id: "settings", label: "Settings", icon: Settings },
-  ];
+  const field = (label: string, key: keyof typeof form, props: React.InputHTMLAttributes<HTMLInputElement> = {}) => (
+    <div>
+      <label htmlFor={`profile-${key}`} className="block text-sm font-medium text-foreground/70 mb-2">{label}</label>
+      <input id={`profile-${key}`} value={form[key]} onChange={set(key)} className={inputClass} {...props} />
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-cream py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-          <p className="text-gray-600 mt-2">Welcome back, {user?.name}!</p>
+    <form onSubmit={handleSave} className="bg-card border border-border rounded-xl p-6 space-y-4">
+      <h3 className="font-heading text-xl font-bold text-foreground">Profile Information</h3>
+      <div>
+        <label className="block text-sm font-medium text-foreground/70 mb-2">Email</label>
+        <div className="flex items-center gap-3 p-3 bg-secondary rounded-lg">
+          <Mail className="h-5 w-5 text-foreground/40" />
+          <span className="text-foreground">{user?.email}</span>
         </div>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        {field('Name', 'name', { autoComplete: 'name' })}
+        {field('Phone', 'phone', { type: 'tel', autoComplete: 'tel', placeholder: '10-digit mobile number' })}
+      </div>
+      <h4 className="flex items-center gap-2 font-heading font-bold text-foreground pt-2">
+        <MapPin className="h-5 w-5 text-primary" /> Delivery address
+      </h4>
+      {field('Address', 'street', { autoComplete: 'street-address' })}
+      <div className="grid sm:grid-cols-3 gap-4">
+        {field('City', 'city', { autoComplete: 'address-level2' })}
+        {field('State', 'state', { autoComplete: 'address-level1' })}
+        {field('Pincode', 'zipCode', { autoComplete: 'postal-code', inputMode: 'numeric', maxLength: 6 })}
+      </div>
+      {message && <Notice kind={message.kind}>{message.text}</Notice>}
+      <button
+        type="submit"
+        disabled={saving}
+        className="h-12 px-8 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded-full transition-all"
+      >
+        {saving ? 'Saving…' : 'Save details'}
+      </button>
+    </form>
+  );
+};
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <div className="bg-white rounded-lg shadow-sm p-6 h-fit">
-            <nav className="space-y-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                      activeTab === tab.id
-                        ? "bg-primary text-white"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
+const AccountPage: React.FC = () => {
+  const {
+    user, ready, loading, authAvailable, emailVerified,
+    login, loginWithGoogle, register, resetPassword, resendVerification, logout,
+  } = useUser();
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const [mode, setMode] = useState<Mode>(params.get('signup') ? 'signup' : 'login');
+  const [formData, setFormData] = useState({
+    email: params.get('email') || '',
+    password: '',
+    name: '',
+  });
+  const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
 
-              <button
-                onClick={logout}
-                className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left text-red-600 hover:bg-red-50 transition-colors mt-6"
-              >
-                <LogOut className="h-5 w-5" />
-                <span>Logout</span>
-              </button>
-            </nav>
+  useEffect(() => {
+    setError('');
+    setInfo('');
+  }, [mode]);
+
+  const attempt = async (fn: () => Promise<void>, success?: string) => {
+    setError('');
+    setInfo('');
+    try {
+      await fn();
+      if (success) setInfo(success);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mode === 'login') attempt(() => login(formData.email, formData.password));
+    else if (mode === 'signup') attempt(() => register(formData.name, formData.email, formData.password));
+    else attempt(() => resetPassword(formData.email), `If an account exists for ${formData.email}, we've sent a link to reset your password.`);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-16 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" aria-label="Loading" />
+      </div>
+    );
+  }
+
+  // Signed in: account dashboard
+  if (user) {
+    return (
+      <div className="min-h-screen bg-background pt-20 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="mb-8">
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-foreground mb-2">
+              My <span className="text-primary">Account</span>
+            </h1>
+            <p className="text-foreground/70">Manage your profile and orders</p>
           </div>
 
-          {/* Content */}
-          <div className="lg:col-span-3">
-            {activeTab === "profile" && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                  Profile Information
-                </h2>
+          {!emailVerified && (
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <p className="text-amber-800 text-sm">
+                Please verify your email: we sent a link to <strong>{user.email}</strong>. Verifying also
+                connects any orders you placed as a guest with this email.
+              </p>
+              <button
+                onClick={() => attempt(resendVerification, 'Verification email sent. Please check your inbox.')}
+                className="text-sm font-medium text-amber-900 underline whitespace-nowrap"
+              >
+                Resend email
+              </button>
+            </div>
+          )}
+          {(error || info) && <div className="mb-6">{error ? <Notice kind="error">{error}</Notice> : <Notice kind="success">{info}</Notice>}</div>}
 
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        value={user?.name || ""}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        value={user?.email || ""}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                      />
-                    </div>
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="bg-card border border-border rounded-xl p-6">
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User className="h-8 w-8 text-primary" />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="(555) 123-4567"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                    />
+                  <div className="min-w-0">
+                    <h2 className="font-heading font-bold text-foreground truncate">{user.name || 'Welcome'}</h2>
+                    <p className="text-sm text-foreground/60 truncate">{user.email}</p>
                   </div>
+                </div>
 
-                  <button className="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                    Save Changes
+                <nav className="space-y-2">
+                  <Link to="/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors">
+                    <Package className="h-5 w-5 text-foreground/60" />
+                    <span className="text-foreground/80">My Orders</span>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 text-destructive transition-colors"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span>Logout</span>
                   </button>
-                </div>
+                </nav>
               </div>
-            )}
+            </div>
 
-            {activeTab === "orders" && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                  Order History
-                </h2>
-
-                {ordersLoading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                  </div>
-                ) : orders.length > 0 ? (
-                  <div className="space-y-4">
-                    {orders.map((order) => (
-                      <div
-                        key={order.id}
-                        className="border border-gray-200 rounded-lg p-4"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              Order #{order.orderNumber}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Placed on{" "}
-                              {new Date(order.date).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              order.status === "delivered"
-                                ? "bg-green-100 text-green-800"
-                                : order.status === "shipped"
-                                ? "bg-blue-100 text-blue-800"
-                                : order.status === "processing"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {order.status.charAt(0).toUpperCase() +
-                              order.status.slice(1)}
-                          </span>
-                        </div>
-
-                        <div className="space-y-2 mb-3">
-                          {order.items.map((item, index) => (
-                            <div
-                              key={index}
-                              className="flex justify-between text-sm"
-                            >
-                              <span>
-                                {item.name} x{item.quantity}
-                              </span>
-                              <span>
-                                ₹{(item.price * item.quantity).toFixed(2)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="flex justify-between items-center pt-3 border-t border-gray-200">
-                          <span className="font-medium">
-                            Total: ₹{order.total.toFixed(2)}
-                          </span>
-                          <div className="flex space-x-2">
-                            {order.trackingNumber && (
-                              <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-                                Track Order
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setSelectedOrder(order)}
-                              className="text-primary hover:text-primary-dark font-medium text-sm"
-                            >
-                              View Details
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No orders yet
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      Start shopping to see your orders here.
-                    </p>
-                    <Link
-                      to="/products"
-                      className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-                    >
-                      Shop Now
-                    </Link>
-                  </div>
-                )}
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              <ProfileForm />
+              <div className="grid sm:grid-cols-2 gap-4">
+                <Link to="/orders" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all group">
+                  <Package className="h-8 w-8 text-primary mb-3" />
+                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary transition-colors">View Orders</h3>
+                  <p className="text-sm text-foreground/70">Track your orders</p>
+                </Link>
+                <Link to="/products" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all group">
+                  <ShoppingBag className="h-8 w-8 text-primary mb-3" />
+                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary transition-colors">Shop Now</h3>
+                  <p className="text-sm text-foreground/70">Explore our coffee collection</p>
+                </Link>
               </div>
-            )}
-
-            {activeTab === "subscriptions" && (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      Active Subscriptions
-                    </h2>
-                    <Link
-                      to="/products"
-                      className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Browse Products
-                    </Link>
-                  </div>
-
-                  {user?.subscriptions && user.subscriptions.length > 0 ? (
-                    user.subscriptions.map((subscription) => (
-                      <div
-                        key={subscription.id}
-                        className="border border-gray-200 rounded-lg p-4 mb-4"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {subscription.frequency.charAt(0).toUpperCase() +
-                                subscription.frequency.slice(1)}{" "}
-                              Delivery
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Next delivery:{" "}
-                              {new Date(
-                                subscription.nextDelivery
-                              ).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              subscription.status === "active"
-                                ? "bg-green-100 text-green-800"
-                                : subscription.status === "paused"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {subscription.status.charAt(0).toUpperCase() +
-                              subscription.status.slice(1)}
-                          </span>
-                        </div>
-
-                        <div className="flex space-x-3">
-                          <button className="text-primary hover:text-primary-dark font-medium">
-                            Modify
-                          </button>
-                          <button className="text-yellow-600 hover:text-yellow-700 font-medium">
-                            Pause
-                          </button>
-                          <button className="text-red-600 hover:text-red-700 font-medium">
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <Bell className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No active subscriptions
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        Subscribe to your favorite products for regular delivery
-                        and savings.
-                      </p>
-                      <Link
-                        to="/products"
-                        className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors"
-                      >
-                        Browse Products
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {activeTab === "settings" && (
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                    Account Settings
-                  </h2>
-
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Notifications
-                      </h3>
-                      <div className="space-y-3">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            defaultChecked
-                            className="rounded border-gray-300 text-primary focus:ring-primary mr-3"
-                          />
-                          <span>Email notifications for order updates</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            defaultChecked
-                            className="rounded border-gray-300 text-primary focus:ring-primary mr-3"
-                          />
-                          <span>Subscription delivery reminders</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="rounded border-gray-300 text-primary focus:ring-primary mr-3"
-                          />
-                          <span>Marketing emails and promotions</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">
-                        Privacy
-                      </h3>
-                      <div className="space-y-3">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            defaultChecked
-                            className="rounded border-gray-300 text-primary focus:ring-primary mr-3"
-                          />
-                          <span>
-                            Allow data collection for personalized
-                            recommendations
-                          </span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="rounded border-gray-300 text-primary focus:ring-primary mr-3"
-                          />
-                          <span>Share usage data with partners</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <button className="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                      Save Settings
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
-      {/* 🔹 Order Details Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
-            <h2 className="text-xl font-bold mb-4">
-              Order #{selectedOrder.orderNumber}
-            </h2>
-            <p>
-              <strong>Date:</strong>{" "}
-              {new Date(selectedOrder.date).toLocaleString()}
-            </p>
-            <p>
-              <strong>Status:</strong> {selectedOrder.status}
-            </p>
-            <p>
-              <strong>Total:</strong> ₹{selectedOrder.total.toFixed(2)}
-            </p>
+    );
+  }
 
-            <div className="mt-4 space-y-2">
-              {selectedOrder.items.map((item, i) => (
-                <div key={i} className="flex justify-between">
-                  <span>
-                    {item.name} x{item.quantity}
-                  </span>
-                  <span>₹{(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
+  const titles: Record<Mode, [string, string]> = {
+    login: ['Welcome Back', 'Sign in to your account'],
+    signup: ['Create Account', 'Save your details and track your orders'],
+    reset: ['Reset Password', "Enter your email and we'll send you a reset link"],
+  };
 
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="mt-6 bg-primary text-white px-4 py-2 rounded-lg"
-            >
-              Close
-            </button>
+  // Signed out: sign in / sign up / reset password
+  return (
+    <div className="min-h-screen bg-background pt-20 pb-16 flex items-center">
+      <div className="max-w-md mx-auto px-4 sm:px-6 w-full">
+        <motion.div
+          className="bg-card border border-border rounded-xl p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-center mb-8">
+            <h1 className="font-heading text-3xl font-bold text-foreground mb-2">{titles[mode][0]}</h1>
+            <p className="text-foreground/70">{titles[mode][1]}</p>
           </div>
-        </div>
-      )}
+
+          {!authAvailable ? (
+            <Notice kind="error">Sign-in isn't available right now. You can still check out as a guest.</Notice>
+          ) : (
+            <>
+              {mode !== 'reset' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => attempt(loginWithGoogle)}
+                    disabled={loading}
+                    className="w-full h-12 flex items-center justify-center gap-3 bg-background border border-border hover:bg-secondary disabled:opacity-60 text-foreground font-medium rounded-full transition-all"
+                  >
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
+                  <div className="flex items-center gap-3 my-6 text-xs text-foreground/50">
+                    <span className="flex-1 h-px bg-border" /> or <span className="flex-1 h-px bg-border" />
+                  </div>
+                </>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {mode === 'signup' && (
+                  <div>
+                    <label htmlFor="account-name" className="block text-sm font-medium text-foreground mb-2">Name</label>
+                    <input
+                      id="account-name"
+                      type="text"
+                      autoComplete="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className={inputClass}
+                      placeholder="Your name"
+                      required
+                    />
+                  </div>
+                )}
+                <div>
+                  <label htmlFor="account-email" className="block text-sm font-medium text-foreground mb-2">Email</label>
+                  <input
+                    id="account-email"
+                    type="email"
+                    autoComplete="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className={inputClass}
+                    placeholder="your@email.com"
+                    required
+                  />
+                </div>
+                {mode !== 'reset' && (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label htmlFor="account-password" className="block text-sm font-medium text-foreground">Password</label>
+                      {mode === 'login' && (
+                        <button type="button" onClick={() => setMode('reset')} className="text-xs text-primary hover:text-primary/80 font-medium">
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      id="account-password"
+                      type="password"
+                      autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                      minLength={mode === 'signup' ? 6 : undefined}
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className={inputClass}
+                      placeholder={mode === 'signup' ? 'At least 6 characters' : '••••••••'}
+                      required
+                    />
+                  </div>
+                )}
+
+                {error && <Notice kind="error">{error}</Notice>}
+                {info && <Notice kind="success">{info}</Notice>}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded-full transition-all"
+                >
+                  {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
+                </button>
+              </form>
+            </>
+          )}
+
+          <div className="mt-6 text-center">
+            {mode === 'reset' ? (
+              <button onClick={() => setMode('login')} className="text-primary hover:text-primary/80 text-sm font-medium">
+                Back to sign in
+              </button>
+            ) : (
+              <button
+                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                className="text-primary hover:text-primary/80 text-sm font-medium"
+              >
+                {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+              </button>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };

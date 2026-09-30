@@ -17,7 +17,7 @@ import {
 } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "../lib/firebase";
 import { accountApi } from "../services/accountApi";
-import type { User } from "../store";
+import type { User } from "../types/user";
 
 interface UserContextType {
   user: User | null;

@@ -7,6 +7,8 @@ export interface CartItem {
   image: string;
   quantity: number;
   type: 'single' | 'subscription';
+  /** Grams, used by the shipping calculator. */
+  weight?: number;
 }
 
 interface CartState {

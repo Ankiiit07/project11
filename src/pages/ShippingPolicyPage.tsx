@@ -9,7 +9,7 @@ import {
   AlertCircle, 
   CheckCircle, 
   Info,
-  Coffee,
+  
   Star
 } from 'lucide-react';
 
