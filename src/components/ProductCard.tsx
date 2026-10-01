@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CartNotification from './CartNotification';
 import { useReviewSummaries } from '../hooks/useReviewSummaries';
 import { cld, cldSrcSet } from '../utils/cloudinary';
+import { analytics } from '../utils/analytics';
 
 interface ProductCardProps {
   id: string;
@@ -76,6 +77,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       type: 'single',
       weight,
     });
+    analytics.addToCart({ id, name, price });
     
     setShowNotification(true);
     

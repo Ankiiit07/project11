@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { sendContact } from '../services/contactApi';
+import { analytics } from '../utils/analytics';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const ContactPage: React.FC = () => {
     setSubmitMessage('');
     try {
       await sendContact({ type: 'contact', ...formData, website });
+      analytics.contact('contact_form');
       setSubmitMessage("Thank you! We've received your message and will get back to you soon.");
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (err) {

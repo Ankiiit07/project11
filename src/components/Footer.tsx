@@ -12,6 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { sendContact } from '../services/contactApi';
+import { analytics } from '../utils/analytics';
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -31,6 +32,7 @@ const Footer: React.FC = () => {
 
     try {
       const result = await sendContact({ type: 'newsletter', email: email.trim() });
+      if (!result.alreadySubscribed) analytics.newsletterSignup();
       setSubscriptionMessage(
         result.alreadySubscribed ? "You're already subscribed. Thank you!" : "You're subscribed! We'll be in touch with new coffee and offers."
       );

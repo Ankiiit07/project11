@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MessageCircle, X, Bot } from 'lucide-react';
 import ChatBot from './ChatBot';
+import { analytics } from '../utils/analytics';
 
 const WHATSAPP_NUMBER = '917979837079';
 const WHATSAPP_MESSAGE = "Hi! I'm interested in Cafe at Once products.";
@@ -63,7 +64,10 @@ const HelpButton: React.FC = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => setMenuOpen(false)}
+                onClick={() => {
+                  setMenuOpen(false);
+                  analytics.contact('whatsapp');
+                }}
                 className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-secondary"
                 data-testid="whatsapp-button"
               >
@@ -80,6 +84,7 @@ const HelpButton: React.FC = () => {
                 onClick={() => {
                   setMenuOpen(false);
                   setChatOpen(true);
+                  analytics.contact('chatbot');
                 }}
                 className="w-full flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-secondary text-left"
                 data-testid="chatbot-button"

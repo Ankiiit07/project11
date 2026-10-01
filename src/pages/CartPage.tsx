@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContextOptimized';
 import { calculateShipping, DEFAULT_SHIPPING_RATES } from '../utils/shippingCalculator';
+import { analytics, type AnalyticsItem } from '../utils/analytics';
 
 const CartPage: React.FC = () => {
   const { state: cartState, dispatch } = useCart();
@@ -63,6 +64,14 @@ const CartPage: React.FC = () => {
   };
 
   // Empty cart state
+  const gaItems = (): AnalyticsItem[] =>
+    cartState.items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity }));
+
+  useEffect(() => {
+    if (cartState.items.length) analytics.viewCart(gaItems());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (cartState.items.length === 0) {
     return (
       <div className="min-h-screen bg-background pt-20 pb-16">
@@ -286,6 +295,7 @@ const CartPage: React.FC = () => {
               {/* Checkout Button */}
               <Link
                 to="/checkout"
+                onClick={() => analytics.beginCheckout(gaItems())}
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 data-testid="proceed-to-checkout"
               >
