@@ -45,7 +45,7 @@ const HelpButton: React.FC = () => {
 
       <div
         className="fixed right-4 sm:right-6 z-50 flex flex-col items-end gap-3"
-        style={{ bottom: 'max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem))' }}
+        style={{ bottom: 'calc(max(1rem, calc(env(safe-area-inset-bottom) + 0.5rem)) + var(--bottom-bar, 0px))', transition: 'bottom 0.25s ease-out' }}
       >
         <AnimatePresence>
           {menuOpen && (

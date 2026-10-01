@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Heart, Plus, Minus, Check, Package, Shield, Truck } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Check, Gift, MessageCircle, Package, Shield, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
@@ -9,6 +9,12 @@ import SEO from '../components/SEO';
 import { cld, cldSrcSet, toShareImage } from '../utils/cloudinary';
 import ProductReviews, { Stars, useProductReviews } from '../components/ProductReviews';
 import { analytics } from '../utils/analytics';
+import DeliveryCheck from '../components/DeliveryCheck';
+import StickyBuyBar from '../components/StickyBuyBar';
+import { DEFAULT_SHIPPING_RATES } from '../utils/shippingCalculator';
+
+const MAX_QUANTITY = 20;
+const SWIPE_ROW = 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4 -mx-4 px-4 pb-2 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:overflow-visible';
 
 const ProductDetailPage: React.FC = () => {
   React.useEffect(() => {
@@ -22,9 +28,9 @@ const ProductDetailPage: React.FC = () => {
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const buyButtonsRef = useRef<HTMLDivElement>(null);
   
   const { products: relatedProducts } = useProductsByCategory(product?.category || '');
   const { data: reviewData, reload: reloadReviews } = useProductReviews(id || '');
@@ -74,7 +80,11 @@ const ProductDetailPage: React.FC = () => {
     .filter(p => p.id !== product.id)
     .slice(0, 4);
 
+  const canBuy = product.inStock || Boolean(product.isPreOrder);
+  const buyLabel = !canBuy ? 'Out of stock' : product.isPreOrder ? 'Pre-order' : 'Add to Cart';
+
   const handleAddToCart = () => {
+    if (!canBuy) return;
     for (let i = 0; i < quantity; i++) {
       dispatch({
         type: 'ADD_ITEM',
@@ -94,6 +104,7 @@ const ProductDetailPage: React.FC = () => {
   };
 
   const handleBuyNow = () => {
+    if (!canBuy) return;
     handleAddToCart();
     analytics.beginCheckout([{ id: product.id, name: product.name, price: product.price, quantity }]);
     setTimeout(() => navigate('/checkout'), 500);
@@ -105,7 +116,7 @@ const ProductDetailPage: React.FC = () => {
   const seoDescription = `${product.name} — Real brewed Arabica coffee, nitrogen-preserved in a portable press tube. No machine. No fridge. No additives. Ready in 5 seconds. ₹${product.price}`;
 
   return (
-    <div className="min-h-screen bg-background pb-16">
+    <div className="min-h-screen bg-background pb-28 md:pb-16">
       <SEO 
         title={`${product.name} — Nitrogen-Preserved Press Tube | Cafe at Once`}
         description={seoDescription}
@@ -266,6 +277,14 @@ const ProductDetailPage: React.FC = () => {
                 </>
               )}
             </div>
+            {product.originalPrice > product.price && (
+              <p className="-mt-4 text-sm font-medium text-green-700">You save ₹{product.originalPrice - product.price}</p>
+            )}
+            {product.isPreOrder && product.preOrderNote && (
+              <p className="flex items-center gap-2 text-sm font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                <Gift className="h-4 w-4 shrink-0" /> {product.preOrderNote}
+              </p>
+            )}
 
             {/* Description */}
             <p className="text-foreground/70 leading-relaxed">
@@ -293,13 +312,17 @@ const ProductDetailPage: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    aria-label="Decrease quantity"
+                    disabled={quantity <= 1}
                     className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
                   <span className="w-12 text-center font-medium text-foreground">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(MAX_QUANTITY, quantity + 1))}
+                    aria-label="Increase quantity"
+                    disabled={quantity >= MAX_QUANTITY}
                     className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all"
                   >
                     <Plus className="h-4 w-4" />
@@ -307,41 +330,40 @@ const ProductDetailPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div ref={buyButtonsRef} className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 h-14 px-8 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                  disabled={!canBuy}
+                  className="flex-1 h-14 disabled:bg-foreground/30 disabled:shadow-none disabled:translate-y-0 px-8 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
                 >
-                  Buy Now
+                  {canBuy ? 'Buy Now' : 'Out of stock'}
                 </button>
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 h-14 px-8 bg-secondary hover:bg-secondary/80 text-foreground font-heading font-bold rounded-full border border-border transition-all"
+                  disabled={!canBuy}
+                  className="flex-1 h-14 disabled:opacity-50 px-8 bg-secondary hover:bg-secondary/80 text-foreground font-heading font-bold rounded-full border border-border transition-all"
                 >
-                  Add to Cart
-                </button>
-                <button
-                  onClick={() => setIsWishlisted(!isWishlisted)}
-                  className="w-14 h-14 flex items-center justify-center rounded-full border border-border hover:border-primary hover:bg-primary/10 transition-all"
-                >
-                  <Heart className={`h-5 w-5 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
+                  {buyLabel}
                 </button>
               </div>
 
               {showAddedMessage && (
                 <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg">
                   <Check className="h-5 w-5" />
-                  <span>Added to cart successfully!</span>
+                  <span>Added to cart!</span>
+                  <Link to="/cart" className="ml-auto font-medium underline">View cart</Link>
                 </div>
               )}
+
+              <DeliveryCheck orderValue={product.price * quantity} preOrder={product.isPreOrder} />
             </div>
 
             {/* Features */}
             <div className="grid grid-cols-3 gap-4 pt-4">
               {[
-                { icon: Truck, text: 'Free Shipping' },
-                { icon: Shield, text: 'Secure Payment' },
-                { icon: Package, text: 'Easy Returns' },
+                { icon: Truck, text: `Free shipping over ₹${DEFAULT_SHIPPING_RATES.freeShippingThreshold}` },
+                { icon: Shield, text: 'Secure UPI & card payment' },
+                { icon: Package, text: '7-day returns' },
               ].map((feature, index) => {
                 const Icon = feature.icon;
                 return (
@@ -361,7 +383,7 @@ const ProductDetailPage: React.FC = () => {
         <div id="product-tabs" className="mb-16 scroll-mt-24">
           <div className="border-b border-border mb-6">
             <div className="flex gap-8">
-              {['description', 'nutrition', 'reviews'].map((tab) => (
+              {['description', 'how to use', 'reviews'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -387,10 +409,36 @@ const ProductDetailPage: React.FC = () => {
                 <p className="text-foreground/70 leading-relaxed">{product.description}</p>
               </div>
             )}
-            {activeTab === 'nutrition' && (
-              <div>
-                <h3 className="font-heading text-xl font-bold text-foreground mb-4">Nutrition Facts</h3>
-                <p className="text-foreground/70">100% Natural Coffee Concentrate • Sugar Free • Gluten Free</p>
+            {activeTab === 'how to use' && (
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-heading text-xl font-bold text-foreground mb-4">How to use</h3>
+                  <ol className="space-y-3">
+                    {product.instructions.map((step, i) => (
+                      <li key={i} className="flex gap-3 text-foreground/80">
+                        <span className="flex-shrink-0 w-7 h-7 rounded-full bg-primary text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
+                        <span className="pt-0.5">{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div>
+                  <h3 className="font-heading text-xl font-bold text-foreground mb-4">Ingredients</h3>
+                  <ul className="flex flex-wrap gap-2">
+                    {product.ingredients.map((ing) => (
+                      <li key={ing} className="px-3 py-1.5 bg-secondary rounded-lg text-sm text-foreground/80">{ing}</li>
+                    ))}
+                  </ul>
+                  <a
+                    href={`https://wa.me/917979837079?text=${encodeURIComponent(`Hi! I have a question about ${product.name}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => analytics.contact('whatsapp')}
+                    className="mt-6 inline-flex items-center gap-2 text-primary font-medium"
+                  >
+                    <MessageCircle className="h-4 w-4" /> Questions? Ask us on WhatsApp
+                  </a>
+                </div>
               </div>
             )}
             {activeTab === 'reviews' && (
@@ -405,14 +453,25 @@ const ProductDetailPage: React.FC = () => {
             <h2 className="font-heading text-3xl font-bold text-foreground mb-8">
               You May Also <span className="text-primary">Like</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className={SWIPE_ROW}>
               {filteredRelatedProducts.map((relatedProduct) => (
-                <ProductCard key={relatedProduct.id} {...relatedProduct} />
+                <div key={relatedProduct.id} className="snap-start shrink-0 w-[75%] sm:w-auto">
+                  <ProductCard {...relatedProduct} />
+                </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
+      <StickyBuyBar
+        targetRef={buyButtonsRef}
+        name={product.name}
+        price={product.price}
+        label={buyLabel}
+        disabled={!canBuy}
+        onAdd={handleAddToCart}
+      />
     </div>
   );
 };
