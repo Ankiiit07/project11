@@ -56,6 +56,20 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
   const [error, setError] = useState('');
   const c = order.customer;
 
+  const createShipment = async () => {
+    setSaving(true);
+    setError('');
+    try {
+      const updated = await accountApi.adminCreateShipment(order.id);
+      setAwb(updated.awbCode || '');
+      onChanged(updated);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not create the shipment');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const save = async (status: Order['status'], awbCode?: string) => {
     setSaving(true);
     setError('');
@@ -160,7 +174,30 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
                 Save
               </button>
             </div>
-            <p className="mt-1 text-xs text-foreground/50">Saving an AWB marks a new order as shipped.</p>
+            <p className="mt-1 text-xs text-foreground/50">Saving an AWB by hand marks a new order as shipped.</p>
+            {order.awbCode ? (
+              <p className="mt-3 text-foreground/70">
+                {order.courierName || 'Courier'} · <Link className="text-primary hover:underline" to={`/track/${order.awbCode}`}>track</Link>
+                {order.shipment?.shipmentId && !order.shipment.pickupRequested && ' · pickup not requested yet'}
+              </p>
+            ) : (
+              order.status !== 'cancelled' && (
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={createShipment}
+                  className="mt-3 h-10 px-4 border border-primary text-primary rounded-lg font-medium disabled:opacity-50"
+                >
+                  {saving ? 'Working…' : 'Create shipment in Shiprocket'}
+                </button>
+              )
+            )}
+            {order.shipment?.error && !order.awbCode && (
+              <p className="mt-2 text-xs text-red-700">
+                Shiprocket: {order.shipment.error}
+                {order.shipment.attempts ? ` (tried ${order.shipment.attempts}×)` : ''}
+              </p>
+            )}
             {!!order.statusHistory?.length && (
               <ul className="mt-3 text-xs text-foreground/60 space-y-0.5">
                 {order.statusHistory.map((h, idx) => (

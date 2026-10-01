@@ -43,6 +43,8 @@ export interface Order {
 
 export interface AdminOrder extends Order {
   awbCode?: string;
+  courierName?: string;
+  shipment?: { shipmentId?: number; pickupRequested?: boolean; error?: string | null; attempts?: number };
   statusHistory?: { status: Order['status']; at: string; by: string }[];
 }
 
@@ -143,6 +145,9 @@ export const accountApi = {
     call<{ order: AdminOrder }>('admin-orders', { method: 'POST', body: JSON.stringify({ id, ...update }) }).then(
       (d) => d.order
     ),
+
+  adminCreateShipment: (orderId: string) =>
+    call<{ order: AdminOrder }>('shiprocket', { method: 'POST', body: JSON.stringify({ orderId }) }).then((d) => d.order),
 
   getReviewSummaries: () =>
     call<{ summary: Record<string, ReviewSummary> }>('reviews?summary=1').then((d) => d.summary),
