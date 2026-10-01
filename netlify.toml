@@ -6,6 +6,10 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# Creates Shiprocket shipments for new orders and syncs delivery status.
+[functions."ship-orders"]
+  schedule = "*/10 * * * *"
+
 # Serve static assets first (no redirect)
 [[redirects]]
   from = "/js/*"

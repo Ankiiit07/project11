@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { toShareImage } from '../utils/shareImage';
+import { toShareImage } from '../utils/cloudinary';
 
 const DEFAULT_SHARE_IMAGE = toShareImage(
   'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774186149/DSC00887-scaled_ddzxox.jpg'
@@ -254,7 +254,6 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:site" content="@cafeatonce" />
       
       {/* Additional SEO Meta Tags */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
       <meta name="theme-color" content="#8B7355" />
       <meta name="msapplication-TileColor" content="#8B7355" />
       

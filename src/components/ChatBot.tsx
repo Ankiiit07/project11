@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot } from 'lucide-react';
+import { X, Send, Bot } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -9,8 +9,13 @@ interface Message {
   options?: string[];
 }
 
-const ChatBot: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ChatBotProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+// Quick answers to common questions. Opened from the Help button (HelpButton.tsx).
+const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -157,35 +162,15 @@ const ChatBot: React.FC = () => {
     }
   };
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-    if (!isOpen) {
-      // Focus input when opening chat
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 300);
-    }
-  };
+  useEffect(() => {
+    if (isOpen) setTimeout(() => inputRef.current?.focus(), 300);
+  }, [isOpen]);
 
   return (
     <div className="chat-bot">
-      {/* Chat Toggle Button - positioned above WhatsApp button */}
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-24 right-6 bg-primary hover:bg-primary-dark text-white p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 z-40"
-        aria-label={isOpen ? 'Close chat' : 'Open chat'}
-        data-testid="chatbot-button"
-      >
-        {isOpen ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <MessageCircle className="h-6 w-6" />
-        )}
-      </button>
-
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-40 right-6 w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50">
+        <div role="dialog" aria-label="Cafe Assistant" className="fixed bottom-20 right-4 left-4 sm:left-auto sm:w-80 h-[70vh] max-h-[28rem] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50">
           {/* Header */}
           <div className="bg-primary text-white p-4 rounded-t-lg flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -193,7 +178,7 @@ const ChatBot: React.FC = () => {
               <span className="font-semibold">Cafe Assistant</span>
             </div>
             <button
-              onClick={toggleChat}
+              onClick={onClose}
               className="text-white hover:text-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full p-1"
               aria-label="Close chat"
             >
@@ -202,7 +187,7 @@ const ChatBot: React.FC = () => {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 max-h-64">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -222,7 +207,7 @@ const ChatBot: React.FC = () => {
                         <button
                           key={option}
                           onClick={() => handleOptionClick(option)}
-                          className="block w-full text-left text-xs bg-white/20 hover:bg-white/30 rounded px-2 py-1 transition-colors focus:outline-none focus:ring-1 focus:ring-white/50"
+                          className="block w-full text-left text-xs bg-white border border-gray-200 hover:border-primary hover:text-primary rounded px-2 py-1.5 transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
                         >
                           {option}
                         </button>

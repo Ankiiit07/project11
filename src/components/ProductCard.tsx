@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContextOptimized';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartNotification from './CartNotification';
 import { useReviewSummaries } from '../hooks/useReviewSummaries';
+import { cld, cldSrcSet } from '../utils/cloudinary';
 
 interface ProductCardProps {
   id: string;
@@ -130,8 +131,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <div className="absolute inset-0 bg-secondary animate-pulse" />
           )}
           <img
-            src={image}
+            src={cld(image, 640)}
+            srcSet={cldSrcSet(image, [320, 480, 640])}
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 80vw"
             alt={name}
+            decoding="async"
             className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImageLoaded(true)}
             loading="lazy"

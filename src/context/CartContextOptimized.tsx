@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useCallback, useMemo, useEffect } from 'react';
 
 export interface CartItem {
   id: string;
@@ -170,12 +170,36 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
+// The cart is saved in the browser so a refresh (or a phone reloading a
+// background tab) doesn't empty it.
+const CART_STORAGE_KEY = 'cafe-at-once-cart';
+
+const loadCart = (): CartState => {
+  const empty: CartState = { items: [], total: 0, itemCount: 0 };
+  try {
+    const items: CartItem[] = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]');
+    if (!Array.isArray(items)) return empty;
+    const valid = items.filter((i) => i && typeof i.id === 'string' && i.quantity > 0 && i.price >= 0);
+    return {
+      items: valid,
+      total: valid.reduce((sum, i) => sum + i.price * i.quantity, 0),
+      itemCount: valid.reduce((sum, i) => sum + i.quantity, 0),
+    };
+  } catch {
+    return empty;
+  }
+};
+
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    total: 0,
-    itemCount: 0,
-  });
+  const [state, dispatch] = useReducer(cartReducer, undefined, loadCart);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
+    } catch {
+      // Storage full or blocked (private mode): the cart still works for this visit.
+    }
+  }, [state.items]);
 
   // Memoized computed values for better performance
   const hasItems = useMemo(() => state.items.length > 0, [state.items.length]);
