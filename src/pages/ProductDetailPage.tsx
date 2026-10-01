@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Heart, Plus, Minus, Check, Package, Shield, Truck } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -8,6 +8,7 @@ import ProductCard from '../components/ProductCard';
 import SEO from '../components/SEO';
 import { cld, cldSrcSet, toShareImage } from '../utils/cloudinary';
 import ProductReviews, { Stars, useProductReviews } from '../components/ProductReviews';
+import { analytics } from '../utils/analytics';
 
 const ProductDetailPage: React.FC = () => {
   React.useEffect(() => {
@@ -40,6 +41,11 @@ const ProductDetailPage: React.FC = () => {
     if (wantsReviews && product) openReviews();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wantsReviews, product?.id]);
+
+  useEffect(() => {
+    if (product) analytics.viewItem({ id: product.id, name: product.name, price: product.price, category: product.category });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id]);
 
   if (loading) {
     return (
@@ -82,12 +88,14 @@ const ProductDetailPage: React.FC = () => {
         },
       });
     }
+    analytics.addToCart({ id: product.id, name: product.name, price: product.price, quantity, category: product.category });
     setShowAddedMessage(true);
     setTimeout(() => setShowAddedMessage(false), 3000);
   };
 
   const handleBuyNow = () => {
     handleAddToCart();
+    analytics.beginCheckout([{ id: product.id, name: product.name, price: product.price, quantity }]);
     setTimeout(() => navigate('/checkout'), 500);
   };
 

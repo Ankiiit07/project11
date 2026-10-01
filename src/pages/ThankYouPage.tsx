@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { accountApi, type Order } from "../services/accountApi";
 import { useUser } from "../context/UserContext";
+import { analytics } from "../utils/analytics";
 
 interface OrderDetails {
   orderNumber: string;
@@ -84,6 +85,13 @@ const ThankYouPage: React.FC = () => {
       }
 
       setOrderDetails(details);
+      if (details) {
+        analytics.purchase(
+          details.orderNumber,
+          details.total,
+          details.items.map((i) => ({ id: (i as { id?: string }).id || i.name, name: i.name, price: i.price, quantity: i.quantity }))
+        );
+      }
     };
 
     loadOrder();
