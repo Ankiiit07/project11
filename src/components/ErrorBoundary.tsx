@@ -1,6 +1,8 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { isChunkLoadError, reloadForNewVersion } from '../utils/lazyPage';
+import { track } from '../utils/analytics';
 
 interface Props {
   children: ReactNode;
@@ -26,15 +28,20 @@ class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
     this.setState({ error, errorInfo });
-    
-    // Log error to external service in production
-    if (process.env.NODE_ENV === 'production') {
-      // Add error logging service here
-      console.error('Production error:', { error, errorInfo });
-    }
+
+    // A page file from an older deploy: load the new version instead of showing this screen.
+    if (isChunkLoadError(error) && reloadForNewVersion()) return;
+
+    // Shows up in GA4 as the "exception" event, so we can see how often visitors hit errors.
+    track('exception', { description: `${error.name}: ${error.message}`.slice(0, 150), fatal: true });
   }
 
   handleRetry = () => {
+    // A failed page load can't be retried in place; reloading fetches the current version.
+    if (isChunkLoadError(this.state.error)) {
+      window.location.reload();
+      return;
+    }
     this.setState({ hasError: false, error: undefined, errorInfo: undefined });
   };
 

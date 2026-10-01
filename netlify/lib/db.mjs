@@ -11,10 +11,15 @@ export async function getDb() {
   if (!uri) throw new Error('MONGODB_URI is not set');
 
   if (!clientPromise) {
-    clientPromise = new MongoClient(uri, { maxPoolSize: 5 }).connect().catch((err) => {
-      clientPromise = null; // let the next request retry
-      throw err;
-    });
+    // Fail within 5s (Netlify stops functions at 10s) so a database problem shows up
+    // as a clear error in the function log instead of a 504 timeout.
+    clientPromise = new MongoClient(uri, { maxPoolSize: 5, serverSelectionTimeoutMS: 5000, connectTimeoutMS: 5000 })
+      .connect()
+      .catch((err) => {
+        clientPromise = null; // let the next request retry
+        console.error('db: could not connect to MongoDB. Check Atlas → Network Access allows 0.0.0.0/0 and the cluster is running:', err.message);
+        throw err;
+      });
   }
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB || 'cafe-at-once');

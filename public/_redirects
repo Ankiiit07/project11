@@ -3,4 +3,10 @@
 /__/auth/*      https://cafe-at-once.firebaseapp.com/__/auth/:splat      200!
 /__/firebase/*  https://cafe-at-once.firebaseapp.com/__/firebase/:splat  200!
 
+# Built files that don't exist (e.g. from an older deploy) are a real 404,
+# not the home page, so browsers never cache HTML as JavaScript.
+/js/*       /index.html   404
+/css/*      /index.html   404
+/assets/*   /index.html   404
+
 /*    /index.html   200
