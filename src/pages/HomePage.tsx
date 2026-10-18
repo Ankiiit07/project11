@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Leaf, Award, Zap, Coffee, Package, Plane } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -14,7 +14,7 @@ import ScrollFloat from '../components/reactbits/ScrollFloat';
 import SpotlightCard from '../components/reactbits/SpotlightCard';
 import Magnet from '../components/reactbits/Magnet';
 import { gsap, useGSAP } from '../lib/gsap';
-import { createPourDrawer, pourSvg } from '../components/pour/pour';
+import { createSeeker, loadVideoBlob, pickVideoSource } from '../utils/scrubVideo';
 import { cld, cldSrcSet, cldVideo, cldVideoPoster } from '../utils/cloudinary';
 
 const INSIGHTS_VIDEO =
@@ -62,28 +62,45 @@ const SWIPE_ROW = 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4
 const HomePage: React.FC = () => {
   const { products: featuredProducts } = useFeaturedProducts();
   const pageRef = useRef<HTMLDivElement>(null);
-  const pourRef = useRef<HTMLDivElement>(null);
-  // The pour scene in the shop's light colours, trimmed top and bottom
-  const pourMarkup = useMemo(() => pourSvg('light', 'hp-', '0 10 800 980'), []);
+  const pourVideoRef = useRef<HTMLVideoElement>(null);
+  const pourStillRef = useRef<HTMLImageElement>(null);
 
-  // Scroll-linked GSAP effects: the hero pour plays as you scroll on desktop (and plays
-  // by itself on phones), the sale photo drifts inside its frame, "How it works" pins on desktop while
+  // Scroll-linked GSAP effects: the real hero pour (filmed) scrubs with scroll on desktop and
+  // plays by itself on phones, the sale photo drifts inside its frame, "How it works" pins on desktop while
   // Peel → Press → Enjoy light up in turn, and the insights video eases from
   // slightly zoomed-out to full size.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      const draw = createPourDrawer(pourRef.current!);
-      const pour = { p: 0 };
+      const video = pourVideoRef.current!;
+      const still = pourStillRef.current!;
+      // Show the real video once a frame is ready; until then (or if it fails) the still stays
+      const reveal = () => gsap.to(video, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' });
+      const reset = (stillSrc: string) => {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        gsap.set(video, { autoAlpha: 0 });
+        still.src = stillSrc;
+      };
 
-      // Desktop: the hero holds for about 1.5 screens of scrolling while the tube pours
+      // Desktop: the hero holds for about 1.5 screens of scrolling while the pour scrubs with it
       mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
         const hero = document.querySelector<HTMLElement>('[data-hero]')!;
-        draw(0);
+        const seek = createSeeker(video);
+        const pour = { p: 0 };
+        const ctrl = new AbortController();
+        reset('/hero/pour-first.webp');
+        loadVideoBlob(video, pickVideoSource(video, '/hero/pour-720'), ctrl.signal)
+          .then(() => {
+            seek(pour.p);
+            reveal();
+          })
+          .catch(() => {});
         gsap.to(pour, {
           p: 1,
           ease: 'none',
-          onUpdate: () => draw(pour.p),
+          onUpdate: () => seek(pour.p),
           scrollTrigger: {
             trigger: hero,
             // below the 80px fixed header; a hero taller than the screen pins once its bottom is in view
@@ -96,14 +113,26 @@ const HomePage: React.FC = () => {
           },
         });
         gsap.to('[data-pour-cue]', { autoAlpha: 0, scrollTrigger: { trigger: hero, start: 'top 80px', end: '+=120', scrub: true } });
+        return () => ctrl.abort();
       });
-      // Phones and tablets: the page scrolls normally and the pour plays once by itself
+      // Phones and tablets: the page scrolls normally and the pour plays once, a little slowed
       mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
-        pour.p = 0;
-        draw(0);
-        gsap.to(pour, { p: 1, duration: 3.4, delay: 0.5, ease: 'power1.inOut', onUpdate: () => draw(pour.p) });
+        const ctrl = new AbortController();
+        reset('/hero/pour-first.webp');
+        loadVideoBlob(video, pickVideoSource(video, '/hero/pour-480'), ctrl.signal)
+          .then(() => {
+            video.playbackRate = 0.6;
+            reveal();
+            return video.play();
+          })
+          // autoplay refused (e.g. low-power mode): show the finished glass instead
+          .catch(() => {
+            if (!ctrl.signal.aborted) still.src = '/hero/pour-last.webp';
+          });
+        return () => ctrl.abort();
       });
-      mm.add('(prefers-reduced-motion: reduce)', () => draw(1));
+      // Reduced motion: the finished glass, no video downloaded
+      mm.add('(prefers-reduced-motion: reduce)', () => reset('/hero/pour-last.webp'));
 
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         // The sale photo drifts slightly inside its frame
@@ -207,19 +236,37 @@ const HomePage: React.FC = () => {
             </h1>
           </div>
 
-          {/* The pour: the Latte tube presses into a glass of milk (decorative; the copy carries the message) */}
+          {/* The pour: real footage of a tube pressed into water (decorative; the copy carries the message) */}
           <motion.div
             className="relative flex flex-col items-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div
-              ref={pourRef}
-              className="h-[36vh] sm:h-[44vh] lg:h-[min(70vh,660px)] aspect-[80/98] max-w-full [&>svg]:w-full [&>svg]:h-full"
-              aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: pourMarkup }}
-            />
+            <div className="relative h-[46vh] sm:h-[52vh] lg:h-[min(70vh,660px)] aspect-[720/1134] max-w-full rounded-[2rem] overflow-hidden bg-secondary shadow-2xl ring-1 ring-foreground/5">
+              <img
+                ref={pourStillRef}
+                src="/hero/pour-first.webp"
+                alt=""
+                aria-hidden="true"
+                width={720}
+                height={1134}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <video
+                ref={pourVideoRef}
+                muted
+                playsInline
+                preload="none"
+                aria-hidden="true"
+                tabIndex={-1}
+                className="absolute inset-0 w-full h-full object-cover opacity-0 invisible [transform:translateZ(0)]"
+              />
+              <span className="absolute left-3 bottom-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur text-[11px] sm:text-xs font-medium text-foreground/80">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                Real pour · Americano<span className="hidden sm:inline">, pressed into water</span>
+              </span>
+            </div>
             <div data-pour-cue className="hidden lg:flex items-center gap-2 mt-2 text-xs uppercase tracking-[0.2em] text-foreground/50" aria-hidden="true">
               Scroll to pour
               <ArrowRight className="h-3.5 w-3.5 rotate-90" />
