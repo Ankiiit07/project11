@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 
@@ -9,7 +9,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
     <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Best Portable Coffee for Travellers in India (2025 Guide) | Cafe at Once"
-        description="Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for Indian travellers — from press tubes to pour-overs."
+        description="Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for Indian travellers, from press tubes to pour-overs."
         url="https://cafeatonce.com/blog/best-portable-coffee-travellers-india"
         type="article"
         breadcrumbs={[
@@ -22,7 +22,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8 transition-colors"
+          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Insights
@@ -33,7 +33,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
+          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
             Travel Guide
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
@@ -41,7 +41,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
           </h1>
           <p className="text-xl text-foreground/70 mb-6">
             Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for 
-            Indian travellers — from press tubes to pour-overs.
+            Indian travellers, from press tubes to pour-overs.
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/60">
             <span className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
             <p className="text-foreground/80 leading-relaxed">
               Whether you're catching a 6 AM flight, checking into a budget hotel, or camping in Himachal, 
               finding decent coffee on the road is a universal struggle. Most travellers settle for 
-              instant coffee sachets — thin, bitter, and nothing like the real thing. But it doesn't 
+              instant coffee sachets, thin, bitter, and nothing like the real thing. But it doesn't 
               have to be this way.
             </p>
           </section>
@@ -123,7 +123,7 @@ const BestPortableCoffeeTravellers: React.FC = () => {
           </p>
           <Link 
             to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
           >
             Shop Travel-Ready Coffee
           </Link>

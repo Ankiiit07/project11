@@ -1,6 +1,6 @@
 import React from 'react';
 import toast, { Toaster, type Toast } from 'react-hot-toast';
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from './icons';
 
 export type NotificationType = 'success' | 'error' | 'info' | 'warning';
 
@@ -29,7 +29,7 @@ const CustomToast: React.FC<{ t: Toast; message: string; type: NotificationType 
 }) => (
   <div
     role={type === 'error' ? 'alert' : 'status'}
-    className={`${t.visible ? 'opacity-100' : 'opacity-0'} transition-opacity max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
+    className={`${t.visible ? 'opacity-100' : 'opacity-0'} max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
   >
     <div className="flex-1 w-0 p-4">
       <div className="flex items-start">

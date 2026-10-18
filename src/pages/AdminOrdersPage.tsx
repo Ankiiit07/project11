@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Download, RefreshCw, Search, ShieldAlert, ChevronDown, ChevronUp } from 'lucide-react';
+import { Download, RefreshCw, Search, ShieldAlert, ChevronDown, ChevronUp } from '../components/icons';
 import { useUser } from '../context/UserContext';
 import { accountApi, ApiError, type AdminOrder, type AdminOrdersResponse, type Order } from '../services/accountApi';
 
@@ -93,7 +93,7 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
         >
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-heading font-bold text-foreground">{order.id}</span>
-            <span className={`px-2 py-0.5 text-xs font-medium rounded-full border capitalize ${STATUS_STYLES[order.status]}`}>
+            <span className={`px-2 py-0.5 text-xs font-medium rounded border capitalize ${STATUS_STYLES[order.status]}`}>
               {order.status}
             </span>
             <span className="text-xs text-foreground/50">{when(order.createdAt)}</span>
@@ -155,7 +155,7 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
           </div>
           <div>
             <h4 className="font-bold text-foreground mb-1">Payment & shipping</h4>
-            <p className="text-foreground/70 break-all">Razorpay: {order.payment?.paymentId || '—'}</p>
+            <p className="text-foreground/70 break-all">Razorpay: {order.payment?.paymentId || '-'}</p>
             <label htmlFor={`awb-${order.id}`} className="block mt-3 mb-1 text-foreground/70">AWB / tracking number</label>
             <div className="flex gap-2">
               <input
@@ -262,7 +262,7 @@ const AdminOrdersPage: React.FC = () => {
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground mb-2">Admin sign-in</h1>
           <p className="text-foreground/70 mb-6">Sign in with your admin account to see orders.</p>
-          <Link to="/account" className="inline-block px-8 py-3 bg-primary text-white font-bold rounded-full">Sign in</Link>
+          <Link to="/account" className="inline-block px-8 py-3 bg-primary text-white font-bold rounded">Sign in</Link>
         </div>
       </div>
     );
@@ -344,8 +344,8 @@ const AdminOrdersPage: React.FC = () => {
                   setPage(1);
                 }}
                 className={`shrink-0 h-10 px-3 rounded-lg text-sm whitespace-nowrap capitalize border ${
-                  status === st ? 'bg-primary text-white border-primary' : 'bg-card border-border text-foreground/80'
-                }`}
+ status === st ? 'bg-primary text-white border-primary' : 'bg-card border-border text-foreground/80'
+ }`}
               >
                 {st || 'All'}
                 {s && st ? ` (${s.counts[st as Order['status']]})` : ''}

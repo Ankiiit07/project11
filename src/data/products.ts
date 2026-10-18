@@ -72,7 +72,7 @@ export const products: Product[] = [
   // Latte Sale campaign bundles (shown in the home page banner)
   {
     id: 'latte-pack-2',
-    name: 'Cafe at Once Latte — Pack of 2',
+    name: 'Cafe at Once Latte, Pack of 2',
     price: 298,
     originalPrice: 398, // 2 × the single-tube price of ₹199
     image: '/campaign/latte-sale-800.webp',
@@ -109,7 +109,7 @@ export const products: Product[] = [
   },
   {
     id: 'latte-pack-6',
-    name: 'Cafe at Once Latte — Pack of 6',
+    name: 'Cafe at Once Latte, Pack of 6',
     price: 600,
     originalPrice: 1194, // 6 × the single-tube price of ₹199
     image: '/campaign/latte-sale-800.webp',
@@ -414,7 +414,7 @@ export const products: Product[] = [
   // PRE-ORDER PRODUCTS - JOYINBAG Collection
   {
     id: 'preorder-arabica-joyinbag',
-    name: 'Joy in Bag — Arabica Multi-Serve',
+    name: 'Joy in Bag, Arabica Multi-Serve',
     price: 749,
     originalPrice: 999,
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1774184105/B8_3_1_mk61uf.webp',
@@ -426,7 +426,7 @@ export const products: Product[] = [
     video: '',
     category: 'preorder',
     badges: ['Pre-Order', 'Multi-Serve', '8 Servings', 'Free Gift'],
-    description: 'The large-format option. 100% Arabica brewed concentrate in a multi-serve bag — yields 8 servings of 300ml each (2.4L total). Nitrogen-washed for freshness. Add 150–300ml water per serving, pour concentrate, stir. Adjustable strength. Room temperature storage, 12 months shelf life, no preservatives. Best for: home, office, group servings, daily use, travel setups. First 5 orders get free gifts!',
+    description: 'The large-format option. 100% Arabica brewed concentrate in a multi-serve bag, yields 8 servings of 300ml each (2.4L total). Nitrogen-washed for freshness. Add 150–300ml water per serving, pour concentrate, stir. Adjustable strength. Room temperature storage, 12 months shelf life, no preservatives. Best for: home, office, group servings, daily use, travel setups. First 5 orders get free gifts!',
     ingredients: ['100% Arabica Coffee', 'Nitrogen'],
     nutrition: {
       calories: 5,

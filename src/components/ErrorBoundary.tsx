@@ -1,5 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Home } from './icons';
 import { Link } from 'react-router-dom';
 import { isChunkLoadError, reloadForNewVersion } from '../utils/lazyPage';
 import { track } from '../utils/analytics';
@@ -67,7 +67,7 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="space-y-4">
               <button
                 onClick={this.handleRetry}
-                className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+                className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center"
               >
                 <RefreshCw className="h-5 w-5 mr-2" />
                 Try Again
@@ -75,7 +75,7 @@ class ErrorBoundary extends Component<Props, State> {
 
               <Link
                 to="/"
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg flex items-center justify-center"
               >
                 <Home className="h-5 w-5 mr-2" />
                 Go Home

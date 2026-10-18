@@ -1,18 +1,14 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Clock, Leaf, Award, Zap, Coffee, Package, Plane } from 'lucide-react';
+import { ArrowRight } from '../components/icons';
 import { motion } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 import { useFeaturedProducts } from '../hooks/useProducts';
 import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
 import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
+import { Glitch, KineticHeading, KineticMarquee, KineticWord } from '../components/kinetic';
 import CampaignBanner from '../components/CampaignBanner';
-import SplitText from '../components/reactbits/SplitText';
-import ShinyText from '../components/reactbits/ShinyText';
-import ScrollFloat from '../components/reactbits/ScrollFloat';
-import SpotlightCard from '../components/reactbits/SpotlightCard';
-import Magnet from '../components/reactbits/Magnet';
 import { gsap, useGSAP } from '../lib/gsap';
 import { createSeeker, loadVideoBlob, pickVideoSource } from '../utils/scrubVideo';
 import { cld, cldSrcSet, cldVideo, cldVideoPoster } from '../utils/cloudinary';
@@ -24,35 +20,37 @@ const STEPS = [
   {
     step: '01',
     title: 'Peel',
-    description: 'Open your premium coffee concentrate tube',
+    description: 'Twist the cap off the tube.',
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1751552822/Frame_26_3_bmmwov.png',
   },
   {
     step: '02',
     title: 'Press',
-    description: 'Squeeze into hot or cold water',
+    description: 'Squeeze it into 150 to 300 ml of water or milk, hot or cold.',
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1751552685/Frame_25_3_zjsnuy.png',
   },
   {
     step: '03',
-    title: 'Enjoy',
-    description: 'Perfect coffee, wherever you are',
+    title: 'Stir',
+    description: 'Stir once. That is the whole recipe.',
     image: 'https://res.cloudinary.com/dtcsms7zn/image/upload/v1751551122/Frame_27_1_ntpnxq.png',
   },
 ];
 
-const FEATURES = [
-  { icon: Clock, title: '5-Second Coffee', description: 'Real brewed coffee, ready in 5 seconds flat', color: 'text-blue-600', bgColor: 'bg-blue-50' },
-  { icon: Leaf, title: 'Zero Additives', description: 'Just Arabica coffee. No sugar, no preservatives', color: 'text-green-600', bgColor: 'bg-green-50' },
-  { icon: Package, title: '12-Month Shelf Life', description: 'Nitrogen-preserved freshness, no refrigeration needed', color: 'text-purple-600', bgColor: 'bg-purple-50' },
-  { icon: Plane, title: 'TSA Safe', description: 'Carry-on compliant. Perfect for frequent travellers', color: 'text-orange-600', bgColor: 'bg-orange-50' },
+const REASONS = [
+  { title: '5 seconds', description: 'No machine, no kettle, no fridge. Press and drink.' },
+  { title: 'Nothing added', description: 'Brewed Arabica coffee. No sugar, no preservatives.' },
+  { title: '12 months', description: 'Sealed with nitrogen, so it keeps on the shelf.' },
+  { title: 'Carry-on friendly', description: 'A 16 g tube sits well under flight liquid limits.' },
 ];
 
-const PILLS = [
-  { icon: Leaf, label: 'Zero Sugar', className: 'bg-green-50 border-green-200 text-green-700' },
-  { icon: Award, label: 'Zero Additives', className: 'bg-blue-50 border-blue-200 text-blue-700' },
-  { icon: Coffee, label: '100% Arabica', className: 'bg-purple-50 border-purple-200 text-purple-700' },
-  { icon: Plane, label: 'TSA Safe', className: 'bg-orange-50 border-orange-200 text-orange-700' },
+const FACTS = ['Zero sugar', 'Zero additives', '100% Arabica', 'Carry-on friendly'];
+
+const READS = [
+  { to: '/blog/how-to-make-coffee-without-machine', label: 'How to make coffee without a machine' },
+  { to: '/blog/instant-vs-brewed-coffee-difference', label: 'Instant vs brewed: what actually changes' },
+  { to: '/blog/why-arabica-coffee-matters', label: 'Why Arabica matters' },
+  { to: '/blog/best-portable-coffee-travellers-india', label: 'Portable coffee for travellers' },
 ];
 
 // On phones these rows scroll sideways (with the next card peeking in);
@@ -66,9 +64,8 @@ const HomePage: React.FC = () => {
   const pourStillRef = useRef<HTMLImageElement>(null);
 
   // Scroll-linked GSAP effects: the real hero pour (filmed) scrubs with scroll on desktop and
-  // plays by itself on phones, the sale photo drifts inside its frame, "How it works" pins on desktop while
-  // Peel → Press → Enjoy light up in turn, and the insights video eases from
-  // slightly zoomed-out to full size.
+  // plays by itself on phones, the hero headline widens into place on load, the sale photo
+  // drifts inside its frame and the insights video eases up to full size.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -135,6 +132,12 @@ const HomePage: React.FC = () => {
       mm.add('(prefers-reduced-motion: reduce)', () => reset('/hero/pour-last.webp'));
 
       mm.add('(prefers-reduced-motion: no-preference)', () => {
+        // Kinetic headline: each line widens from condensed to full width as the page opens
+        gsap.fromTo(
+          '[data-k-line]',
+          { '--wdth': 75, opacity: 0, yPercent: 30 },
+          { '--wdth': 100, opacity: 1, yPercent: 0, duration: 1.1, stagger: 0.18, ease: 'expo.out', delay: 0.1 }
+        );
         // The sale photo drifts slightly inside its frame
         gsap.fromTo(
           '[data-campaign-img]',
@@ -143,39 +146,15 @@ const HomePage: React.FC = () => {
         );
         gsap.fromTo(
           '[data-insights-video]',
-          { scale: 0.88, borderRadius: '3rem' },
+          { scale: 0.88 },
           {
             scale: 1,
-            borderRadius: '1.5rem',
             ease: 'none',
             scrollTrigger: { trigger: '[data-insights-video]', start: 'top bottom', end: 'center center', scrub: true },
           }
         );
       });
 
-      // Desktop only: phones keep the swipeable row, which a pin would fight with
-      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-        const cards = gsap.utils.toArray<HTMLElement>('[data-step-card]');
-        gsap.set('[data-steps-track]', { autoAlpha: 1 });
-        gsap.set(cards, { opacity: 0.35, scale: 0.94 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#how-it-works',
-            start: 'center center+=40', // centred below the 80px fixed header
-            end: '+=1200',
-            pin: true,
-            scrub: 0.6,
-            refreshPriority: 1, // pinned before the triggers below it measure their positions
-          },
-        });
-        tl.fromTo('[data-steps-progress]', { scaleX: 0 }, { scaleX: 1, duration: cards.length, ease: 'none' }, 0);
-        cards.forEach((card, i) => {
-          tl.to(card, { opacity: 1, scale: 1.04, y: -12, duration: 0.6, ease: 'power2.out' }, i);
-          tl.fromTo(card.querySelector('[data-step-badge]'), { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1 }, i);
-          if (i > 0) tl.to(cards[i - 1], { scale: 1, y: 0, duration: 0.6, ease: 'power2.out' }, i);
-        });
-      });
       return () => mm.revert();
     },
     { scope: pageRef }
@@ -205,34 +184,28 @@ const HomePage: React.FC = () => {
       {/* Hero */}
       <section
         data-hero
-        className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center"
+        className="relative bg-background overflow-hidden lg:min-h-[85vh] flex items-center"
       >
-        <div
-          className="absolute inset-0 opacity-5"
-          aria-hidden="true"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none" aria-hidden="true" />
-
         {/* Phones: headline, then the product, then the details. Desktop: text left, product right. */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 lg:py-12 grid lg:grid-cols-2 gap-x-12 gap-y-6 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10 lg:py-16 grid lg:grid-cols-2 gap-x-12 gap-y-6 items-center">
           <div className="space-y-4 lg:col-start-1">
-            <motion.div
-              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary/10 border border-primary/20 rounded-full"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Zap className="h-4 w-4 text-primary" />
-              <ShinyText text="India's First Nitrogen-Preserved Coffee" className="text-xs sm:text-sm font-medium text-primary" />
-            </motion.div>
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/70">
+              India's first nitrogen-preserved coffee
+            </p>
 
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
-              <SplitText text="Real Coffee." className="block" delay={0.1} />
-              <SplitText text="No Machine. No Compromise." className="block text-primary mt-1 sm:mt-2" delay={0.45} stagger={0.02} />
+            <h1
+              className="font-heading text-5xl sm:text-7xl lg:text-[4.75rem] font-extrabold uppercase text-foreground leading-[0.9] tracking-[-0.02em]"
+              style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}
+            >
+              <span data-k-line className="block" style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}>
+                Real coffee.
+              </span>
+              <span data-k-line className="block text-primary" style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}>
+                No machine.
+              </span>
+              <span data-k-line className="block text-primary" style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}>
+                <Glitch text="No compromise." onLoadAfter={1.4} repeat />
+              </span>
             </h1>
           </div>
 
@@ -243,7 +216,7 @@ const HomePage: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="relative h-[46vh] sm:h-[52vh] lg:h-[min(70vh,660px)] aspect-[720/1134] max-w-full rounded-[2rem] overflow-hidden bg-secondary shadow-2xl ring-1 ring-foreground/5">
+            <div className="relative h-[46vh] sm:h-[52vh] lg:h-[min(70vh,660px)] aspect-[720/1134] max-w-full overflow-hidden bg-secondary border border-foreground">
               <img
                 ref={pourStillRef}
                 src="/hero/pour-first.webp"
@@ -262,14 +235,12 @@ const HomePage: React.FC = () => {
                 tabIndex={-1}
                 className="absolute inset-0 w-full h-full object-cover opacity-0 invisible [transform:translateZ(0)]"
               />
-              <span className="absolute left-3 bottom-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur text-[11px] sm:text-xs font-medium text-foreground/80">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+              <span className="absolute left-0 bottom-0 px-3 py-2 bg-foreground text-background font-mono text-[10px] sm:text-xs uppercase tracking-[0.14em]">
                 Real pour · Americano<span className="hidden sm:inline">, pressed into water</span>
               </span>
             </div>
-            <div data-pour-cue className="hidden lg:flex items-center gap-2 mt-2 text-xs uppercase tracking-[0.2em] text-foreground/50" aria-hidden="true">
+            <div data-pour-cue className="hidden lg:block mt-3 font-mono text-xs uppercase tracking-[0.2em] text-foreground/60" aria-hidden="true">
               Scroll to pour
-              <ArrowRight className="h-3.5 w-3.5 rotate-90" />
             </div>
           </motion.div>
 
@@ -280,61 +251,49 @@ const HomePage: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.6 }}
           >
             <div className="space-y-3">
-              <p className="text-lg sm:text-xl font-semibold text-foreground/90">Just Press.</p>
-              <p className="text-base sm:text-xl text-foreground/70 leading-relaxed max-w-xl">
+              <p className="text-base sm:text-xl text-foreground/80 leading-relaxed max-w-xl">
                 India's first{' '}
                 <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">
                   nitrogen-preserved brewed Arabica coffee
                 </Link>{' '}
-                in a portable press tube. Real coffee in 5 seconds: no machine, no fridge, no additives. TSA-safe and ready
-                for wherever life takes you.
+                in a press tube. Squeeze it into water or milk and it is ready in 5 seconds. No machine, no fridge, nothing added.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Magnet padding={40} strength={5} className="w-full sm:w-auto">
               <Link
                 to="/products"
-                className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-foreground hover:bg-primary text-background font-heading font-bold uppercase tracking-wide"
                 data-testid="hero-shop-now"
               >
-                Shop Cafe at Once
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                Shop the coffee
+                <ArrowRight className="h-5 w-5" />
               </Link>
-              </Magnet>
               <a
                 href="#how-it-works"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-border hover:border-primary text-foreground hover:text-primary font-heading font-bold rounded-full transition-all duration-300"
+                className="inline-flex items-center justify-center px-8 py-4 border border-foreground text-foreground hover:bg-foreground hover:text-background font-heading font-bold uppercase tracking-wide"
                 data-testid="hero-learn-more"
               >
-                How It Works
+                How it works
               </a>
             </div>
 
-            <div className="flex flex-wrap gap-2 sm:gap-3">
-              {PILLS.map(({ icon: Icon, label, className }) => (
-                <span
-                  key={label}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 border rounded-full text-xs sm:text-sm font-medium ${className}`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </span>
-              ))}
-            </div>
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.14em] text-foreground/70">
+              {FACTS.join('  /  ')}
+            </p>
 
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-2 sm:pt-4">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-4 border-t border-foreground/20">
               {[
                 { to: 5, unit: 's', label: 'Ready to Drink' },
                 { to: 12, unit: 'mo', label: 'Shelf Life' },
                 { to: 100, unit: '%', label: 'Arabica' },
               ].map((stat) => (
                 <div key={stat.label} className="space-y-1">
-                  <div className="font-heading text-2xl sm:text-3xl font-bold text-foreground">
+                  <div className="font-heading text-3xl sm:text-4xl font-extrabold text-foreground">
                     <CountUp to={stat.to} />
                     <span className="text-primary">{stat.unit}</span>
                   </div>
-                  <div className="text-xs sm:text-sm text-foreground/60">{stat.label}</div>
+                  <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.12em] text-foreground/60">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -342,68 +301,61 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <KineticMarquee
+        items={['Peel', 'Press', 'Pour', 'Real coffee in 5 seconds', 'No machine', 'No fridge']}
+        className="border-y border-foreground bg-background text-foreground font-heading font-extrabold uppercase leading-none text-[clamp(2.75rem,9vw,8rem)] py-3 sm:py-4"
+      />
+
       <CampaignBanner />
 
-      {/* How it works */}
-      <section id="how-it-works" className="bg-white py-12 lg:py-16 scroll-mt-20">
+      {/* How it works: three steps as stacked rows, each verb widening as it crosses the screen */}
+      <section id="how-it-works" className="bg-background py-16 lg:py-24 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal className="text-center mb-8 sm:mb-12">
-            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
-              Coffee in <span className="text-primary">5 Seconds</span>
-            </ScrollFloat>
-            <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
-              Revolutionary coffee concentrate technology that delivers barista-quality coffee instantly
-            </p>
-          </Reveal>
+          <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/60 mb-3">How it works</p>
+          <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase text-foreground leading-[0.95] mb-10 sm:mb-14">
+            Three moves. <span className="text-primary">Five seconds.</span>
+          </KineticHeading>
 
-          {/* Progress line for the pinned desktop scene; shown by GSAP only when the scene runs */}
-          <div data-steps-track className="invisible hidden lg:block h-1 mb-10 rounded-full bg-border overflow-hidden" aria-hidden="true">
-            <div data-steps-progress className="h-full bg-primary origin-left" />
-          </div>
-
-          <Stagger className={`${SWIPE_ROW} md:grid md:grid-cols-3 md:gap-8 lg:gap-12 md:mx-0 md:px-0 md:overflow-visible`}>
+          <ol className="border-b border-foreground">
             {STEPS.map((item) => (
-              <StaggerItem key={item.step} className="snap-center shrink-0 w-[78%] md:w-auto">
-                <div
-                  data-step-card
-                  className="relative h-full bg-secondary border border-border rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-[border-color,box-shadow] duration-300 hover:shadow-hover"
+              <li key={item.step} className="grid grid-cols-12 items-center gap-x-4 gap-y-2 border-t border-foreground py-6 sm:py-8">
+                <span className="col-span-2 sm:col-span-1 font-mono text-sm text-foreground/60">{item.step}</span>
+                <KineticWord
+                  as="h3"
+                  className="col-span-10 sm:col-span-6 font-heading font-extrabold uppercase leading-[0.85] text-[clamp(3.5rem,13vw,10rem)] text-foreground"
                 >
-                  <div data-step-badge className="absolute top-4 right-4 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-heading font-bold shadow-lg">
-                    {item.step}
-                  </div>
-                  <img
-                    src={cld(item.image, 480)}
-                    srcSet={cldSrcSet(item.image, [320, 480, 640])}
-                    sizes="(min-width: 768px) 33vw, 78vw"
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-36 sm:h-48 object-contain mb-4 sm:mb-6"
-                  />
-                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">{item.title}</h3>
-                  <p className="text-sm sm:text-base text-foreground/70">{item.description}</p>
-                </div>
-              </StaggerItem>
+                  {item.title}
+                </KineticWord>
+                <p className="col-span-8 col-start-3 sm:col-start-auto sm:col-span-3 text-base sm:text-lg text-foreground/80">{item.description}</p>
+                <img
+                  src={cld(item.image, 320)}
+                  srcSet={cldSrcSet(item.image, [160, 320, 480])}
+                  sizes="(min-width: 640px) 12vw, 25vw"
+                  alt=""
+                  loading="lazy"
+                  className="col-span-2 w-full h-20 sm:h-28 object-contain"
+                />
+              </li>
             ))}
-          </Stagger>
+          </ol>
         </div>
       </section>
 
       {/* Featured products */}
-      <section className="bg-gradient-to-b from-white to-background py-12 lg:py-16">
+      <section className="bg-background border-t border-foreground py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-2 sm:mb-4">
-                Featured <span className="text-primary">Products</span>
-              </ScrollFloat>
-              <p className="text-base sm:text-lg text-foreground/70">Discover our most popular coffee concentrates</p>
+              <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase text-foreground leading-[0.95] mb-2 sm:mb-3">
+                The <span className="text-primary">range</span>
+              </KineticHeading>
+              <p className="text-base sm:text-lg text-foreground/70">Concentrates, cold brew and tea, all in the same press tube.</p>
             </div>
             <Link
               to="/products"
-              className="shrink-0 inline-flex items-center gap-1 sm:gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
+              className="shrink-0 font-mono text-xs sm:text-sm uppercase tracking-[0.14em] text-foreground underline underline-offset-4 hover:text-primary"
             >
               View all
-              <ArrowRight className="h-5 w-5" />
             </Link>
           </Reveal>
 
@@ -417,68 +369,56 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Why Cafe at Once */}
-      <section className="bg-background py-12 lg:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal className="text-center mb-8 sm:mb-12">
-            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
-              Why Choose <span className="text-primary">Cafe at Once</span>
-            </ScrollFloat>
-            <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
-              The only coffee that combines real brewed Arabica taste with true portability. No machine. No fridge. No
-              compromise.
+      {/* Why it's in your bag: an editorial list, no cards */}
+      <section className="bg-secondary border-t border-foreground py-16 lg:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-5">
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/60 mb-3">Why people carry it</p>
+            <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase text-foreground leading-[0.95]">
+              Brewed first. <span className="text-primary">Sealed second.</span>
+            </KineticHeading>
+            <p className="mt-5 text-base sm:text-lg text-foreground/80 max-w-md">
+              Real brewed Arabica, sealed with nitrogen the way it left the brewer. No powder, no machine.
             </p>
-          </Reveal>
-
-          <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-            {FEATURES.map(({ icon: Icon, title, description, color, bgColor }) => (
-              <StaggerItem key={title}>
-                <SpotlightCard className="h-full bg-white border border-border rounded-2xl p-4 sm:p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover">
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-xl flex items-center justify-center mb-3 sm:mb-4`}>
-                  <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
-                </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-foreground mb-1 sm:mb-2">{title}</h3>
-                <p className="text-xs sm:text-sm text-foreground/70">{description}</p>
-                </SpotlightCard>
-              </StaggerItem>
-            ))}
-          </Stagger>
-
-          <div className="text-center mt-8">
-            <Link to="/faq" className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-2">
-              Have questions? Read our FAQ
-              <ArrowRight className="h-4 w-4" />
+            <Link to="/faq" className="inline-block mt-6 font-mono text-xs sm:text-sm uppercase tracking-[0.14em] text-foreground underline underline-offset-4 hover:text-primary">
+              Read the FAQ
             </Link>
           </div>
+          <dl className="lg:col-span-7 border-b border-foreground">
+            {REASONS.map((r, i) => (
+              <div key={r.title} className="grid grid-cols-12 gap-4 border-t border-foreground py-5 sm:py-6">
+                <span className="col-span-2 font-mono text-sm text-foreground/60">{String(i + 1).padStart(2, '0')}</span>
+                <dt className="col-span-10 sm:col-span-4 font-heading text-2xl sm:text-3xl font-extrabold uppercase leading-none">{r.title}</dt>
+                <dd className="col-span-10 col-start-3 sm:col-span-6 sm:col-start-auto text-base text-foreground/80">{r.description}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
       {/* Coffee insights */}
-      <section className="bg-foreground text-white py-12 lg:py-16">
+      <section className="bg-foreground text-white py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <Reveal className="space-y-5 sm:space-y-6">
-            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold">
-              Discover Coffee <span className="text-primary">Insights</span>
-            </ScrollFloat>
-            <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-              Explore the fascinating world of coffee with our curated collection of brewing techniques, culture insights,
-              and expert tips.
-            </p>
-            <ul className="space-y-3">
-              {['Professional brewing techniques', 'Coffee origin stories & culture', 'Health benefits & nutrition facts', 'Expert tips & recommendations'].map(
-                (item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <span className="w-2 h-2 bg-primary rounded-full" />
-                    <span className="text-white/90">{item}</span>
-                  </li>
-                )
-              )}
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-white/60">Coffee notes</p>
+            <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase leading-[0.95]">
+              Read before <span className="text-primary">you press.</span>
+            </KineticHeading>
+            <p className="text-base sm:text-lg text-white/80 leading-relaxed">Short reads on brewing, beans and taking good coffee with you.</p>
+            <ul className="border-b border-white/30">
+              {READS.map((r) => (
+                <li key={r.to} className="border-t border-white/30">
+                  <Link to={r.to} className="block py-3 text-white/90 hover:text-primary">
+                    {r.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
             <Link
               to="/insights"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-white hover:text-foreground text-white font-heading font-bold uppercase tracking-wide"
             >
-              Explore Insights
+              All coffee notes
               <ArrowRight className="h-5 w-5" />
             </Link>
           </Reveal>
@@ -492,7 +432,7 @@ const HomePage: React.FC = () => {
               playsInline
               preload="none"
               data-insights-video
-              className="w-full rounded-3xl shadow-2xl bg-black/20 aspect-video"
+              className="w-full bg-black/20 aspect-video border border-white/30"
             />
           </Reveal>
         </div>

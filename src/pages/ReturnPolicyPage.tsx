@@ -2,16 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   RefreshCw, 
-  Clock, 
   Package, 
   AlertCircle, 
   CheckCircle, 
   XCircle, 
   Info,
   Coffee,
-  Shield,
   Truck
-} from 'lucide-react';
+} from '../components/icons';
 
 const ReturnPolicyPage: React.FC = () => {
   const returnConditions = [
@@ -99,21 +97,18 @@ const ReturnPolicyPage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-primary/10 to-amber-100 rounded-2xl p-8 mb-12"
+          className="bg-primary/10 rounded-2xl p-8 mb-12"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div className="flex flex-col items-center">
-              <Clock className="h-12 w-12 text-primary mb-3" />
+          <div className="border-y border-foreground/20 divide-y divide-foreground/20">
+            <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
               <h3 className="text-lg font-bold text-gray-900 mb-2">7-Day Return Window</h3>
               <p className="text-gray-600">Return eligible products within 7 days of delivery</p>
             </div>
-            <div className="flex flex-col items-center">
-              <Shield className="h-12 w-12 text-primary mb-3" />
+            <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
               <h3 className="text-lg font-bold text-gray-900 mb-2">Easy Returns</h3>
               <p className="text-gray-600">Simple return process with prepaid shipping labels</p>
             </div>
-            <div className="flex flex-col items-center">
-              <RefreshCw className="h-12 w-12 text-primary mb-3" />
+            <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
               <h3 className="text-lg font-bold text-gray-900 mb-2">Quick Refunds</h3>
               <p className="text-gray-600">Refunds processed within 3-5 business days</p>
             </div>

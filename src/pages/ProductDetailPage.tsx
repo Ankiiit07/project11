@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Plus, Minus, Check, Gift, MessageCircle, Package, Shield, Truck } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Check, Gift, MessageCircle, Package, Shield, Truck } from '../components/icons';
 import { motion } from 'framer-motion';
 import { useProduct, useProductsByCategory } from '../hooks/useProducts';
 import { useCart } from '../context/CartContextOptimized';
@@ -113,18 +113,18 @@ const ProductDetailPage: React.FC = () => {
   const discountPercentage = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
 
   // Generate SEO-friendly product description
-  const seoDescription = `${product.name} — Real brewed Arabica coffee, nitrogen-preserved in a portable press tube. No machine. No fridge. No additives. Ready in 5 seconds. ₹${product.price}`;
+  const seoDescription = `${product.name}: real brewed Arabica coffee, nitrogen-preserved in a portable press tube. No machine. No fridge. No additives. Ready in 5 seconds. ₹${product.price}`;
 
   return (
     <div className="min-h-screen bg-background pb-28 md:pb-16">
       <SEO 
-        title={`${product.name} — Nitrogen-Preserved Press Tube | Cafe at Once`}
+        title={`${product.name} | Nitrogen-Preserved Press Tube | Cafe at Once`}
         description={seoDescription}
         url={`https://cafeatonce.com/products/${product.id}`}
         image={toShareImage(product.images?.[0] || product.image)}
         type="product"
         product={{
-          name: `Cafe at Once ${product.name} — Nitrogen-Preserved Press Tube`,
+          name: `Cafe at Once ${product.name}, Nitrogen-Preserved Press Tube`,
           description: seoDescription,
           price: product.price,
           currency: "INR",
@@ -159,11 +159,11 @@ const ProductDetailPage: React.FC = () => {
           },
           {
             question: "Does it need refrigeration?",
-            answer: "No — Cafe at Once tubes are nitrogen-preserved and don't require refrigeration. Store in a cool, dry place for up to 12 months."
+            answer: "No, Cafe at Once tubes are nitrogen-preserved and don't require refrigeration. Store in a cool, dry place for up to 12 months."
           },
           {
             question: "Is it TSA/flight safe?",
-            answer: "Yes — Cafe at Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits."
+            answer: "Yes, Cafe at Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits."
           }
         ]}
       />
@@ -172,7 +172,7 @@ const ProductDetailPage: React.FC = () => {
         <div className="mb-6">
           <Link
             to="/products"
-            className="inline-flex items-center gap-2 text-foreground/70 hover:text-primary transition-colors"
+            className="inline-flex items-center gap-2 text-foreground/70 hover:text-primary"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Products
@@ -205,11 +205,11 @@ const ProductDetailPage: React.FC = () => {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(img)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      (selectedImage || product.image) === img 
-                        ? 'border-primary ring-2 ring-primary/20' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
+                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+ (selectedImage || product.image) === img 
+ ? 'border-primary ring-2 ring-primary/20' 
+ : 'border-border hover:border-primary/50'
+ }`}
                   >
                     <img
                       src={cld(img, 160)}
@@ -236,11 +236,11 @@ const ProductDetailPage: React.FC = () => {
                 {product.category?.replace('-', ' ')}
               </span>
               {product.isPreOrder ? (
-                <span className="text-sm px-3 py-1 bg-amber-50 text-amber-800 rounded-full font-medium">Pre-order</span>
+                <span className="text-sm px-3 py-1 bg-amber-50 text-amber-800 rounded font-medium">Pre-order</span>
               ) : product.inStock ? (
-                <span className="text-sm px-3 py-1 bg-green-50 text-green-700 rounded-full font-medium">In Stock</span>
+                <span className="text-sm px-3 py-1 bg-green-50 text-green-700 rounded font-medium">In Stock</span>
               ) : (
-                <span className="text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded-full font-medium">Out of stock</span>
+                <span className="text-sm px-3 py-1 bg-gray-100 text-gray-600 rounded font-medium">Out of stock</span>
               )}
             </div>
 
@@ -271,7 +271,7 @@ const ProductDetailPage: React.FC = () => {
                   <span className="text-xl text-foreground/50 line-through">
                     ₹{product.originalPrice}
                   </span>
-                  <span className="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded-full">
+                  <span className="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded">
                     {discountPercentage}% OFF
                   </span>
                 </>
@@ -319,7 +319,7 @@ const ProductDetailPage: React.FC = () => {
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     aria-label="Decrease quantity"
                     disabled={quantity <= 1}
-                    className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
@@ -328,7 +328,7 @@ const ProductDetailPage: React.FC = () => {
                     onClick={() => setQuantity(Math.min(MAX_QUANTITY, quantity + 1))}
                     aria-label="Increase quantity"
                     disabled={quantity >= MAX_QUANTITY}
-                    className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all"
+                    className="w-10 h-10 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10"
                   >
                     <Plus className="h-4 w-4" />
                   </button>
@@ -339,14 +339,14 @@ const ProductDetailPage: React.FC = () => {
                 <button
                   onClick={handleBuyNow}
                   disabled={!canBuy}
-                  className="flex-1 h-14 disabled:bg-foreground/30 disabled:shadow-none disabled:translate-y-0 px-8 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                  className="flex-1 h-14 disabled:bg-foreground/30 disabled:shadow-none disabled:translate-y-0 px-8 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded shadow-lg"
                 >
                   {canBuy ? 'Buy Now' : 'Out of stock'}
                 </button>
                 <button
                   onClick={handleAddToCart}
                   disabled={!canBuy}
-                  className="flex-1 h-14 disabled:opacity-50 px-8 bg-secondary hover:bg-secondary/80 text-foreground font-heading font-bold rounded-full border border-border transition-all"
+                  className="flex-1 h-14 disabled:opacity-50 px-8 bg-secondary hover:bg-secondary/80 text-foreground font-heading font-bold rounded border border-border"
                 >
                   {buyLabel}
                 </button>
@@ -392,11 +392,11 @@ const ProductDetailPage: React.FC = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`pb-4 px-2 font-medium capitalize transition-all relative ${
-                    activeTab === tab
-                      ? 'text-primary'
-                      : 'text-foreground/60 hover:text-foreground'
-                  }`}
+                  className={`pb-4 px-2 font-medium capitalize relative ${
+ activeTab === tab
+ ? 'text-primary'
+ : 'text-foreground/60 hover:text-foreground'
+ }`}
                 >
                   {tab}
                   {activeTab === tab && (

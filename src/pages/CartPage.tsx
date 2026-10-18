@@ -10,7 +10,7 @@ import {
   Truck,
   Package,
   Tag,
-} from 'lucide-react';
+} from '../components/icons';
 import { useCart } from '../context/CartContextOptimized';
 import { calculateShipping, DEFAULT_SHIPPING_RATES } from '../utils/shippingCalculator';
 import { analytics, type AnalyticsItem } from '../utils/analytics';
@@ -88,7 +88,7 @@ const CartPage: React.FC = () => {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded shadow-lg"
               data-testid="empty-cart-shop-button"
             >
               <ShoppingBag className="h-5 w-5" />
@@ -116,7 +116,7 @@ const CartPage: React.FC = () => {
             </div>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
               data-testid="continue-shopping"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -134,7 +134,7 @@ const CartPage: React.FC = () => {
                 {cartState.items.length > 0 && (
                   <button
                     onClick={clearCart}
-                    className="text-sm text-destructive hover:text-destructive/80 font-medium transition-colors"
+                    className="text-sm text-destructive hover:text-destructive/80 font-medium"
                     data-testid="clear-cart"
                   >
                     Clear Cart
@@ -176,7 +176,7 @@ const CartPage: React.FC = () => {
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               disabled={updatingItem === item.id}
-                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 disabled:opacity-50"
                               data-testid={`decrease-${item.id}`}
                             >
                               <Minus className="h-4 w-4" />
@@ -187,7 +187,7 @@ const CartPage: React.FC = () => {
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               disabled={updatingItem === item.id}
-                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 transition-all disabled:opacity-50"
+                              className="w-8 h-8 flex items-center justify-center rounded-lg border border-border hover:border-primary hover:bg-primary/10 disabled:opacity-50"
                               data-testid={`increase-${item.id}`}
                             >
                               <Plus className="h-4 w-4" />
@@ -201,7 +201,7 @@ const CartPage: React.FC = () => {
                             </p>
                             <button
                               onClick={() => removeItem(item.id)}
-                              className="text-destructive hover:text-destructive/80 transition-colors"
+                              className="text-destructive hover:text-destructive/80"
                               data-testid={`remove-${item.id}`}
                             >
                               <Trash2 className="h-5 w-5" />
@@ -228,10 +228,10 @@ const CartPage: React.FC = () => {
                     <div key={step} className="flex flex-col items-center">
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                          step === 1
-                            ? 'bg-primary text-white'
-                            : 'bg-secondary text-foreground/40'
-                        }`}
+ step === 1
+ ? 'bg-primary text-white'
+ : 'bg-secondary text-foreground/40'
+ }`}
                       >
                         {step}
                       </div>
@@ -242,7 +242,7 @@ const CartPage: React.FC = () => {
                   ))}
                 </div>
                 <div className="h-1 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-1/4 transition-all duration-300" />
+                  <div className="h-full bg-primary w-1/4" />
                 </div>
               </div>
 
@@ -296,7 +296,7 @@ const CartPage: React.FC = () => {
               <Link
                 to="/checkout"
                 onClick={() => analytics.beginCheckout(gaItems())}
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded shadow-lg"
                 data-testid="proceed-to-checkout"
               >
                 <Package className="h-5 w-5" />

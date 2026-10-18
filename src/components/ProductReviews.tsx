@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, BadgeCheck, EyeOff, Eye } from 'lucide-react';
+import { Star, BadgeCheck, EyeOff, Eye } from './icons';
 import { useUser } from '../context/UserContext';
 import { accountApi, type ProductReviewsResponse, type Review } from '../services/accountApi';
 import { refreshReviewSummaries } from '../hooks/useReviewSummaries';
@@ -112,7 +112,7 @@ const ReviewForm: React.FC<{ productId: string; existing?: Review | null; onSave
       <button
         type="submit"
         disabled={saving}
-        className="h-11 px-8 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded-full"
+        className="h-11 px-8 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded"
       >
         {saving ? 'Saving…' : existing ? 'Update review' : 'Post review'}
       </button>
@@ -212,7 +212,7 @@ const ProductReviews: React.FC<{ productId: string; data: ProductReviewsResponse
                   >
                     {r.status === 'hidden' ? (
                       <>
-                        <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 mr-1">Hidden</span>
+                        <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-600 mr-1">Hidden</span>
                         <Eye className="h-4 w-4" /> Show
                       </>
                     ) : (

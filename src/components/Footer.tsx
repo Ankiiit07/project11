@@ -3,12 +3,8 @@ import {
   Mail,
   Phone,
   MapPin,
-  Facebook,
-  Instagram,
-  Twitter,
   ArrowRight,
-  Coffee,
-} from 'lucide-react';
+} from './icons';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { sendContact } from '../services/contactApi';
@@ -74,14 +70,12 @@ const Footer: React.FC = () => {
       <div className="border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-6">
-              <Coffee className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="font-heading text-3xl sm:text-4xl font-bold mb-4">
-              Stay <span className="text-primary">Caffeinated</span>
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/60 mb-3">Newsletter</p>
+            <h3 className="font-heading text-4xl sm:text-5xl font-extrabold uppercase leading-[0.95] mb-4">
+              New coffee, <span className="text-primary">first.</span>
             </h3>
             <p className="text-white/70 text-lg mb-8">
-              Get updates on new products, exclusive offers, and coffee insights delivered to your inbox.
+              One email when there is a new flavour or a sale. Nothing else.
             </p>
             <form onSubmit={handleSubscribe} className="max-w-md mx-auto">
               <div className="flex flex-col sm:flex-row gap-3">
@@ -90,14 +84,14 @@ const Footer: React.FC = () => {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-14 px-6 bg-white/10 border border-white/20 text-white placeholder-white/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="flex-1 h-14 px-6 bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   disabled={isSubscribing}
                   data-testid="newsletter-email-input"
                 />
                 <button 
                   type="submit"
                   disabled={isSubscribing}
-                  className="h-14 px-8 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:shadow-hover hover:-translate-y-0.5"
+                  className="h-14 px-8 bg-primary hover:bg-white hover:text-foreground text-white font-heading font-bold uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   data-testid="newsletter-subscribe-button"
                 >
                   {isSubscribing ? 'Subscribing...' : 'Subscribe'}
@@ -106,7 +100,7 @@ const Footer: React.FC = () => {
               </div>
               {subscriptionMessage && (
                 <p 
-                  className={`text-sm mt-3 ${subscriptionMessage.includes('Successfully') ? 'text-green-400' : 'text-red-400'}`}
+                  className={`text-sm mt-3 ${/subscribed/i.test(subscriptionMessage) ? 'text-white/80' : 'text-red-300'}`}
                   data-testid="newsletter-message"
                 >
                   {subscriptionMessage}
@@ -126,56 +120,31 @@ const Footer: React.FC = () => {
               <Logo size="large" variant="white" />
             </div>
             <p className="text-white/70 text-sm leading-relaxed">
-              Premium coffee concentrates engineered for the modern professional. 
-              Barista-quality coffee in 5 seconds, wherever life takes you.
+              Brewed Arabica coffee, sealed with nitrogen in a press tube. Made in Mumbai.
             </p>
-            {/* Social Icons */}
-            <div className="flex space-x-4">
-              <a 
-                href="#" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-primary transition-all duration-300"
-                aria-label="Follow us on Facebook"
-                data-testid="social-facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a 
-                href="https://www.instagram.com/cafeatonce/?hl=en" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-primary transition-all duration-300"
-                aria-label="Follow us on Instagram"
-                data-testid="social-instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a 
-                href="#" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-primary transition-all duration-300"
-                aria-label="Follow us on Twitter"
-                data-testid="social-twitter"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-            </div>
+            <a
+              href="https://www.instagram.com/cafeatonce/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block font-mono text-xs uppercase tracking-[0.14em] text-white underline underline-offset-4 hover:text-primary"
+              data-testid="social-instagram"
+            >
+              Instagram @cafeatonce
+            </a>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-6">
-            <h4 className="font-heading text-lg font-bold">Quick Links</h4>
+            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60">Quick Links</h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary transition-colors duration-300 text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
                     data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                    <span className="">
                       {link.label}
                     </span>
                   </Link>
@@ -186,16 +155,16 @@ const Footer: React.FC = () => {
 
           {/* Customer Service */}
           <div className="space-y-6">
-            <h4 className="font-heading text-lg font-bold">Customer Service</h4>
+            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60">Customer Service</h4>
             <ul className="space-y-3">
               {customerService.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary transition-colors duration-300 text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
                     data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                    <span className="">
                       {link.label}
                     </span>
                   </Link>
@@ -204,15 +173,15 @@ const Footer: React.FC = () => {
             </ul>
 
             {/* Blog Links */}
-            <h4 className="font-heading text-lg font-bold pt-4">From the Blog</h4>
+            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60 pt-4">From the Blog</h4>
             <ul className="space-y-3">
               {blogLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary transition-colors duration-300 text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
                   >
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">
+                    <span className="">
                       {link.label}
                     </span>
                   </Link>
@@ -223,25 +192,25 @@ const Footer: React.FC = () => {
 
           {/* Contact Info */}
           <div className="col-span-2 lg:col-span-1 space-y-6">
-            <h4 className="font-heading text-lg font-bold">Get in Touch</h4>
+            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60">Get in Touch</h4>
             <ul className="space-y-4">
               <li>
                 <a 
                   href="mailto:cafeatonce@gmail.com" 
-                  className="flex items-start space-x-3 text-white/70 hover:text-primary transition-colors duration-300 group"
+                  className="flex items-start space-x-3 text-white/70 hover:text-primary group"
                   data-testid="footer-email"
                 >
-                  <Mail className="h-5 w-5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
                   <span className="text-sm">cafeatonce@gmail.com</span>
                 </a>
               </li>
               <li>
                 <a 
                   href="tel:+917979837079" 
-                  className="flex items-start space-x-3 text-white/70 hover:text-primary transition-colors duration-300 group"
+                  className="flex items-start space-x-3 text-white/70 hover:text-primary group"
                   data-testid="footer-phone"
                 >
-                  <Phone className="h-5 w-5 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                  <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
                   <span className="text-sm">+91 7979837079</span>
                 </a>
               </li>
@@ -264,7 +233,7 @@ const Footer: React.FC = () => {
               &copy; {new Date().getFullYear()} Cafe at Once. All rights reserved.
             </p>
             <p className="text-white/40 text-xs">
-              Engineered with <span className="text-primary">♥</span> for coffee lovers
+              Made in Mumbai
             </p>
           </div>
         </div>

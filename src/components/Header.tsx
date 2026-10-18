@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, Search } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search } from './icons';
 import { useCart } from '../context/CartContextOptimized';
 import { useUser } from '../context/UserContext';
 import Logo from './Logo';
@@ -92,15 +92,7 @@ const Header: React.FC = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
-          isScrolled
-            ? 'bg-white/90 backdrop-blur-xl shadow-soft'
-            : 'bg-white border-b border-border'
-        }`}
-        style={{
-          backdropFilter: isScrolled ? 'saturate(180%) blur(20px)' : 'none',
-          WebkitBackdropFilter: isScrolled ? 'saturate(180%) blur(20px)' : 'none',
-        }}
+        className={`fixed top-0 left-0 right-0 z-50 bg-background border-b ${isScrolled ? 'border-foreground' : 'border-foreground/15'}`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -111,7 +103,7 @@ const Header: React.FC = () => {
               onClick={handleMobileNavClick}
               data-testid="header-logo"
             >
-              <Logo size="medium" compact className="transition-all duration-300 group-hover:scale-105" />
+              <Logo size="medium" compact className="" />
             </Link>
 
             {/* Desktop Navigation */}
@@ -120,12 +112,11 @@ const Header: React.FC = () => {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="relative px-4 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-all duration-300 ease-out group rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  className="relative px-4 py-2 font-mono text-xs uppercase tracking-[0.14em] text-foreground/70 hover:text-foreground hover:underline underline-offset-4 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   aria-label={`Navigate to ${item.label} page`}
                   data-testid={`nav-${item.label.toLowerCase()}`}
                 >
-                  <span className="relative z-10">{item.label}</span>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
+                  {item.label}
                 </Link>
               ))}
             </nav>
@@ -135,7 +126,7 @@ const Header: React.FC = () => {
               {/* Search Icon (Desktop) */}
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="hidden md:flex items-center justify-center w-10 h-10 rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="hidden md:flex items-center justify-center w-10 h-10 text-foreground/70 hover:text-foreground hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label="Search products"
                 data-testid="search-button"
               >
@@ -145,7 +136,7 @@ const Header: React.FC = () => {
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative flex items-center justify-center w-10 h-10 rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="relative flex items-center justify-center w-10 h-10 text-foreground/70 hover:text-foreground hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label={`Shopping cart with ${cartState.itemCount} items`}
                 onClick={handleMobileNavClick}
                 data-testid="cart-button"
@@ -155,7 +146,7 @@ const Header: React.FC = () => {
                 {/* Cart Badge - Tech-forward style */}
                 {cartState.itemCount > 0 && (
                   <span 
-                    className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-primary rounded-full shadow-lg animate-scale-in"
+                    className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold text-white bg-primary rounded"
                     aria-label={`${cartState.itemCount} items in cart`}
                     data-testid="cart-count"
                   >
@@ -167,7 +158,7 @@ const Header: React.FC = () => {
               {/* User */}
               <button
                 onClick={handleUserClick}
-                className="flex items-center justify-center w-10 h-10 rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="flex items-center justify-center w-10 h-10 text-foreground/70 hover:text-foreground hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label={user ? 'Go to account page' : 'Sign in or create account'}
                 data-testid="user-button"
               >
@@ -177,7 +168,7 @@ const Header: React.FC = () => {
               {/* Mobile menu button */}
               <button
                 onClick={handleMobileMenuToggle}
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="lg:hidden flex items-center justify-center w-10 h-10 text-foreground/70 hover:text-foreground hover:bg-secondary/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
                 aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
@@ -198,7 +189,7 @@ const Header: React.FC = () => {
       {isMobileMenuOpen && (
         <div 
           id="mobile-menu"
-          className="fixed inset-0 z-40 lg:hidden bg-white"
+          className="fixed inset-0 z-40 lg:hidden bg-background"
           role="navigation"
           aria-label="Mobile navigation menu"
           aria-hidden="false"
@@ -210,7 +201,7 @@ const Header: React.FC = () => {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="block py-4 text-2xl font-heading font-bold text-foreground hover:text-primary transition-colors duration-300 border-b border-border/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+                  className="block py-4 text-2xl font-heading font-extrabold uppercase text-foreground hover:text-primary border-b border-border/50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
                   onClick={handleMobileNavClick}
                   aria-label={`Navigate to ${item.label} page`}
                   data-testid={`mobile-nav-${item.label.toLowerCase()}`}
@@ -222,7 +213,7 @@ const Header: React.FC = () => {
               {user && (
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left py-4 text-2xl font-heading font-bold text-destructive hover:text-destructive/80 transition-colors duration-300 border-b border-border/50 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2 rounded"
+                  className="block w-full text-left py-4 text-2xl font-heading font-bold text-destructive hover:text-destructive/80 border-b border-border/50 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2 rounded"
                   aria-label="Logout from account"
                   data-testid="mobile-logout-button"
                 >

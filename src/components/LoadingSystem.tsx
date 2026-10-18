@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Coffee, ShoppingCart, CreditCard, Truck, CheckCircle } from 'lucide-react';
+import { Loader2, Coffee, ShoppingCart, CreditCard, Truck, CheckCircle } from './icons';
 import { useRazorpay } from '../hooks/useRazorpay';
 
 // Enhanced loading spinner component
@@ -124,7 +124,7 @@ export const Skeleton: React.FC<{
   <div className={`${width} ${height} ${className} relative overflow-hidden bg-gray-200 rounded`}>
     {shimmer && (
       <motion.div
-        className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white to-transparent"
+        className="absolute inset-0 -translate-x-full bg-transparent"
         animate={{ translateX: ['-100%', '100%'] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
       />
@@ -225,7 +225,7 @@ export const LoadingButton: React.FC<{
   <button
     onClick={onClick}
     disabled={loading || disabled}
-    className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${className}`}
+    className={`inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
   >
     {loading ? (
       <>
@@ -285,8 +285,8 @@ export const PaymentProcessing: React.FC<{
           <motion.div
             key={key}
             className={`w-2 h-2 rounded-full ${
-              Object.keys(steps).indexOf(step) >= index ? 'bg-primary' : 'bg-gray-300'
-            }`}
+ Object.keys(steps).indexOf(step) >= index ? 'bg-primary' : 'bg-gray-300'
+ }`}
             animate={{
               scale: step === key ? [1, 1.2, 1] : 1,
             }}
@@ -381,8 +381,8 @@ export const LoadingOverlay: React.FC<{
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={`absolute inset-0 flex items-center justify-center z-50 ${
-            blur ? 'backdrop-blur-sm' : ''
-          } bg-white/80 dark:bg-gray-900/80`}
+ blur ? '' : ''
+ } bg-white/80 dark:bg-gray-900/80`}
         >
           <div className="text-center">
             <LoadingSpinner size="lg" className="mx-auto mb-2" />
@@ -406,10 +406,10 @@ export const StepProgress: React.FC<{
         <div className="flex flex-col items-center">
           <motion.div
             className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              index <= currentStep
-                ? 'bg-primary text-white'
-                : 'bg-gray-200 text-gray-500'
-            }`}
+ index <= currentStep
+ ? 'bg-primary text-white'
+ : 'bg-gray-200 text-gray-500'
+ }`}
             animate={{
               scale: index === currentStep ? [1, 1.1, 1] : 1,
             }}
@@ -428,8 +428,8 @@ export const StepProgress: React.FC<{
         {index < steps.length - 1 && (
           <div
             className={`w-16 h-0.5 mx-2 ${
-              index < currentStep ? 'bg-primary' : 'bg-gray-200'
-            }`}
+ index < currentStep ? 'bg-primary' : 'bg-gray-200'
+ }`}
           />
         )}
       </div>

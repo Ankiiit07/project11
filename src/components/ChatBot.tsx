@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Bot } from 'lucide-react';
+import { X, Send, Bot } from './icons';
 
 interface Message {
   id: string;
@@ -46,7 +46,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
       // Initial greeting
       setTimeout(() => {
         addBotMessage(
-          "Hi! 👋 I'm your Cafe at Once assistant. How can I help you today?",
+          "Hi! I'm your Cafe at Once assistant. How can I help you today?",
           [
             "Product Information",
             "Coffee Origins",
@@ -82,42 +82,42 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
       
       if (input.includes('product') || input.includes('coffee') || input.includes('concentrate')) {
         addBotMessage(
-          "We offer premium coffee concentrates! ☕\n\n• Cafe at Once Latte - ₹199\n• Cafe at Once Americano - ₹199\n• Cafe at Once Tea & Coffee - ₹199\n• Cafe at Once Mocha - ₹199\n• Cafe at Once Espresso - ₹379\n• Cafe at Once Cold Brew II - ₹199\n\nAll our products are sugar-free, gluten-free, and made from 100% Arabica beans!",
+          "We offer premium coffee concentrates!\n\n• Cafe at Once Latte - ₹199\n• Cafe at Once Americano - ₹199\n• Cafe at Once Tea & Coffee - ₹199\n• Cafe at Once Mocha - ₹199\n• Cafe at Once Espresso - ₹379\n• Cafe at Once Cold Brew II - ₹199\n\nAll our products are sugar-free, gluten-free, and made from 100% Arabica beans!",
           ["View Products", "Health Benefits", "How to Order", "Coffee Origins"]
         );
       } else if (input.includes('price') || input.includes('cost') || input.includes('offer')) {
         addBotMessage(
-          "Our pricing is very affordable! 💰\n\n• Most products: ₹199 each\n• Premium Espresso: ₹379\n• Free shipping on orders above ₹1000\n• Subscribe & Save 15% on every order\n• Special bulk discounts available\n\nWould you like to know about our subscription offers?",
+          "Our pricing is very affordable!\n\n• Most products: ₹199 each\n• Premium Espresso: ₹379\n• Free shipping on orders above ₹1000\n• Subscribe & Save 15% on every order\n• Special bulk discounts available\n\nWould you like to know about our subscription offers?",
           ["Subscription Details", "Bulk Orders", "Current Offers"]
         );
       } else if (input.includes('shipping') || input.includes('delivery')) {
         addBotMessage(
-          "We offer fast and reliable delivery! 🚚\n\n• Standard Delivery: 3-5 business days\n• Express Delivery: 1-2 business days (₹50 extra)\n• Free shipping on orders above ₹1000\n• Cash on Delivery available (₹25 charges)\n• Pan-India delivery\n\nWe serve 50+ cities across India!",
+          "We offer fast and reliable delivery!\n\n• Standard Delivery: 3-5 business days\n• Express Delivery: 1-2 business days (₹50 extra)\n• Free shipping on orders above ₹1000\n• Cash on Delivery available (₹25 charges)\n• Pan-India delivery\n\nWe serve 50+ cities across India!",
           ["Track Order", "Delivery Areas", "COD Information"]
         );
       } else if (input.includes('health') || input.includes('benefit') || input.includes('sugar') || input.includes('gluten')) {
         addBotMessage(
-          "Cafe at Once is India's healthiest coffee! 🌿\n\n✅ 100% Sugar-Free\n✅ Gluten-Free\n✅ No artificial additives\n✅ 100% Natural Arabica beans\n✅ Rich in antioxidants\n✅ Boosts metabolism\n✅ Enhances mental alertness\n✅ Low acidity\n✅ Diabetic-friendly\n✅ Keto-friendly\n\nPerfect for diabetics and health-conscious individuals!",
+          "Cafe at Once is India's healthiest coffee!\n\n• 100% Sugar-Free\n• Gluten-Free\n• No artificial additives\n• 100% Natural Arabica beans\n• Rich in antioxidants\n• Boosts metabolism\n• Enhances mental alertness\n• Low acidity\n• Diabetic-friendly\n• Keto-friendly\n\nPerfect for diabetics and health-conscious individuals!",
           ["Nutritional Info", "Diabetic Friendly", "Ingredients", "Coffee Benefits"]
         );
       } else if (input.includes('how') || input.includes('use') || input.includes('prepare')) {
         addBotMessage(
-          "Super easy to use! Just 3 steps: 🎯\n\n1️⃣ PEEL - Open the concentrate tube\n2️⃣ PRESS - Squeeze into hot/cold water\n3️⃣ GO - Enjoy perfect coffee in 5 seconds!\n\n• Use 4-6 oz water for strong coffee\n• Use 6-8 oz water for mild coffee\n• Works with hot or cold water\n• No stirring required!\n• Perfect for travel and office\n• No equipment needed!",
+          "Super easy to use! Just 3 steps:\n\n1. PEEL - Open the concentrate tube\n2. PRESS - Squeeze into hot/cold water\n3. GO - Enjoy perfect coffee in 5 seconds!\n\n• Use 4-6 oz water for strong coffee\n• Use 6-8 oz water for mild coffee\n• Works with hot or cold water\n• No stirring required!\n• Perfect for travel and office\n• No equipment needed!",
           ["Video Tutorial", "Recipe Ideas", "Storage Tips", "Travel Tips"]
         );
       } else if (input.includes('origin') || input.includes('bean') || input.includes('arabica')) {
         addBotMessage(
-          "Our coffee comes from the finest Arabica beans! 🌍\n\n• Origin: Premium Arabica beans from Karnataka\n• Altitude: 3,000-5,000 feet above sea level\n• Processing: Natural sun-dried method\n• Roasting: Medium-dark roast for perfect balance\n• Grinding: Fine grind for optimal extraction\n• Packaging: Nitrogen-flushed for freshness\n\nWe source directly from certified organic farms!",
+          "Our coffee comes from the finest Arabica beans!\n\n• Origin: Premium Arabica beans from Karnataka\n• Altitude: 3,000-5,000 feet above sea level\n• Processing: Natural sun-dried method\n• Roasting: Medium-dark roast for perfect balance\n• Grinding: Fine grind for optimal extraction\n• Packaging: Nitrogen-flushed for freshness\n\nWe source directly from certified organic farms!",
           ["Coffee Regions", "Organic Certification", "Sustainability", "Quality Process"]
         );
       } else if (input.includes('recipe') || input.includes('idea') || input.includes('drink')) {
         addBotMessage(
-          "Get creative with our coffee concentrates! 🎨\n\n☕ Classic Americano: 1 tube + hot water\n🥛 Creamy Latte: 1 tube + hot milk + foam\n🍫 Mocha Delight: 1 tube + hot milk + chocolate\n🧊 Iced Coffee: 1 tube + cold water + ice\n🥤 Cold Brew: 1 tube + cold water + overnight\n🍯 Honey Coffee: 1 tube + hot water + honey\n🥥 Coconut Coffee: 1 tube + coconut milk\n\nPerfect for experimenting with flavors!",
+          "Get creative with our coffee concentrates!\n\n• Classic Americano: 1 tube + hot water\n• Creamy Latte: 1 tube + hot milk + foam\n• Mocha Delight: 1 tube + hot milk + chocolate\n• Iced Coffee: 1 tube + cold water + ice\n• Cold Brew: 1 tube + cold water + overnight\n• Honey Coffee: 1 tube + hot water + honey\n• Coconut Coffee: 1 tube + coconut milk\n\nPerfect for experimenting with flavors!",
           ["More Recipes", "Seasonal Drinks", "Custom Blends", "Video Tutorials"]
         );
       } else if (input.includes('subscription') || input.includes('subscribe') || input.includes('regular')) {
         addBotMessage(
-          "Perfect for bulk orders and gifting! 🎁\n\n• Corporate Orders: Special pricing for offices\n• Bulk Discounts: 20% off on orders above ₹5000\n• Gift Boxes: Custom packaging available\n• Event Catering: Perfect for meetings and events\n• Subscription Plans: Regular delivery for offices\n• Custom Branding: Company logo on packaging\n• Gift Cards: Available in various denominations\n\nContact us for corporate inquiries!",
+          "Perfect for bulk orders and gifting!\n\n• Corporate Orders: Special pricing for offices\n• Bulk Discounts: 20% off on orders above ₹5000\n• Gift Boxes: Custom packaging available\n• Event Catering: Perfect for meetings and events\n• Subscription Plans: Regular delivery for offices\n• Custom Branding: Company logo on packaging\n• Gift Cards: Available in various denominations\n\nContact us for corporate inquiries!",
           ["Corporate Plans", "Gift Options", "Bulk Pricing", "Custom Orders"]
         );
       } else {
@@ -179,7 +179,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
             </div>
             <button
               onClick={onClose}
-              className="text-white hover:text-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full p-1"
+              className="text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white/50 rounded p-1"
               aria-label="Close chat"
             >
               <X className="h-4 w-4" />
@@ -195,10 +195,10 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
               >
                 <div
                   className={`max-w-xs px-4 py-2 rounded-lg ${
-                    message.sender === 'user'
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
+ message.sender === 'user'
+ ? 'bg-primary text-white'
+ : 'bg-gray-100 text-gray-800'
+ }`}
                 >
                   <p className="text-sm whitespace-pre-line">{message.text}</p>
                   {message.options && (
@@ -207,7 +207,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
                         <button
                           key={option}
                           onClick={() => handleOptionClick(option)}
-                          className="block w-full text-left text-xs bg-white border border-gray-200 hover:border-primary hover:text-primary rounded px-2 py-1.5 transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="block w-full text-left text-xs bg-white border border-gray-200 hover:border-primary hover:text-primary rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
                         >
                           {option}
                         </button>
@@ -247,7 +247,7 @@ const ChatBot: React.FC<ChatBotProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
-                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal } from '../components/icons';
 import { products } from '../data/products';
 import ProductCard from '../components/ProductCard';
 import { useReviewSummaries } from '../hooks/useReviewSummaries';
@@ -55,7 +55,7 @@ const ProductsPage: React.FC = () => {
     <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Shop Nitrogen-Preserved Coffee | Cafe at Once Collection"
-        description="Shop Cafe at Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds — no machine required."
+        description="Shop Cafe at Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds, no machine required."
         url="https://cafeatonce.com/products"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },
@@ -69,7 +69,7 @@ const ProductsPage: React.FC = () => {
             Shop <span className="text-primary">Cafe at Once</span>
           </h1>
           <p className="text-foreground/70 text-lg max-w-2xl">
-            Nitrogen-preserved brewed Arabica coffee in portable press tubes. Americano, Latte, and Mocha — 
+            Nitrogen-preserved brewed Arabica coffee in portable press tubes. Americano, Latte, and Mocha, 
             ready in 5 seconds. <Link to="/faq" className="text-primary hover:underline">See how it works</Link>
           </p>
         </div>
@@ -127,11 +127,11 @@ const ProductsPage: React.FC = () => {
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      selectedCategory === category.id
-                        ? 'bg-primary text-white shadow-lg'
-                        : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border'
-                    }`}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium ${
+ selectedCategory === category.id
+ ? 'bg-primary text-white shadow-lg'
+ : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border'
+ }`}
                     data-testid={`category-${category.id}`}
                   >
                     {category.name} ({productCount})

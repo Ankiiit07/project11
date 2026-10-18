@@ -45,7 +45,7 @@ const StickyBuyBar: React.FC<StickyBuyBarProps> = ({ targetRef, name, price, lab
     <AnimatePresence>
       {show && (
         <motion.div
-          className="md:hidden fixed inset-x-0 bottom-0 z-40 bg-white/95 backdrop-blur border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.08)]"
+          className="md:hidden fixed inset-x-0 bottom-0 z-40 bg-white/95 border-t border-border"
           style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           initial={{ y: '100%' }}
           animate={{ y: 0 }}
@@ -66,9 +66,9 @@ const StickyBuyBar: React.FC<StickyBuyBarProps> = ({ targetRef, name, price, lab
               }}
               disabled={disabled}
               aria-live="polite"
-              className="h-12 px-6 bg-primary text-white font-heading font-bold rounded-full shadow-md active:scale-95 transition-transform disabled:bg-foreground/30 disabled:shadow-none"
+              className="h-12 px-6 bg-primary text-white font-heading font-bold rounded shadow-md disabled:bg-foreground/30 disabled:shadow-none"
             >
-              {added ? 'Added ✓' : label}
+              {added ? 'Added' : label}
             </button>
           </div>
         </motion.div>

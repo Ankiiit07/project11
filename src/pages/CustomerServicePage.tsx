@@ -7,13 +7,10 @@ import {
   Clock, 
   MessageCircle, 
   HelpCircle, 
-  Package, 
-  CreditCard, 
-  Truck, 
   Coffee,
   
   Star
-} from 'lucide-react';
+} from '../components/icons';
 
 const CustomerServicePage: React.FC = () => {
   const faqs = [
@@ -98,26 +95,14 @@ const CustomerServicePage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+          className="border-y border-foreground divide-y divide-foreground/20 mb-16"
         >
-          {contactMethods.map((method, index) => (
-            <motion.div
-              key={method.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + index * 0.1 }}
-              className="bg-white rounded-2xl shadow-xl p-8 text-center hover:shadow-2xl transition-shadow duration-300"
-            >
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <method.icon className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{method.title}</h3>
-              <p className="text-lg font-semibold text-primary mb-2">{method.details}</p>
-              <p className="text-gray-600 mb-4">{method.description}</p>
-              <button className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors">
-                {method.action}
-              </button>
-            </motion.div>
+          {contactMethods.map((method) => (
+            <div key={method.title} className="grid md:grid-cols-12 gap-x-6 gap-y-1 py-6">
+              <h3 className="md:col-span-3 font-heading text-2xl font-extrabold uppercase leading-none">{method.title}</h3>
+              <p className="md:col-span-4 text-lg font-semibold text-foreground">{method.details}</p>
+              <p className="md:col-span-5 text-foreground/70">{method.description}</p>
+            </div>
           ))}
         </motion.div>
 
@@ -192,7 +177,7 @@ const CustomerServicePage: React.FC = () => {
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 + index * 0.1 }}
-                className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300"
+                className="bg-white rounded-xl shadow-lg p-6"
               >
                 <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-start">
                   <Coffee className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
@@ -209,7 +194,7 @@ const CustomerServicePage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-gradient-to-r from-primary/10 to-amber-100 rounded-2xl p-8 text-center"
+          className="bg-primary/10 rounded-2xl p-8 text-center"
         >
           <div className="flex items-center justify-center mb-4">
             <Star className="h-8 w-8 text-amber-500 mr-2" />
@@ -219,17 +204,14 @@ const CustomerServicePage: React.FC = () => {
             At Cafe at Once, we're committed to your satisfaction. If you're not completely happy with your purchase, 
             we'll work with you to make it right. Your coffee experience matters to us!
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex items-center justify-center">
-              <Package className="h-6 w-6 text-primary mr-2" />
+          <div className="border-y border-foreground/20 divide-y divide-foreground/20">
+            <div className="py-3">
               <span className="font-medium">7-Day Return Policy</span>
             </div>
-            <div className="flex items-center justify-center">
-              <Truck className="h-6 w-6 text-primary mr-2" />
+            <div className="py-3">
               <span className="font-medium">Free Shipping on Orders Above ₹1000</span>
             </div>
-            <div className="flex items-center justify-center">
-              <CreditCard className="h-6 w-6 text-primary mr-2" />
+            <div className="py-3">
               <span className="font-medium">Secure Payment Options</span>
             </div>
           </div>

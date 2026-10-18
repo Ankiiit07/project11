@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MessageCircle, X, Bot } from 'lucide-react';
+import { MessageCircle, X, Bot } from './icons';
 import ChatBot from './ChatBot';
 import { analytics } from '../utils/analytics';
 
@@ -106,7 +106,7 @@ const HelpButton: React.FC = () => {
           aria-label={open ? 'Close help' : 'Help'}
           aria-expanded={menuOpen}
           aria-controls="help-menu"
-          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 flex items-center justify-center transition-transform active:scale-95"
+          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary text-white shadow-lg hover:bg-primary/90 flex items-center justify-center"
           data-testid="help-button"
         >
           {open ? <X className="w-6 h-6" /> : <MessageCircle className="w-6 h-6" />}

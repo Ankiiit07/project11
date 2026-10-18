@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Package, Clock, CheckCircle, Truck, ShoppingBag } from 'lucide-react';
+import { Package, Clock, CheckCircle, Truck, ShoppingBag } from '../components/icons';
 import { Link } from 'react-router-dom';
 import { useOrders } from '../hooks/useOrders';
 import { useUser } from '../context/UserContext';
@@ -53,7 +53,7 @@ const OrdersPage: React.FC = () => {
           </p>
           <Link
             to="/account"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded"
           >
             Sign in
           </Link>
@@ -86,7 +86,7 @@ const OrdersPage: React.FC = () => {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded shadow-lg"
             >
               <ShoppingBag className="h-5 w-5" />
               Start Shopping
@@ -116,7 +116,7 @@ const OrdersPage: React.FC = () => {
             return (
               <motion.div
                 key={order.id}
-                className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all"
+                className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.4 }}
@@ -129,7 +129,7 @@ const OrdersPage: React.FC = () => {
                         <h3 className="font-heading text-lg font-bold text-foreground">
                           Order #{order.id}
                         </h3>
-                        <span className={`px-3 py-1 text-xs font-medium rounded-full border ${getStatusColor(order.status)}`}>
+                        <span className={`px-3 py-1 text-xs font-medium rounded border ${getStatusColor(order.status)}`}>
                           <span className="flex items-center gap-1">
                             <StatusIcon className="h-3 w-3" />
                             {order.status}
@@ -187,14 +187,14 @@ const OrdersPage: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link
                       to={`/track?orderId=${order.id}`}
-                      className="flex-1 h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-full transition-all flex items-center justify-center gap-2"
+                      className="flex-1 h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded flex items-center justify-center gap-2"
                     >
                       <Truck className="h-5 w-5" />
                       Track Order
                     </Link>
                     <Link
                       to={`/orders/${order.id}`}
-                      className="flex-1 h-12 px-6 bg-secondary hover:bg-secondary/80 text-foreground font-medium rounded-full border border-border transition-all flex items-center justify-center gap-2"
+                      className="flex-1 h-12 px-6 bg-secondary hover:bg-secondary/80 text-foreground font-medium rounded border border-border flex items-center justify-center gap-2"
                     >
                       <Package className="h-5 w-5" />
                       View Details

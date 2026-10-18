@@ -292,7 +292,7 @@ export function calculateShipping(
  */
 export function getShippingMessage(result: ShippingResult, subtotal: number): string {
   if (result.isFreeShipping) {
-    return 'Free Shipping! 🎉';
+    return 'Free shipping';
   }
   
   const amountForFree = DEFAULT_SHIPPING_RATES.freeShippingThreshold - subtotal;

@@ -12,7 +12,7 @@ import {
   Zap,
   Clock,
   Calendar,
-} from "lucide-react";
+} from "../components/icons";
 import { useCart } from "../context/CartContextOptimized";
 import { useUser } from "../context/UserContext";
 import PaymentOptions from "../components/PaymentOptions";
@@ -427,7 +427,7 @@ const CheckoutPage: React.FC = () => {
             </p>
             <Link
               to="/products"
-              className="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors"
+              className="inline-flex items-center px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg"
             >
               Shop Products
             </Link>
@@ -445,7 +445,7 @@ const CheckoutPage: React.FC = () => {
           <div className="mb-8">
             <Link
               to="/cart"
-              className="inline-flex items-center text-primary hover:text-primary-dark transition-colors mb-4 bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md z-10 relative"
+              className="inline-flex items-center text-primary hover:text-primary-dark mb-4 bg-white px-4 py-2 rounded-lg shadow-sm z-10 relative"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Cart
@@ -494,7 +494,7 @@ const CheckoutPage: React.FC = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -510,7 +510,7 @@ const CheckoutPage: React.FC = () => {
                         value={formData.firstName}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="John"
                       />
                     </div>
@@ -524,7 +524,7 @@ const CheckoutPage: React.FC = () => {
                         value={formData.lastName}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="Doe"
                       />
                     </div>
@@ -541,7 +541,7 @@ const CheckoutPage: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -567,7 +567,7 @@ const CheckoutPage: React.FC = () => {
                       value={formData.address}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       placeholder="123 Main Street, Apartment 4B"
                     />
                   </div>
@@ -583,7 +583,7 @@ const CheckoutPage: React.FC = () => {
                         value={formData.city}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="Mumbai"
                       />
                     </div>
@@ -597,7 +597,7 @@ const CheckoutPage: React.FC = () => {
                         value={formData.state}
                         onChange={handleInputChange}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="Maharashtra"
                       />
                     </div>
@@ -615,7 +615,7 @@ const CheckoutPage: React.FC = () => {
                         onChange={handleInputChange}
                         required
                         maxLength={6}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="400001"
                       />
                       {formData.zipCode && isValidPincode(formData.zipCode) && deliveryEstimate && (
@@ -636,7 +636,7 @@ const CheckoutPage: React.FC = () => {
                         name="country"
                         value={formData.country}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                       >
                         <option value="IN">India</option>
                         <option value="US">United States</option>
@@ -662,11 +662,11 @@ const CheckoutPage: React.FC = () => {
                     {shippingOptions.map((option) => (
                       <label
                         key={option.id}
-                        className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                          selectedShippingMethod === option.id
-                            ? 'border-primary bg-primary/5'
-                            : 'border-gray-200 hover:border-gray-300'
-                        } ${!option.available ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center p-4 border-2 rounded-lg cursor-pointer ${
+ selectedShippingMethod === option.id
+ ? 'border-primary bg-primary/5'
+ : 'border-gray-200 hover:border-gray-300'
+ } ${!option.available ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         <input
                           type="radio"
@@ -860,7 +860,7 @@ const CheckoutPage: React.FC = () => {
                           />
                           <button
                             onClick={applyDiscount}
-                            className="px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors"
+                            className="px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg"
                             data-testid="apply-discount-button"
                           >
                             Apply

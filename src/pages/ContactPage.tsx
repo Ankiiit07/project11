@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send } from '../components/icons';
 import { sendContact } from '../services/contactApi';
 import { analytics } from '../utils/analytics';
 
@@ -77,7 +77,7 @@ const ContactPage: React.FC = () => {
               return (
                 <motion.div
                   key={contact.title}
-                  className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all"
+                  className="bg-card border border-border rounded-xl p-6 hover:border-primary/50"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.4 }}
@@ -91,7 +91,7 @@ const ContactPage: React.FC = () => {
                   {contact.link ? (
                     <a
                       href={contact.link}
-                      className="text-foreground/70 hover:text-primary transition-colors"
+                      className="text-foreground/70 hover:text-primary"
                     >
                       {contact.value}
                     </a>
@@ -203,7 +203,7 @@ const ContactPage: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <>

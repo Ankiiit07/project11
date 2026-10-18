@@ -33,7 +33,6 @@ export function pourSvg(theme: PourTheme, p = '', viewBox = '0 0 800 1000'): str
   return `
   <svg viewBox="${viewBox}" aria-hidden="true" focusable="false">
   <defs>
-    <radialGradient id="${p}halo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="${t.halo}" stop-opacity="${t.haloOpacity}"/><stop offset=".6" stop-color="${t.halo}" stop-opacity="${(+t.haloOpacity * 0.35).toFixed(2)}"/><stop offset="1" stop-color="${t.halo}" stop-opacity="0"/></radialGradient>
     <!-- tube: shaded across its thickness so it reads as a cylinder -->
     <linearGradient id="${p}tubeBody" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#0D2A21"/><stop offset=".16" stop-color="#1B5242"/><stop offset=".34" stop-color="#2C7A62"/>
@@ -41,7 +40,7 @@ export function pourSvg(theme: PourTheme, p = '', viewBox = '0 0 800 1000'): str
     </linearGradient>
     <linearGradient id="${p}seal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E2C23"/><stop offset=".45" stop-color="#2A6E58"/><stop offset="1" stop-color="#0C261E"/></linearGradient>
     <linearGradient id="${p}capG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2E8A66"/><stop offset=".28" stop-color="#6FD3A8"/><stop offset=".42" stop-color="#C4F5DF"/><stop offset=".58" stop-color="#76D8AE"/><stop offset="1" stop-color="#2A7F5E"/>
+      <stop offset="0" stop-color="#3F7C66"/><stop offset=".42" stop-color="#9CC4AE"/><stop offset="1" stop-color="#3A735E"/>
     </linearGradient>
     <linearGradient id="${p}milk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t.milkTop}"/><stop offset="1" stop-color="${t.milkBottom}"/></linearGradient>
     <linearGradient id="${p}latte" x1="0" y1="0" x2="0" y2="1">
@@ -60,12 +59,10 @@ export function pourSvg(theme: PourTheme, p = '', viewBox = '0 0 800 1000'): str
       <feDisplacementMap in="SourceGraphic" in2="n" scale="38" xChannelSelector="R" yChannelSelector="G" result="d"/>
       <feGaussianBlur in="d" stdDeviation="6"/>
     </filter>
-    <filter id="${p}blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>
   </defs>
 
-  <ellipse cx="400" cy="720" rx="330" ry="330" fill="url(#${p}halo)"/>
-  <ellipse cx="402" cy="958" rx="150" ry="13" fill="${t.shadow}" opacity="${t.shadowOpacity}" filter="url(#${p}blur)"/>
-  <ellipse data-p="tubeShadow" cx="640" cy="960" rx="52" ry="8" fill="${t.shadow}" opacity="0" filter="url(#${p}blur)"/>
+  <line x1="200" y1="962" x2="604" y2="962" stroke="${t.shadow}" stroke-opacity="${t.shadowOpacity}" stroke-width="2"/>
+  <ellipse data-p="tubeShadow" cx="640" cy="960" rx="52" ry="8" fill="${t.shadow}" opacity="0"/>
 
   <!-- what's in the glass -->
   <g clip-path="url(#${p}glassClip)">
@@ -122,7 +119,7 @@ export function pourSvg(theme: PourTheme, p = '', viewBox = '0 0 800 1000'): str
       <path d="M-151 -34 V34 M-145 -34 V34 M-139 -33 V33 M-133 -33 V33" stroke="#08201A" stroke-width="1.6" opacity=".7"/>
       <path d="M-130 -34 H86 Q108 -34 112 -18 L112 18 Q108 34 86 34 H-130 Z" fill="url(#${p}tubeBody)"/>
       <rect x="-122" y="-26" width="196" height="4" rx="2" fill="#fff" opacity=".2"/>
-      <text x="-104" y="7" font-family="'Space Grotesk','Bricolage Grotesque',system-ui,sans-serif" font-weight="700" font-size="21" fill="#F4EFE6" letter-spacing=".5">COFFEE <tspan font-weight="800">@once</tspan><tspan font-size="11" dx="2" dy="-8">®</tspan><tspan font-size="15" font-weight="600" dx="5" dy="8">LATTE</tspan></text>
+      <text x="-104" y="7" font-family="'Bricolage Grotesque',system-ui,sans-serif" font-weight="700" font-size="21" fill="#F4EFE6" letter-spacing=".5">COFFEE <tspan font-weight="800">@once</tspan><tspan font-size="11" dx="2" dy="-8">®</tspan><tspan font-size="15" font-weight="600" dx="5" dy="8">LATTE</tspan></text>
       <text x="-104" y="22" font-family="system-ui,sans-serif" font-size="6.5" font-weight="700" fill="#F4EFE6" opacity=".72" letter-spacing=".6">NITROGEN PRESERVATION &amp; NO ADDITIVE</text>
       <path d="M110 -24 L118 -27 L118 27 L110 24 Z" fill="#2A7F5E"/>
       <rect x="116" y="-28" width="38" height="56" rx="13" fill="url(#${p}capG)"/>

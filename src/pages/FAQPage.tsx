@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, Coffee, Thermometer, Clock, Package, Leaf, ShieldCheck } from 'lucide-react';
+import { ChevronDown, Coffee, Thermometer, Clock, Package, Leaf, ShieldCheck } from '../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -10,17 +10,17 @@ const FAQPage: React.FC = () => {
   const faqs = [
     {
       question: "What is Cafe at Once?",
-      answer: "Cafe at Once is India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. It's real coffee — not instant powder — preserved using nitrogen washing to lock in freshness for up to 12 months without refrigeration.",
+      answer: "Cafe at Once is India's first nitrogen-preserved brewed Arabica coffee in a portable press tube. It's brewed coffee, preserved using nitrogen washing to lock in freshness for up to 12 months without refrigeration.",
       icon: Coffee
     },
     {
       question: "How does nitrogen preservation work?",
-      answer: "Our proprietary nitrogen-washing process replaces oxygen with food-grade nitrogen, preventing oxidation and preserving the coffee's natural oils, aroma, and flavour. This is the same technology used in premium craft beers and wines — now applied to coffee for the first time in India.",
+      answer: "Our proprietary nitrogen-washing process replaces oxygen with food-grade nitrogen, preventing oxidation and preserving the coffee's natural oils, aroma, and flavour. This is the same technology used in premium craft beers and wines, now applied to coffee for the first time in India.",
       icon: ShieldCheck
     },
     {
       question: "Do I need hot water to use Cafe at Once?",
-      answer: "No — Cafe at Once works with any water temperature. Hot, cold, or room temperature. Simply press the tube into your cup, add water, stir, and enjoy. Perfect for travel, camping, or anywhere you don't have access to a kettle.",
+      answer: "No, Cafe at Once works with any water temperature. Hot, cold, or room temperature. Simply press the tube into your cup, add water, stir, and enjoy. Perfect for travel, camping, or anywhere you don't have access to a kettle.",
       icon: Thermometer
     },
     {
@@ -30,7 +30,7 @@ const FAQPage: React.FC = () => {
     },
     {
       question: "Is Cafe at Once TSA/flight safe?",
-      answer: "Yes — Cafe at Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits. Perfect for frequent flyers who refuse to compromise on coffee quality.",
+      answer: "Yes, Cafe at Once tubes are fully TSA compliant and carry-on safe. Each tube contains 16g of coffee concentrate, well under liquid limits. Perfect for frequent flyers who refuse to compromise on coffee quality.",
       icon: Package
     },
     {
@@ -45,7 +45,7 @@ const FAQPage: React.FC = () => {
     },
     {
       question: "What's the difference between Americano, Latte, and Mocha variants?",
-      answer: "Americano is our classic black coffee — bold, pure, and unsweetened. Latte is designed to be mixed with milk for a creamier experience. Mocha includes natural cocoa notes for chocolate lovers. All variants are sugar-free and preservative-free.",
+      answer: "Americano is our classic black coffee, bold, pure, and unsweetened. Latte is designed to be mixed with milk for a creamier experience. Mocha includes natural cocoa notes for chocolate lovers. All variants are sugar-free and preservative-free.",
       icon: Coffee
     }
   ];
@@ -53,7 +53,7 @@ const FAQPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <SEO 
-        title="FAQ | Cafe at Once — Nitrogen-Preserved Coffee Questions Answered"
+        title="FAQ | Cafe at Once | Nitrogen-Preserved Coffee Questions Answered"
         description="Everything you need to know about Cafe at Once nitrogen-preserved Arabica coffee. How it works, shelf life, ingredients, and more."
         url="https://cafeatonce.com/faq"
         faq={faqs.map(f => ({ question: f.question, answer: f.answer }))}
@@ -64,7 +64,7 @@ const FAQPage: React.FC = () => {
       />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-secondary to-background py-12 sm:py-16">
+      <section className="bg-secondary py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
@@ -96,7 +96,7 @@ const FAQPage: React.FC = () => {
                 >
                   <button
                     onClick={() => setOpenIndex(isOpen ? null : index)}
-                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/50 transition-colors"
+                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-secondary/50"
                     aria-expanded={isOpen}
                     data-testid={`faq-question-${index}`}
                   >
@@ -109,7 +109,7 @@ const FAQPage: React.FC = () => {
                       </h2>
                     </div>
                     <ChevronDown 
-                      className={`h-5 w-5 text-foreground/60 transition-transform duration-300 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+                      className={`h-5 w-5 text-foreground/60 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </button>
                   
@@ -144,14 +144,14 @@ const FAQPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary hover:bg-cream-dark font-semibold rounded-full transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary hover:bg-cream-dark font-semibold rounded"
               data-testid="faq-contact-btn"
             >
               Contact Us
             </Link>
             <Link
               to="/products"
-              className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded-full transition-colors"
+              className="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-primary font-semibold rounded"
               data-testid="faq-shop-btn"
             >
               Shop Cafe at Once
