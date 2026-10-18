@@ -290,6 +290,11 @@ const ProductDetailPage: React.FC = () => {
             <p className="text-foreground/70 leading-relaxed">
               {product.description}
             </p>
+            {product.id.startsWith('latte') && (
+              <Link to="/latte" className="inline-flex items-center gap-1 text-primary hover:underline font-medium">
+                Watch the Latte story →
+              </Link>
+            )}
 
             {/* Badges */}
             {product.badges && product.badges.length > 0 && (

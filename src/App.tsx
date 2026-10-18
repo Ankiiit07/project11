@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, type ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { MotionConfig } from 'framer-motion';
@@ -44,6 +44,7 @@ const OrderDetailsPage = lazyPage(() => import('./pages/OrderDetailsPage'));
 const OrderTrackingPage = lazyPage(() => import('./pages/OrderTrackingPage'));
 const AdminOrdersPage = lazyPage(() => import('./pages/AdminOrdersPage'));
 const FAQPage = lazyPage(() => import('./pages/FAQPage'));
+const LattePage = lazyPage(() => import('./pages/LattePage'));
 
 // Blog Posts
 const NitrogenPreservedCoffee = lazyPage(() => import('./pages/blog/NitrogenPreservedCoffee'));
@@ -65,6 +66,11 @@ function ScrollToTop() {
   return null;
 }
 
+// The Latte story page (/latte) brings its own nav, footer and buy buttons
+function ShopChrome({ children }: { children: ReactNode }) {
+  return useLocation().pathname === '/latte' ? null : <>{children}</>;
+}
+
 function App() {
   return (
     <Router>
@@ -78,7 +84,7 @@ function App() {
               <ScrollToTop />
               <SkipLink />
               <div className="min-h-screen bg-background flex flex-col">
-                <Header />
+                <ShopChrome><Header /></ShopChrome>
                 <main id="main-content" className="flex-1 pb-8">
                   <ErrorBoundary>
                     <Suspense fallback={<PageLoader />}>
@@ -105,6 +111,7 @@ function App() {
                   <Route path="/track/:awb" element={<OrderTrackingPage />} />
                   <Route path="/admin" element={<AdminOrdersPage />} />
                   <Route path="/faq" element={<FAQPage />} />
+                  <Route path="/latte" element={<LattePage />} />
                   <Route path="/blog/what-is-nitrogen-preserved-coffee" element={<NitrogenPreservedCoffee />} />
                   <Route path="/blog/best-portable-coffee-travellers-india" element={<BestPortableCoffeeTravellers />} />
                   <Route path="/blog/instant-vs-brewed-coffee-difference" element={<InstantVsBrewedCoffee />} />
@@ -115,8 +122,8 @@ function App() {
                     </Suspense>
                   </ErrorBoundary>
                 </main>
-                <Footer />
-                <HelpButton />
+                <ShopChrome><Footer /></ShopChrome>
+                <ShopChrome><HelpButton /></ShopChrome>
                 <NotificationSystem />
               </div>
             </CartProvider>

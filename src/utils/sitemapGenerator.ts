@@ -8,6 +8,7 @@ export const SITE_URL = 'https://cafeatonce.com';
 const STATIC_PATHS = [
   '/',
   '/products',
+  '/latte',
   '/insights',
   '/about',
   '/contact',

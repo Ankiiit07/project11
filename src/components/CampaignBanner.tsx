@@ -142,10 +142,10 @@ const CampaignBanner: React.FC = () => {
               </div>
 
               <Link
-                to="/products/latte-concentrate"
+                to="/latte"
                 className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white"
               >
-                What's in a Latte tube?
+                See the Latte story
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
