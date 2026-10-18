@@ -1,3 +1,5 @@
+import { createPourDrawer, smooth } from '../../components/pour/pour';
+
 // Brings the Latte page to life: the scroll-scrubbed pour, caption beats, section
 // entrances, the pour line, press-and-hold and the FAQ. Everything is scoped to `root`
 // and torn down by the returned cleanup, so leaving the page leaves nothing running.
@@ -8,46 +10,10 @@ interface Options {
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
-const smooth = (p: number, e0: number, e1: number) => {
-  const t = clamp((p - e0) / (e1 - e0), 0, 1);
-  return t * t * (3 - 2 * t);
-};
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-
 // Seeded so the "random" scatter is identical on every visit
 function rng(seed: number) {
   let s = seed >>> 0;
   return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
-}
-
-// Tube keyframes: [progress, x, y, rotation, squeeze]
-const TK = [
-  [0, 560, 210, 24, 1],
-  [0.2, 400, 180, 90, 1],
-  [0.34, 400, 180, 90, 0.8],
-  [0.7, 400, 180, 90, 0.78],
-  [0.78, 400, 180, 90, 1],
-  [0.93, 640, 795, -90, 1],
-  [1, 640, 795, -90, 1],
-];
-const BLOOM_TO = [
-  [-40, 120, 1.3],
-  [46, 190, 1.5],
-  [-10, 250, 1.7],
-  [30, 70, 1.1],
-];
-
-function tubeAt(p: number) {
-  for (let i = 1; i < TK.length; i++) {
-    if (p <= TK[i][0]) {
-      const A = TK[i - 1];
-      const B = TK[i];
-      const t = smooth(p, A[0], B[0]);
-      return [lerp(A[1], B[1], t), lerp(A[2], B[2], t), lerp(A[3], B[3], t), lerp(A[4], B[4], t)];
-    }
-  }
-  const L = TK[TK.length - 1];
-  return [L[1], L[2], L[3], L[4]];
 }
 
 export function initLattePage(root: HTMLElement, { onAdd, onNavigate }: Options): () => void {
@@ -133,60 +99,7 @@ export function initLattePage(root: HTMLElement, { onAdd, onNavigate }: Options)
     op: -1,
     k: -1,
   }));
-  const S = {
-    tube: $<SVGElement>('#tube'),
-    shape: $<SVGElement>('#tubeShape'),
-    stream: $<SVGElement>('#stream'),
-    drop: $<SVGElement>('#drop'),
-    splash: $<SVGElement>('#splash'),
-    tint: $<SVGElement>('#tint'),
-    blooms: $$<SVGElement>('#blooms .bl'),
-    swirl: $<SVGElement>('#swirl'),
-    foam: $<SVGElement>('#foam'),
-    ice: $<SVGElement>('#ice'),
-    drops: $<SVGElement>('#drops'),
-  };
-  const attrCache = new WeakMap<Element, Record<string, string>>();
-  const setAttr = (el: Element, name: string, val: string) => {
-    let m = attrCache.get(el);
-    if (!m) attrCache.set(el, (m = {}));
-    if (m[name] !== val) {
-      m[name] = val;
-      el.setAttribute(name, val);
-    }
-  };
-
-  function drawScene(p: number) {
-    const [x, y, r, sq] = tubeAt(p);
-    setAttr(S.tube, 'transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${r.toFixed(2)})`);
-    setAttr(S.shape, 'transform', `scale(1 ${sq.toFixed(3)})`);
-    const dt = smooth(p, 0.13, 0.27);
-    setAttr(S.drop, 'opacity', p > 0.12 && p < 0.27 ? '1' : '0');
-    setAttr(S.drop, 'transform', `translate(0 ${(dt * 270).toFixed(1)})`);
-    const grow = smooth(p, 0.25, 0.31);
-    const back = smooth(p, 0.66, 0.74);
-    const sy = Math.max(0.0001, grow * (1 - back));
-    setAttr(S.stream, 'transform', `translate(0 ${(back * 300).toFixed(1)}) translate(400 330) scale(1 ${sy.toFixed(4)}) translate(-400 -330)`);
-    setAttr(S.stream, 'opacity', grow > 0 && back < 1 ? '1' : '0');
-    const pouring = grow * (1 - back);
-    const wob = 1 + Math.sin(p * 160) * 0.12;
-    setAttr(S.splash, 'opacity', (pouring * 0.85).toFixed(3));
-    setAttr(S.splash, 'transform', `translate(400 622) scale(${(wob * (0.6 + pouring * 0.5)).toFixed(3)} 1) translate(-400 -622)`);
-    const bloom = smooth(p, 0.3, 0.6);
-    const mix = smooth(p, 0.56, 0.8);
-    S.blooms.forEach((el, i) => {
-      const [dx, dy, s] = BLOOM_TO[i];
-      const ang = mix * (i % 2 ? -1 : 1) * (40 + i * 18);
-      setAttr(el, 'opacity', (bloom * (1 - mix * 0.85) * 0.95).toFixed(3));
-      setAttr(el, 'transform', `rotate(${ang.toFixed(1)} 400 780) translate(${(dx * bloom).toFixed(1)} ${(dy * bloom).toFixed(1)}) translate(400 630) scale(${(0.2 + bloom * s).toFixed(3)}) translate(-400 -630)`);
-    });
-    setAttr(S.swirl, 'opacity', (smooth(p, 0.52, 0.62) * (1 - smooth(p, 0.74, 0.84)) * 0.8).toFixed(3));
-    setAttr(S.swirl, 'transform', `rotate(${(mix * 50).toFixed(1)} 400 780)`);
-    setAttr(S.tint, 'opacity', (smooth(p, 0.32, 0.82) * 0.96).toFixed(3));
-    setAttr(S.foam, 'opacity', smooth(p, 0.78, 0.9).toFixed(3));
-    setAttr(S.ice, 'transform', `translate(0 ${(Math.sin(p * 90) * 3 * pouring).toFixed(2)})`);
-    setAttr(S.drops, 'opacity', smooth(p, 0.86, 0.98).toFixed(3));
-  }
+  const drawScene = createPourDrawer(root);
 
   const heroProgress = () => {
     const range = hero.offsetHeight - innerHeight;

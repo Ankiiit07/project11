@@ -79,7 +79,6 @@
 @media (max-height:560px){
 .lp .scrollcue{display:none}
 }
-.lp #scene *{transform-box:view-box}
 .lp main{position:relative}
 .lp section.block{position:relative;padding:clamp(88px,13vw,170px) clamp(20px,6vw,96px);max-width:1280px;margin:0 auto}
 .lp .kicker{display:block;margin-bottom:20px}
