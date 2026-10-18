@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Leaf, Award, Zap, Coffee, Package, Plane } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -6,7 +6,13 @@ import ProductCard from '../components/ProductCard';
 import { useFeaturedProducts } from '../hooks/useProducts';
 import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
-import { CountUp, Reveal, Stagger, StaggerItem, WordReveal } from '../components/motion';
+import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
+import VantaBackground from '../components/VantaBackground';
+import SplitText from '../components/reactbits/SplitText';
+import ShinyText from '../components/reactbits/ShinyText';
+import SpotlightCard from '../components/reactbits/SpotlightCard';
+import Magnet from '../components/reactbits/Magnet';
+import { gsap, useGSAP } from '../lib/gsap';
 import { cld, cldSrcSet, cldVideo, cldVideoPoster } from '../utils/cloudinary';
 
 const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_codebase-updates/artifacts/lsivxbzw_Mask-group-70.png';
@@ -54,8 +60,37 @@ const SWIPE_ROW = 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4
 
 const HomePage: React.FC = () => {
   const { products: featuredProducts } = useFeaturedProducts();
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-linked GSAP effects: the hero product drifts up slower than the page,
+  // and the insights video eases from slightly zoomed-out to full size.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.to('[data-hero-parallax]', {
+          yPercent: -18,
+          ease: 'none',
+          scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true },
+        });
+        gsap.fromTo(
+          '[data-insights-video]',
+          { scale: 0.88, borderRadius: '3rem' },
+          {
+            scale: 1,
+            borderRadius: '1.5rem',
+            ease: 'none',
+            scrollTrigger: { trigger: '[data-insights-video]', start: 'top bottom', end: 'center center', scrub: true },
+          }
+        );
+      });
+      return () => mm.revert();
+    },
+    { scope: pageRef }
+  );
 
   return (
+    <div ref={pageRef}>
     <PageWrapper padding="none">
       <SEO
         title="Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India"
@@ -76,14 +111,23 @@ const HomePage: React.FC = () => {
       />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center">
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
-            backgroundSize: '40px 40px',
-          }}
+      <section
+        data-hero
+        className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center"
+      >
+        {/* Vanta fog on desktop; the dotted pattern everywhere else */}
+        <VantaBackground
+          fallback={
+            <div
+              className="absolute inset-0 opacity-5"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
+                backgroundSize: '40px 40px',
+              }}
+            />
+          }
         />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none" aria-hidden="true" />
 
         {/* Phones: headline, then the product, then the details. Desktop: text left, product right. */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 lg:py-12 grid lg:grid-cols-2 gap-x-12 gap-y-6 items-center">
@@ -95,17 +139,18 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Zap className="h-4 w-4 text-primary" />
-              <span className="text-xs sm:text-sm font-medium text-primary">India's First Nitrogen-Preserved Coffee</span>
+              <ShinyText text="India's First Nitrogen-Preserved Coffee" className="text-xs sm:text-sm font-medium text-primary" />
             </motion.div>
 
             <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
-              <WordReveal text="Real Coffee." className="block" delay={0.1} />
-              <WordReveal text="No Machine. No Compromise." className="block text-primary mt-1 sm:mt-2" delay={0.35} />
+              <SplitText text="Real Coffee." className="block" delay={0.1} />
+              <SplitText text="No Machine. No Compromise." className="block text-primary mt-1 sm:mt-2" delay={0.45} stagger={0.02} />
             </h1>
           </div>
 
           {/* Product: gently floats, with soft steam */}
           <motion.div
+            data-hero-parallax
             className="relative flex justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -146,14 +191,16 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Magnet padding={40} strength={5} className="w-full sm:w-auto">
               <Link
                 to="/products"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 data-testid="hero-shop-now"
               >
                 Shop Cafe at Once
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
+              </Magnet>
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-border hover:border-primary text-foreground hover:text-primary font-heading font-bold rounded-full transition-all duration-300"
@@ -274,15 +321,14 @@ const HomePage: React.FC = () => {
 
           <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {FEATURES.map(({ icon: Icon, title, description, color, bgColor }) => (
-              <StaggerItem
-                key={title}
-                className="bg-white border border-border rounded-2xl p-4 sm:p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover"
-              >
+              <StaggerItem key={title}>
+                <SpotlightCard className="h-full bg-white border border-border rounded-2xl p-4 sm:p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-xl flex items-center justify-center mb-3 sm:mb-4`}>
                   <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
                 </div>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-foreground mb-1 sm:mb-2">{title}</h3>
                 <p className="text-xs sm:text-sm text-foreground/70">{description}</p>
+                </SpotlightCard>
               </StaggerItem>
             ))}
           </Stagger>
@@ -334,12 +380,14 @@ const HomePage: React.FC = () => {
               controls
               playsInline
               preload="none"
+              data-insights-video
               className="w-full rounded-3xl shadow-2xl bg-black/20 aspect-video"
             />
           </Reveal>
         </div>
       </section>
     </PageWrapper>
+    </div>
   );
 };
 

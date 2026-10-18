@@ -11,6 +11,7 @@ import HelpButton from './components/HelpButton';
 import NotificationSystem from './components/NotificationSystem';
 import { PageLoader } from './components/OptimizedLoader';
 import SkipLink from './components/SkipLink';
+import SmoothScroll, { useLenis } from './components/SmoothScroll';
 
 // Offline cache for returning visitors (public/sw.js)
 if ('serviceWorker' in navigator) {
@@ -51,11 +52,14 @@ const HowToMakeCoffeeWithoutMachine = lazy(() => import('./pages/blog/HowToMakeC
 const WhyArabicaCoffeeMatters = lazy(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
 
 function ScrollToTop() {
-  const location = useLocation();
+  const { pathname } = useLocation();
+  const lenis = useLenis();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);
+    // Jump (not glide) to the top on a new page; Lenis must be told or it scrolls back
+    if (lenis) lenis.scrollTo(0, { immediate: true, force: true });
+    else window.scrollTo(0, 0);
+  }, [pathname, lenis]);
 
   return null;
 }
@@ -67,6 +71,7 @@ function App() {
         <HelmetProvider>
           {/* Animations follow the visitor's "reduce motion" setting */}
           <MotionConfig reducedMotion="user">
+          <SmoothScroll>
           <UserProvider>
             <CartProvider>
               <ScrollToTop />
@@ -115,6 +120,7 @@ function App() {
               </div>
             </CartProvider>
           </UserProvider>
+          </SmoothScroll>
           </MotionConfig>
         </HelmetProvider>
       </ErrorBoundary>

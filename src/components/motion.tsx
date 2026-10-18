@@ -62,26 +62,6 @@ export const StaggerItem: React.FC<{ children: React.ReactNode; className?: stri
   );
 };
 
-/** Headline that appears word by word. Screen readers get the full sentence at once. */
-export const WordReveal: React.FC<{ text: string; className?: string; delay?: number }> = ({ text, className, delay = 0 }) => (
-  <span className={className}>
-    <span className="sr-only">{text}</span>
-    <span aria-hidden="true">
-      {text.split(' ').map((word, i) => (
-        <motion.span
-          key={`${word}-${i}`}
-          className="inline-block mr-[0.25em]"
-          initial={{ opacity: 0, y: '0.4em' }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: EASE, delay: delay + i * 0.08 }}
-        >
-          {word}
-        </motion.span>
-      ))}
-    </span>
-  </span>
-);
-
 /** Counts from 0 to `to` once, when first visible. Shows the final number straight away if motion is reduced. */
 export const CountUp: React.FC<{ to: number; duration?: number; className?: string }> = ({ to, duration = 1.2, className }) => {
   const ref = useRef<HTMLSpanElement>(null);
