@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { MotionConfig } from 'framer-motion';
@@ -11,6 +11,7 @@ import HelpButton from './components/HelpButton';
 import NotificationSystem from './components/NotificationSystem';
 import { PageLoader } from './components/OptimizedLoader';
 import SkipLink from './components/SkipLink';
+import { lazyPage } from './utils/lazyPage';
 
 // Offline cache for returning visitors (public/sw.js)
 if ('serviceWorker' in navigator) {
@@ -20,35 +21,35 @@ if ('serviceWorker' in navigator) {
 }
 
 // Lazy load pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const InsightsPage = lazy(() => import('./pages/InsightsPage'));
-const TestimonialsPage = lazy(() => import('./pages/TestimonialsPage'));
-const AccountPage = lazy(() => import('./pages/AccountPage'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
-const ThankYouPage = lazy(() => import('./pages/ThankYouPage'));
-const CustomerServicePage = lazy(() => import('./pages/CustomerServicePage'));
-const ShippingPolicyPage = lazy(() => import('./pages/ShippingPolicyPage'));
-const ReturnPolicyPage = lazy(() => import('./pages/ReturnPolicyPage'));
-const TermsConditionsPage = lazy(() => import('./pages/TermsConditionsPage'));
-const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
-const RazorpayTestPage = lazy(() => import('./pages/RazorpayTestPage'));
-const OrdersPage = lazy(() => import('./pages/OrdersPage'));
-const OrderDetailsPage = lazy(() => import('./pages/OrderDetailsPage'));
-const OrderTrackingPage = lazy(() => import('./pages/OrderTrackingPage'));
-const AdminOrdersPage = lazy(() => import('./pages/AdminOrdersPage'));
-const FAQPage = lazy(() => import('./pages/FAQPage'));
+const HomePage = lazyPage(() => import('./pages/HomePage'));
+const ProductsPage = lazyPage(() => import('./pages/ProductsPage'));
+const ProductDetailPage = lazyPage(() => import('./pages/ProductDetailPage'));
+const CartPage = lazyPage(() => import('./pages/CartPage'));
+const CheckoutPage = lazyPage(() => import('./pages/CheckoutPage'));
+const InsightsPage = lazyPage(() => import('./pages/InsightsPage'));
+const TestimonialsPage = lazyPage(() => import('./pages/TestimonialsPage'));
+const AccountPage = lazyPage(() => import('./pages/AccountPage'));
+const AboutPage = lazyPage(() => import('./pages/AboutPage'));
+const ContactPage = lazyPage(() => import('./pages/ContactPage'));
+const ThankYouPage = lazyPage(() => import('./pages/ThankYouPage'));
+const CustomerServicePage = lazyPage(() => import('./pages/CustomerServicePage'));
+const ShippingPolicyPage = lazyPage(() => import('./pages/ShippingPolicyPage'));
+const ReturnPolicyPage = lazyPage(() => import('./pages/ReturnPolicyPage'));
+const TermsConditionsPage = lazyPage(() => import('./pages/TermsConditionsPage'));
+const PrivacyPolicyPage = lazyPage(() => import('./pages/PrivacyPolicyPage'));
+const RazorpayTestPage = lazyPage(() => import('./pages/RazorpayTestPage'));
+const OrdersPage = lazyPage(() => import('./pages/OrdersPage'));
+const OrderDetailsPage = lazyPage(() => import('./pages/OrderDetailsPage'));
+const OrderTrackingPage = lazyPage(() => import('./pages/OrderTrackingPage'));
+const AdminOrdersPage = lazyPage(() => import('./pages/AdminOrdersPage'));
+const FAQPage = lazyPage(() => import('./pages/FAQPage'));
 
 // Blog Posts
-const NitrogenPreservedCoffee = lazy(() => import('./pages/blog/NitrogenPreservedCoffee'));
-const BestPortableCoffeeTravellers = lazy(() => import('./pages/blog/BestPortableCoffeeTravellers'));
-const InstantVsBrewedCoffee = lazy(() => import('./pages/blog/InstantVsBrewedCoffee'));
-const HowToMakeCoffeeWithoutMachine = lazy(() => import('./pages/blog/HowToMakeCoffeeWithoutMachine'));
-const WhyArabicaCoffeeMatters = lazy(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
+const NitrogenPreservedCoffee = lazyPage(() => import('./pages/blog/NitrogenPreservedCoffee'));
+const BestPortableCoffeeTravellers = lazyPage(() => import('./pages/blog/BestPortableCoffeeTravellers'));
+const InstantVsBrewedCoffee = lazyPage(() => import('./pages/blog/InstantVsBrewedCoffee'));
+const HowToMakeCoffeeWithoutMachine = lazyPage(() => import('./pages/blog/HowToMakeCoffeeWithoutMachine'));
+const WhyArabicaCoffeeMatters = lazyPage(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
 
 function ScrollToTop() {
   const location = useLocation();
