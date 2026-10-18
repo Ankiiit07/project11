@@ -149,8 +149,9 @@ export const accountApi = {
   adminCreateShipment: (orderId: string) =>
     call<{ order: AdminOrder }>('shiprocket', { method: 'POST', body: JSON.stringify({ orderId }) }).then((d) => d.order),
 
+  // A 200 with a non-JSON body (e.g. the SPA fallback page) parses as {}, so default to no ratings
   getReviewSummaries: () =>
-    call<{ summary: Record<string, ReviewSummary> }>('reviews?summary=1').then((d) => d.summary),
+    call<{ summary?: Record<string, ReviewSummary> }>('reviews?summary=1').then((d) => d.summary ?? {}),
 
   getRecentReviews: () => call<{ reviews: Review[]; summary: ReviewSummary }>('reviews?recent=1'),
 

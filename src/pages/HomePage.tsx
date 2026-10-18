@@ -10,6 +10,7 @@ import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
 import VantaBackground from '../components/VantaBackground';
 import SplitText from '../components/reactbits/SplitText';
 import ShinyText from '../components/reactbits/ShinyText';
+import ScrollFloat from '../components/reactbits/ScrollFloat';
 import SpotlightCard from '../components/reactbits/SpotlightCard';
 import Magnet from '../components/reactbits/Magnet';
 import { gsap, useGSAP } from '../lib/gsap';
@@ -63,6 +64,7 @@ const HomePage: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
 
   // Scroll-linked GSAP effects: the hero product drifts up slower than the page,
+  // "How it works" pins on desktop while Peel → Press → Enjoy light up in turn,
   // and the insights video eases from slightly zoomed-out to full size.
   useGSAP(
     () => {
@@ -72,6 +74,30 @@ const HomePage: React.FC = () => {
           yPercent: -18,
           ease: 'none',
           scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true },
+        });
+      });
+
+      // Desktop only: phones keep the swipeable row, which a pin would fight with
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const cards = gsap.utils.toArray<HTMLElement>('[data-step-card]');
+        gsap.set('[data-steps-track]', { autoAlpha: 1 });
+        gsap.set(cards, { opacity: 0.35, scale: 0.94 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#how-it-works',
+            start: 'center center+=40', // centred below the 80px fixed header
+            end: '+=1200',
+            pin: true,
+            scrub: 0.6,
+            refreshPriority: 1, // pinned before the triggers below it measure their positions
+          },
+        });
+        tl.fromTo('[data-steps-progress]', { scaleX: 0 }, { scaleX: 1, duration: cards.length, ease: 'none' }, 0);
+        cards.forEach((card, i) => {
+          tl.to(card, { opacity: 1, scale: 1.04, y: -12, duration: 0.6, ease: 'power2.out' }, i);
+          tl.fromTo(card.querySelector('[data-step-badge]'), { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1 }, i);
+          if (i > 0) tl.to(cards[i - 1], { scale: 1, y: 0, duration: 0.6, ease: 'power2.out' }, i);
         });
         gsap.fromTo(
           '[data-insights-video]',
@@ -245,19 +271,27 @@ const HomePage: React.FC = () => {
       <section id="how-it-works" className="bg-white py-12 lg:py-16 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-8 sm:mb-12">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
               Coffee in <span className="text-primary">5 Seconds</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
               Revolutionary coffee concentrate technology that delivers barista-quality coffee instantly
             </p>
           </Reveal>
 
+          {/* Progress line for the pinned desktop scene; shown by GSAP only when the scene runs */}
+          <div data-steps-track className="invisible hidden lg:block h-1 mb-10 rounded-full bg-border overflow-hidden" aria-hidden="true">
+            <div data-steps-progress className="h-full bg-primary origin-left" />
+          </div>
+
           <Stagger className={`${SWIPE_ROW} md:grid md:grid-cols-3 md:gap-8 lg:gap-12 md:mx-0 md:px-0 md:overflow-visible`}>
             {STEPS.map((item) => (
               <StaggerItem key={item.step} className="snap-center shrink-0 w-[78%] md:w-auto">
-                <div className="relative h-full bg-secondary border border-border rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-hover">
-                  <div className="absolute top-4 right-4 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-heading font-bold shadow-lg">
+                <div
+                  data-step-card
+                  className="relative h-full bg-secondary border border-border rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-[border-color,box-shadow] duration-300 hover:shadow-hover"
+                >
+                  <div data-step-badge className="absolute top-4 right-4 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-heading font-bold shadow-lg">
                     {item.step}
                   </div>
                   <img
@@ -282,9 +316,9 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-2 sm:mb-4">
+              <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-2 sm:mb-4">
                 Featured <span className="text-primary">Products</span>
-              </h2>
+              </ScrollFloat>
               <p className="text-base sm:text-lg text-foreground/70">Discover our most popular coffee concentrates</p>
             </div>
             <Link
@@ -310,9 +344,9 @@ const HomePage: React.FC = () => {
       <section className="bg-background py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-8 sm:mb-12">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
               Why Choose <span className="text-primary">Cafe at Once</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
               The only coffee that combines real brewed Arabica taste with true portability. No machine. No fridge. No
               compromise.
@@ -346,9 +380,9 @@ const HomePage: React.FC = () => {
       <section className="bg-foreground text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <Reveal className="space-y-5 sm:space-y-6">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold">
               Discover Coffee <span className="text-primary">Insights</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-white/80 leading-relaxed">
               Explore the fascinating world of coffee with our curated collection of brewing techniques, culture insights,
               and expert tips.
