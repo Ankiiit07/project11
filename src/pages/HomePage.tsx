@@ -7,7 +7,6 @@ import { useFeaturedProducts } from '../hooks/useProducts';
 import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
 import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
-import VantaBackground from '../components/VantaBackground';
 import CampaignBanner from '../components/CampaignBanner';
 import SplitText from '../components/reactbits/SplitText';
 import ShinyText from '../components/reactbits/ShinyText';
@@ -15,9 +14,9 @@ import ScrollFloat from '../components/reactbits/ScrollFloat';
 import SpotlightCard from '../components/reactbits/SpotlightCard';
 import Magnet from '../components/reactbits/Magnet';
 import { gsap, useGSAP } from '../lib/gsap';
+import { createSeeker, loadVideoBlob, pickVideoSource } from '../utils/scrubVideo';
 import { cld, cldSrcSet, cldVideo, cldVideoPoster } from '../utils/cloudinary';
 
-const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_codebase-updates/artifacts/lsivxbzw_Mask-group-70.png';
 const INSIGHTS_VIDEO =
   'https://res.cloudinary.com/dtcsms7zn/video/upload/v1751395895/526c3573288b46a0a85fec27d8630925.HD-1080p-7.2Mbps-15882571_1_lxeljd.mp4';
 
@@ -63,20 +62,79 @@ const SWIPE_ROW = 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4
 const HomePage: React.FC = () => {
   const { products: featuredProducts } = useFeaturedProducts();
   const pageRef = useRef<HTMLDivElement>(null);
+  const pourVideoRef = useRef<HTMLVideoElement>(null);
+  const pourStillRef = useRef<HTMLImageElement>(null);
 
-  // Scroll-linked GSAP effects: the hero product drifts up slower than the page,
-  // the sale photo drifts inside its frame, "How it works" pins on desktop while
+  // Scroll-linked GSAP effects: the real hero pour (filmed) scrubs with scroll on desktop and
+  // plays by itself on phones, the sale photo drifts inside its frame, "How it works" pins on desktop while
   // Peel → Press → Enjoy light up in turn, and the insights video eases from
   // slightly zoomed-out to full size.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
-        gsap.to('[data-hero-parallax]', {
-          yPercent: -18,
+      const video = pourVideoRef.current!;
+      const still = pourStillRef.current!;
+      // Show the real video once a frame is ready; until then (or if it fails) the still stays
+      const reveal = () => gsap.to(video, { autoAlpha: 1, duration: 0.4, ease: 'power2.out' });
+      const reset = (stillSrc: string) => {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        gsap.set(video, { autoAlpha: 0 });
+        still.src = stillSrc;
+      };
+
+      // Desktop: the hero holds for about 1.5 screens of scrolling while the pour scrubs with it
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const hero = document.querySelector<HTMLElement>('[data-hero]')!;
+        const seek = createSeeker(video);
+        const pour = { p: 0 };
+        const ctrl = new AbortController();
+        reset('/hero/pour-first.webp');
+        loadVideoBlob(video, pickVideoSource(video, '/hero/pour-720'), ctrl.signal)
+          .then(() => {
+            seek(pour.p);
+            reveal();
+          })
+          .catch(() => {});
+        gsap.to(pour, {
+          p: 1,
           ease: 'none',
-          scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true },
+          onUpdate: () => seek(pour.p),
+          scrollTrigger: {
+            trigger: hero,
+            // below the 80px fixed header; a hero taller than the screen pins once its bottom is in view
+            start: () => (hero.offsetHeight > innerHeight - 80 ? 'bottom bottom' : 'top 80px'),
+            end: '+=150%',
+            pin: true,
+            scrub: 0.6,
+            refreshPriority: 2, // the topmost pin measures first
+            invalidateOnRefresh: true,
+          },
         });
+        gsap.to('[data-pour-cue]', { autoAlpha: 0, scrollTrigger: { trigger: hero, start: 'top 80px', end: '+=120', scrub: true } });
+        return () => ctrl.abort();
+      });
+      // Phones and tablets: the page scrolls normally and the pour plays once, a little slowed
+      mm.add('(max-width: 1023px) and (prefers-reduced-motion: no-preference)', () => {
+        const ctrl = new AbortController();
+        reset('/hero/pour-first.webp');
+        loadVideoBlob(video, pickVideoSource(video, '/hero/pour-480'), ctrl.signal)
+          .then(() => {
+            video.playbackRate = 0.6;
+            reveal();
+            return video.play();
+          })
+          // autoplay refused (e.g. low-power mode): show the finished glass instead
+          .catch(() => {
+            if (!ctrl.signal.aborted) still.src = '/hero/pour-last.webp';
+          });
+        return () => ctrl.abort();
+      });
+      // Reduced motion: the finished glass, no video downloaded
+      mm.add('(prefers-reduced-motion: reduce)', () => reset('/hero/pour-last.webp'));
+
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
         // The sale photo drifts slightly inside its frame
         gsap.fromTo(
           '[data-campaign-img]',
@@ -149,17 +207,13 @@ const HomePage: React.FC = () => {
         data-hero
         className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center"
       >
-        {/* Vanta fog on desktop; the dotted pattern everywhere else */}
-        <VantaBackground
-          fallback={
-            <div
-              className="absolute inset-0 opacity-5"
-              style={{
-                backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
-                backgroundSize: '40px 40px',
-              }}
-            />
-          }
+        <div
+          className="absolute inset-0 opacity-5"
+          aria-hidden="true"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
+            backgroundSize: '40px 40px',
+          }}
         />
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none" aria-hidden="true" />
 
@@ -182,28 +236,41 @@ const HomePage: React.FC = () => {
             </h1>
           </div>
 
-          {/* Product: gently floats, with soft steam */}
+          {/* The pour: real footage of a tube pressed into water (decorative; the copy carries the message) */}
           <motion.div
-            data-hero-parallax
-            className="relative flex justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
+            className="relative flex flex-col items-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="absolute top-[6%] left-1/2 -translate-x-1/2 h-16 w-24 pointer-events-none" aria-hidden="true">
-              <span className="steam-wisp left-2" style={{ animationDelay: '0s' }} />
-              <span className="steam-wisp left-9" style={{ animationDelay: '1.2s' }} />
-              <span className="steam-wisp left-16" style={{ animationDelay: '2.4s' }} />
+            <div className="relative h-[46vh] sm:h-[52vh] lg:h-[min(70vh,660px)] aspect-[720/1134] max-w-full rounded-[2rem] overflow-hidden bg-secondary shadow-2xl ring-1 ring-foreground/5">
+              <img
+                ref={pourStillRef}
+                src="/hero/pour-first.webp"
+                alt=""
+                aria-hidden="true"
+                width={720}
+                height={1134}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <video
+                ref={pourVideoRef}
+                muted
+                playsInline
+                preload="none"
+                aria-hidden="true"
+                tabIndex={-1}
+                className="absolute inset-0 w-full h-full object-cover opacity-0 invisible [transform:translateZ(0)]"
+              />
+              <span className="absolute left-3 bottom-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur text-[11px] sm:text-xs font-medium text-foreground/80">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                Real pour · Americano<span className="hidden sm:inline">, pressed into water</span>
+              </span>
             </div>
-            <motion.img
-              src={HERO_IMAGE}
-              alt="Cafe at Once coffee being poured from press tube into glass"
-              className="w-full max-w-[20rem] sm:max-w-md lg:max-w-xl max-h-[42vh] lg:max-h-none object-contain drop-shadow-2xl rounded-2xl"
-              loading="eager"
-              {...{ fetchpriority: 'high' }} // load the hero image first (lowercase: React 18 passes it through)
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            />
+            <div data-pour-cue className="hidden lg:flex items-center gap-2 mt-2 text-xs uppercase tracking-[0.2em] text-foreground/50" aria-hidden="true">
+              Scroll to pour
+              <ArrowRight className="h-3.5 w-3.5 rotate-90" />
+            </div>
           </motion.div>
 
           <motion.div

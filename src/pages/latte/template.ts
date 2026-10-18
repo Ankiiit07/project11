@@ -2,6 +2,7 @@
 // SVG scene stays exactly as designed; scene.ts brings it to life.
 import type { Product } from '../../data/products';
 import { cld } from '../../utils/cloudinary';
+import { pourSvg } from '../../components/pour/pour';
 
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -62,58 +63,7 @@ export const latteMarkup = (offers: LatteOffer[], others: Product[]): string => 
   <section id="hero" aria-label="Cafe at Once, the pour">
     <div class="stage">
       <div class="scene" aria-hidden="true">
-        <svg id="scene" viewBox="0 0 800 1000" role="presentation">
-          <defs>
-            <radialGradient id="halo" cx="50%" cy="62%" r="50%"><stop offset="0" stop-color="#1F5C4A" stop-opacity=".55"/><stop offset="1" stop-color="#1F5C4A" stop-opacity="0"/></radialGradient>
-            <linearGradient id="tubeBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E7A62"/><stop offset=".45" stop-color="#1F5C4A"/><stop offset="1" stop-color="#123A2F"/></linearGradient>
-            <linearGradient id="capG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BEAC6"/><stop offset=".5" stop-color="#6FD3A8"/><stop offset="1" stop-color="#3FA57D"/></linearGradient>
-            <linearGradient id="milk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4ECDF"/><stop offset="1" stop-color="#DCCDB6"/></linearGradient>
-            <linearGradient id="latte" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9A57E"/><stop offset=".5" stop-color="#A97D55"/><stop offset="1" stop-color="#8C6440"/></linearGradient>
-            <linearGradient id="streamG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3B2414"/><stop offset=".45" stop-color="#6B4428"/><stop offset="1" stop-color="#2E1C10"/></linearGradient>
-            <clipPath id="glassClip"><path d="M296 566 L504 566 L486 940 Q485 948 476 948 L324 948 Q315 948 314 940 Z"/></clipPath>
-            <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>
-          </defs>
-          <ellipse cx="400" cy="640" rx="380" ry="330" fill="url(#halo)"/>
-          <ellipse cx="470" cy="958" rx="260" ry="20" fill="#000" opacity=".45"/>
-          <!-- glass contents -->
-          <g clip-path="url(#glassClip)">
-            <rect x="280" y="618" width="240" height="340" fill="url(#milk)"/>
-            <rect id="tint" x="280" y="618" width="240" height="340" fill="url(#latte)" opacity="0"/>
-            <g id="blooms" filter="url(#soft)">
-              <ellipse class="bl" cx="400" cy="630" rx="70" ry="44" fill="#5A3A22" opacity="0"/>
-              <ellipse class="bl" cx="400" cy="630" rx="56" ry="38" fill="#6B4428" opacity="0"/>
-              <ellipse class="bl" cx="400" cy="630" rx="64" ry="30" fill="#4A2E1A" opacity="0"/>
-              <ellipse class="bl" cx="400" cy="630" rx="48" ry="40" fill="#7A5232" opacity="0"/>
-            </g>
-            <path id="swirl" d="M330 700 C 380 660, 440 740, 470 700 S 430 800, 360 780 S 340 860, 430 870" fill="none" stroke="#5A3A22" stroke-width="16" stroke-linecap="round" opacity="0" filter="url(#soft)"/>
-            <rect id="foam" x="280" y="616" width="240" height="22" fill="#EFE2CC" opacity="0"/>
-            <g id="ice" fill="rgba(255,255,255,.22)" stroke="rgba(255,255,255,.55)" stroke-width="2">
-              <rect x="318" y="600" width="58" height="52" rx="10" transform="rotate(-12 347 626)"/>
-              <rect x="400" y="606" width="54" height="50" rx="10" transform="rotate(9 427 631)"/>
-              <rect x="356" y="650" width="50" height="46" rx="9" transform="rotate(4 381 673)"/>
-            </g>
-          </g>
-          <!-- splash where the pour lands -->
-          <ellipse id="splash" cx="400" cy="622" rx="34" ry="7" fill="#6B4428" opacity="0"/>
-          <!-- glass -->
-          <path d="M296 566 L504 566 L486 940 Q485 948 476 948 L324 948 Q315 948 314 940 Z" fill="rgba(233,217,192,.05)" stroke="rgba(233,217,192,.45)" stroke-width="3"/>
-          <path d="M312 590 L326 900" stroke="rgba(255,255,255,.28)" stroke-width="6" stroke-linecap="round"/>
-          <g id="drops" fill="rgba(255,255,255,.5)" opacity="0"><circle cx="470" cy="700" r="3"/><circle cx="462" cy="760" r="2.2"/><circle cx="476" cy="820" r="2.6"/><circle cx="336" cy="840" r="2"/></g>
-          <!-- stream and first drop -->
-          <rect id="stream" x="392" y="330" width="16" height="300" rx="8" fill="url(#streamG)"/>
-          <path id="drop" d="M400 330 C 392 344, 390 352, 400 360 C 410 352, 408 344, 400 330 Z" fill="#5A3A22" opacity="0"/>
-          <!-- the tube: drawn lying along +x, nozzle at x=150 -->
-          <g id="tube">
-            <g id="tubeShape">
-              <rect x="-152" y="-36" width="16" height="72" rx="3" fill="#123A2F"/>
-              <path d="M-150 -30 h4 M-150 -18 h4 M-150 -6 h4 M-150 6 h4 M-150 18 h4 M-150 30 h4" stroke="#0C110F" stroke-width="2"/>
-              <rect x="-138" y="-35" width="252" height="70" rx="26" fill="url(#tubeBody)"/>
-              <rect x="-130" y="-30" width="236" height="10" rx="5" fill="rgba(255,255,255,.12)"/>
-              <text x="-104" y="7" font-family="DM Mono, monospace" font-size="15" fill="#E9D9C0" letter-spacing="1">COFFEE @once LATTE</text>
-              <rect x="108" y="-30" width="44" height="60" rx="18" fill="url(#capG)"/>
-            </g>
-          </g>
-        </svg>
+        ${pourSvg('dark')}
       </div>
 
       <div class="bands">
