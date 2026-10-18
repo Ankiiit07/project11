@@ -107,7 +107,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       >
         {/* Discount Badge */}
         {discountPercentage > 0 && (
-          <div className="absolute top-4 left-4 z-10 bg-destructive text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-destructive text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg flex items-center gap-1">
             <Sparkles className="h-3 w-3" />
             {discountPercentage}% OFF
           </div>
@@ -115,14 +115,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Pre-Order Badge */}
         {isPreOrder && (
-          <div className="absolute top-4 right-4 z-10 bg-primary text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg animate-pulse">
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
             PRE-ORDER
           </div>
         )}
 
         {/* Out of Stock Badge */}
         {!inStock && !isPreOrder && (
-          <div className="absolute top-4 right-4 z-10 bg-foreground/90 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-foreground/90 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
             Out of Stock
           </div>
         )}
@@ -166,11 +166,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Product Info */}
-        <div className="p-6 space-y-4">
+        <div className="p-3 sm:p-6 space-y-2 sm:space-y-4">
           {/* Category & Rating */}
           <div className="flex items-center justify-between">
             {category && (
-              <span className="text-xs font-medium text-primary uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-medium text-primary uppercase tracking-wider">
                 {category.replace('-', ' ')}
               </span>
             )}
@@ -185,18 +185,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Product Name */}
-          <h3 className="font-heading text-lg font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors duration-300">
+          <h3 className="font-heading text-sm sm:text-lg font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors duration-300">
             {name}
           </h3>
 
           {/* Description */}
-          <p className="text-sm text-foreground/70 line-clamp-2">
+          {/* Phones show two cards per row, so the description and tags start at sm */}
+          <p className="hidden sm:[display:-webkit-box] text-sm text-foreground/70 line-clamp-2">
             {description}
           </p>
 
           {/* Badges */}
           {badges && badges.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="hidden sm:flex flex-wrap gap-2">
               {badges.slice(0, 3).map((badge, index) => (
                 <span
                   key={index}
@@ -209,14 +210,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
 
           {/* Price & Action */}
-          <div className="pt-4 border-t border-border flex items-end justify-between gap-4">
+          <div className="pt-3 sm:pt-4 border-t border-border flex flex-wrap items-end justify-between gap-2 sm:gap-3">
             <div className="space-y-1">
               <div className="flex items-baseline gap-2">
-                <span className="font-heading text-2xl font-bold text-foreground">
+                <span className="font-heading text-lg sm:text-2xl font-bold text-foreground">
                   ₹{price}
                 </span>
                 {originalPrice > price && (
-                  <span className="text-sm text-foreground/50 line-through">
+                  <span className="text-xs sm:text-sm text-foreground/50 line-through">
                     ₹{originalPrice}
                   </span>
                 )}
@@ -237,7 +238,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <button
               onClick={handleAddToCart}
               disabled={!inStock || isAddingToCart}
-              className={`flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+              className={`shrink-0 whitespace-nowrap flex items-center justify-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full font-medium transition-all duration-300 ${
                 inStock
                   ? isJustAdded
                     ? 'bg-green-600 text-white'

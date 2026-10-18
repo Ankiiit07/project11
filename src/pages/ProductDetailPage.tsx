@@ -455,7 +455,7 @@ const ProductDetailPage: React.FC = () => {
             </h2>
             <div className={SWIPE_ROW}>
               {filteredRelatedProducts.map((relatedProduct) => (
-                <div key={relatedProduct.id} className="snap-start shrink-0 w-[75%] sm:w-auto">
+                <div key={relatedProduct.id} className="snap-start shrink-0 w-[44%] sm:w-auto">
                   <ProductCard {...relatedProduct} />
                 </div>
               ))}

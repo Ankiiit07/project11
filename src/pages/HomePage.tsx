@@ -8,6 +8,7 @@ import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
 import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
 import VantaBackground from '../components/VantaBackground';
+import CampaignBanner from '../components/CampaignBanner';
 import SplitText from '../components/reactbits/SplitText';
 import ShinyText from '../components/reactbits/ShinyText';
 import ScrollFloat from '../components/reactbits/ScrollFloat';
@@ -64,8 +65,9 @@ const HomePage: React.FC = () => {
   const pageRef = useRef<HTMLDivElement>(null);
 
   // Scroll-linked GSAP effects: the hero product drifts up slower than the page,
-  // "How it works" pins on desktop while Peel → Press → Enjoy light up in turn,
-  // and the insights video eases from slightly zoomed-out to full size.
+  // the sale photo drifts inside its frame, "How it works" pins on desktop while
+  // Peel → Press → Enjoy light up in turn, and the insights video eases from
+  // slightly zoomed-out to full size.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -75,6 +77,22 @@ const HomePage: React.FC = () => {
           ease: 'none',
           scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true },
         });
+        // The sale photo drifts slightly inside its frame
+        gsap.fromTo(
+          '[data-campaign-img]',
+          { yPercent: -5 },
+          { yPercent: 5, ease: 'none', scrollTrigger: { trigger: '[data-campaign]', start: 'top bottom', end: 'bottom top', scrub: true } }
+        );
+        gsap.fromTo(
+          '[data-insights-video]',
+          { scale: 0.88, borderRadius: '3rem' },
+          {
+            scale: 1,
+            borderRadius: '1.5rem',
+            ease: 'none',
+            scrollTrigger: { trigger: '[data-insights-video]', start: 'top bottom', end: 'center center', scrub: true },
+          }
+        );
       });
 
       // Desktop only: phones keep the swipeable row, which a pin would fight with
@@ -99,16 +117,6 @@ const HomePage: React.FC = () => {
           tl.fromTo(card.querySelector('[data-step-badge]'), { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1 }, i);
           if (i > 0) tl.to(cards[i - 1], { scale: 1, y: 0, duration: 0.6, ease: 'power2.out' }, i);
         });
-        gsap.fromTo(
-          '[data-insights-video]',
-          { scale: 0.88, borderRadius: '3rem' },
-          {
-            scale: 1,
-            borderRadius: '1.5rem',
-            ease: 'none',
-            scrollTrigger: { trigger: '[data-insights-video]', start: 'top bottom', end: 'center center', scrub: true },
-          }
-        );
       });
       return () => mm.revert();
     },
@@ -267,6 +275,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <CampaignBanner />
+
       {/* How it works */}
       <section id="how-it-works" className="bg-white py-12 lg:py-16 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -332,7 +342,7 @@ const HomePage: React.FC = () => {
 
           <Stagger className={`${SWIPE_ROW} sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:mx-0 sm:px-0 sm:overflow-visible`}>
             {featuredProducts.slice(0, 4).map((product) => (
-              <StaggerItem key={product.id} className="snap-start shrink-0 w-[75%] sm:w-auto">
+              <StaggerItem key={product.id} className="snap-start shrink-0 w-[44%] sm:w-auto">
                 <ProductCard {...product} />
               </StaggerItem>
             ))}

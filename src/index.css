@@ -79,7 +79,8 @@
     font-family: 'Space Grotesk', sans-serif;
     letter-spacing: -0.02em;
     font-weight: 700;
-    color: #2A2118;
+    /* Inherit, so headings on dark sections (footer, insights) follow their text-white parent */
+    color: inherit;
   }
   
   /* Skip link styles */
