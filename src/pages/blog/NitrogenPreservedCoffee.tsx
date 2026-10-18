@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 
@@ -9,7 +9,7 @@ const NitrogenPreservedCoffee: React.FC = () => {
     <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="What Is Nitrogen-Preserved Coffee? | Cafe at Once Blog"
-        description="Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Cafe at Once explained."
+        description="Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. The science behind Cafe at Once explained."
         url="https://cafeatonce.com/blog/what-is-nitrogen-preserved-coffee"
         type="article"
         breadcrumbs={[
@@ -23,7 +23,7 @@ const NitrogenPreservedCoffee: React.FC = () => {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8 transition-colors"
+          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Insights
@@ -34,14 +34,14 @@ const NitrogenPreservedCoffee: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
+          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
             Coffee Science
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
             What Is Nitrogen-Preserved Coffee?
           </h1>
           <p className="text-xl text-foreground/70 mb-6">
-            Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. The science behind Cafe at Once explained.
+            Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. The science behind Cafe at Once explained.
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/60">
             <span className="flex items-center gap-2">
@@ -74,10 +74,10 @@ const NitrogenPreservedCoffee: React.FC = () => {
               Coffee begins to lose its freshness the moment it's brewed. Oxygen exposure leads to oxidation, 
               which degrades the delicate oils and aromatic compounds that give coffee its distinctive flavour. 
               This is why freshly brewed coffee tastes so different from coffee that's been sitting for hours. 
-              But what if there was a way to pause time — to preserve that just-brewed freshness indefinitely?
+              But what if there was a way to pause time, to preserve that just-brewed freshness indefinitely?
             </p>
             <p className="text-foreground/80 leading-relaxed">
-              Enter <Link to="/products" className="text-primary hover:underline">nitrogen-preserved coffee</Link> — 
+              Enter <Link to="/products" className="text-primary hover:underline">nitrogen-preserved coffee</Link>, 
               a revolutionary approach that's changing how we think about portable, premium coffee.
             </p>
           </section>
@@ -87,7 +87,7 @@ const NitrogenPreservedCoffee: React.FC = () => {
               How Nitrogen Preservation Works
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              [Full body content to be written — explaining the nitrogen-washing process, 
+              [Full body content to be written, explaining the nitrogen-washing process, 
               how it differs from freeze-drying or spray-drying, and why it preserves flavour better than any other method.]
             </p>
           </section>
@@ -115,7 +115,7 @@ const NitrogenPreservedCoffee: React.FC = () => {
               Perfect for Travellers and Coffee Purists
             </h2>
             <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content targeting the primary persona — frequent flyers, remote workers, hotel travellers who demand quality.]
+              [Content targeting the primary persona, frequent flyers, remote workers, hotel travellers who demand quality.]
             </p>
           </section>
         </div>
@@ -126,12 +126,12 @@ const NitrogenPreservedCoffee: React.FC = () => {
             Experience Nitrogen-Preserved Coffee
           </h3>
           <p className="text-foreground/70 mb-6">
-            Ready to taste the difference? Try Cafe at Once — India's first nitrogen-preserved 
+            Ready to taste the difference? Try Cafe at Once, India's first nitrogen-preserved 
             Arabica coffee in a portable press tube.
           </p>
           <Link 
             to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
           >
             Shop Cafe at Once
           </Link>

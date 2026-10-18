@@ -81,7 +81,7 @@ export function renderCustomerEmail(order) {
 
   const html = layout(
     `Order confirmed #${order.orderId}`,
-    `<h2 style="margin:0 0 8px;font-size:20px;">Hi ${escapeHtml(c.firstName)}, your order is confirmed ☕</h2>
+    `<h2 style="margin:0 0 8px;font-size:20px;">Hi ${escapeHtml(c.firstName)}, your order is confirmed</h2>
 <p style="margin:0 0 20px;color:#555;line-height:1.6;">Thanks for ordering from ${BRAND.name}. We're packing your coffee and will ship it soon.</p>
 
 <table role="presentation" width="100%" style="background:${BRAND.cream};border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:14px;">
@@ -140,7 +140,7 @@ export function renderCustomerEmail(order) {
   ].join('\n');
 
   return {
-    subject: `Order confirmed ☕ #${order.orderId} – Cafe at Once`,
+    subject: `Order confirmed #${order.orderId} | Cafe at Once`,
     html,
     text,
   };
@@ -161,7 +161,7 @@ export function renderAdminEmail(order, warnings = []) {
 <strong>Customer:</strong> ${escapeHtml(`${c.firstName} ${c.lastName}`)} · ${escapeHtml(c.email)} · ${escapeHtml(c.phone)}<br>
 <strong>Items:</strong> ${escapeHtml(items)}<br>
 <strong>Ship to:</strong> ${escapeHtml(`${c.address}, ${c.city}, ${c.state} ${c.zipCode}`)}<br>
-<strong>AWB:</strong> ${escapeHtml(order.awbCode || 'Not created yet — check Shiprocket')}
+<strong>AWB:</strong> ${escapeHtml(order.awbCode || 'Not created yet, check Shiprocket')}
 </p>`
   );
   const text = `New order #${order.orderId} · ${inr(order.total)}
@@ -170,5 +170,5 @@ Customer: ${c.firstName} ${c.lastName} · ${c.email} · ${c.phone}
 Items: ${items}
 Ship to: ${c.address}, ${c.city}, ${c.state} ${c.zipCode}
 AWB: ${order.awbCode || 'Not created yet'}`;
-  return { subject: `🛒 New order #${order.orderId} – ${inr(order.total)}`, html, text };
+  return { subject: `New order #${order.orderId} | ${inr(order.total)}`, html, text };
 }

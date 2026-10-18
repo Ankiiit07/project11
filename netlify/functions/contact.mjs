@@ -65,7 +65,7 @@ export const handler = async (event) => {
     await db.collection('messages').insertOne({ type: 'contact', name, email, subject, message, ip, createdAt: new Date() });
     await notify(
       `Website message${subject ? ` (${subject})` : ''} from ${name}`,
-      `${message}\n\n— ${name} <${email}>\nReply to this email to answer them.`,
+      `${message}\n\nFrom ${name} <${email}>\nReply to this email to answer them.`,
       email
     );
     return reply(200, { success: true });

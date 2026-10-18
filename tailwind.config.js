@@ -3,23 +3,44 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   // darkMode disabled
   theme: {
+    // Crisp corners everywhere (no soft rounding); `full` stays round only for true circles
+    borderRadius: { none: '0', sm: '2px', DEFAULT: '2px', md: '2px', lg: '2px', xl: '2px', '2xl': '2px', '3xl': '2px', full: '9999px' },
+    // No drop shadows anywhere: depth comes from borders and colour blocks
+    boxShadow: { sm: 'none', DEFAULT: 'none', md: 'none', lg: 'none', xl: 'none', '2xl': 'none', inner: 'none', none: 'none' },
+    dropShadow: { sm: 'none', DEFAULT: 'none', md: 'none', lg: 'none', xl: 'none', '2xl': 'none', none: 'none' },
     extend: {
       colors: {
         // Tech-Forward Design System - keeping coffee theme but modernized
         primary: '#8B7355', // Main coffee brown
+        // Paper, not pure white
+        white: '#FBF8F3',
+        // The stock rainbow (blue, purple, pink, orange...) is folded into three brand families:
+        // roast browns, the packaging's bottle green, and caramel. Red becomes a muted brick.
+        ...(() => {
+          const roast = { 50: '#F6F1EA', 100: '#EDE3D6', 200: '#DCCBB6', 300: '#C6AE92', 400: '#A88C6C', 500: '#8B7355', 600: '#725C43', 700: '#5A4834', 800: '#433527', 900: '#2A2118' };
+          const bottle = { 50: '#EEF4F1', 100: '#D8E6DF', 200: '#B3CDC1', 300: '#86AE9C', 400: '#568C76', 500: '#2F6E57', 600: '#245A47', 700: '#1D4A3B', 800: '#163A2E', 900: '#0E2A21' };
+          const caramel = { 50: '#FAF2E8', 100: '#F2E2CC', 200: '#E6C9A4', 300: '#D6AB78', 400: '#C38E52', 500: '#A8733B', 600: '#8A5D30', 700: '#6D4926', 800: '#50361D', 900: '#352414' };
+          const brick = { 50: '#F8EDEA', 100: '#F0D8D2', 200: '#E0B1A7', 300: '#CC8678', 400: '#B86353', 500: '#A4473A', 600: '#8C3B30', 700: '#722F27', 800: '#57241E', 900: '#3D1915' };
+          return {
+            blue: roast, purple: roast, indigo: roast, violet: roast, pink: roast, rose: roast, sky: roast, cyan: roast, fuchsia: roast,
+            green: bottle, emerald: bottle, teal: bottle, lime: bottle,
+            orange: caramel, amber: caramel, yellow: caramel,
+            red: brick,
+          };
+        })(),
         // Latte Sale campaign: deep green and mint from the Latte packaging
-        campaign: { ink: '#0C110F', mint: '#6FD3A8' },
-        'primary-foreground': '#FFFFFF',
+        campaign: { ink: '#0C110F', mint: '#9CC4AE' },
+        'primary-foreground': '#FBF8F3',
         secondary: '#F0E4D3', // Cream
         'secondary-foreground': '#2A2118', // Dark roast
         background: '#F5F1EB', // Light cream background
         foreground: '#2A2118', // Main text color (not pure black)
-        card: '#FFFFFF',
+        card: '#FBF8F3',
         'card-foreground': '#2A2118',
         accent: '#D4C5B0', // Muted accent
         'accent-foreground': '#2A2118',
-        destructive: '#EF4444',
-        'destructive-foreground': '#FFFFFF',
+        destructive: '#A4473A',
+        'destructive-foreground': '#FBF8F3',
         border: '#E6DCC9', // Subtle borders
         input: '#E6DCC9',
         ring: '#8B7355',
@@ -39,16 +60,16 @@ export default {
       },
       fontFamily: {
         sans: ['Outfit', 'system-ui', 'sans-serif'], // Body text
-        heading: ['Space Grotesk', 'sans-serif'], // Headings - tech feel
-        accent: ['Playfair Display', 'serif'], // Testimonials, premium badges
+        // Condensed grotesque with a width axis, used for the kinetic headlines
+        heading: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        accent: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        mono: ['"DM Mono"', 'ui-monospace', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.4s ease-out',
         'bounce-light': 'bounceLight 4s ease-in-out infinite',
         'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 4s ease-in-out infinite alternate',
-        'gradient': 'gradient 6s ease infinite',
         'wiggle': 'wiggle 3s ease-in-out infinite',
         'shake': 'shake 1s ease-in-out infinite',
         'smooth-spin': 'smoothSpin 12s linear infinite',
@@ -79,14 +100,6 @@ export default {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-6px)' },
-        },
-        glow: {
-          '0%': { boxShadow: '0 0 10px rgba(139, 115, 85, 0.3)' },
-          '100%': { boxShadow: '0 0 25px rgba(139, 115, 85, 0.6)' },
-        },
-        gradient: {
-          '0%, 100%': { backgroundPosition: '0% 50%' },
-          '50%': { backgroundPosition: '100% 50%' },
         },
         wiggle: {
           '0%, 100%': { transform: 'rotate(-0.5deg)' },
@@ -120,21 +133,13 @@ export default {
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
       },
-      backdropBlur: {
-        xs: '2px',
-      },
       perspective: {
         '1000': '1000px',
       },
       scale: {
         '102': '1.02',
       },
-      boxShadow: {
-        '3xl': '0 35px 60px -12px rgba(0, 0, 0, 0.25)',
-        'soft': '0 8px 30px rgba(0, 0, 0, 0.04)', // Tech-forward soft shadow
-        'card': '0 2px 8px rgba(0, 0, 0, 0.06)', // Subtle card shadow
-        'hover': '0 12px 40px rgba(0, 0, 0, 0.08)', // Hover state shadow
-      },
+      boxShadow: { '3xl': 'none', soft: 'none', card: 'none', hover: 'none' },
       transitionDuration: {
         '2000': '2000ms',
       },

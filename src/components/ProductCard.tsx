@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Star, Check, Eye, Sparkles } from 'lucide-react';
+import { ShoppingCart, Star, Check } from './icons';
 import { useCart } from '../context/CartContextOptimized';
 import { motion, AnimatePresence } from 'framer-motion';
 import CartNotification from './CartNotification';
@@ -99,30 +99,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
   return (
     <>
       <motion.div
-        className="group relative bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-hover"
+        className="relative bg-card border border-foreground/15 overflow-hidden cursor-pointer"
         onClick={handleCardClick}
-        whileHover={{ y: -4 }}
-        transition={{ duration: 0.3 }}
         data-testid={`product-card-${id}`}
       >
         {/* Discount Badge */}
         {discountPercentage > 0 && (
-          <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-10 bg-destructive text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg flex items-center gap-1">
-            <Sparkles className="h-3 w-3" />
+          <div className="absolute top-0 left-0 z-10 bg-foreground text-background px-2 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] sm:text-xs uppercase tracking-[0.1em]">
             {discountPercentage}% OFF
           </div>
         )}
 
         {/* Pre-Order Badge */}
         {isPreOrder && (
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
+          <div className="absolute top-0 right-0 z-10 bg-primary text-white px-2 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] sm:text-xs uppercase tracking-[0.1em]">
             PRE-ORDER
           </div>
         )}
 
         {/* Out of Stock Badge */}
         {!inStock && !isPreOrder && (
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 bg-foreground/90 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-lg">
+          <div className="absolute top-0 right-0 z-10 bg-foreground/90 text-white px-2 py-1 sm:px-3 sm:py-1.5 font-mono text-[10px] sm:text-xs uppercase tracking-[0.1em]">
             Out of Stock
           </div>
         )}
@@ -130,7 +127,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Product Image Container */}
         <div className="relative aspect-square bg-secondary overflow-hidden">
           {!imageLoaded && (
-            <div className="absolute inset-0 bg-secondary animate-pulse" />
+            <div className="absolute inset-0 skeleton" aria-hidden="true" />
           )}
           <img
             src={cld(image, 640)}
@@ -138,31 +135,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 80vw"
             alt={name}
             decoding="async"
-            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={() => setImageLoaded(true)}
             loading="lazy"
           />
           
-          {/* Hover Overlay */}
-          <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-all duration-300 flex items-center justify-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileHover={{ opacity: 1, scale: 1 }}
-              className="opacity-0 group-hover:opacity-100 transition-all duration-300"
-            >
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/products/${id}`);
-                }}
-                className="bg-white text-foreground px-6 py-3 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-                data-testid={`quick-view-${id}`}
-              >
-                <Eye className="h-4 w-4" />
-                Quick View
-              </button>
-            </motion.div>
-          </div>
         </div>
 
         {/* Product Info */}
@@ -170,7 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Category & Rating */}
           <div className="flex items-center justify-between">
             {category && (
-              <span className="text-[10px] sm:text-xs font-medium text-primary uppercase tracking-wider">
+              <span className="font-mono text-[10px] sm:text-xs text-foreground/60 uppercase tracking-[0.12em]">
                 {category.replace('-', ' ')}
               </span>
             )}
@@ -185,7 +162,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </div>
 
           {/* Product Name */}
-          <h3 className="font-heading text-sm sm:text-lg font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors duration-300">
+          <h3 className="font-heading text-sm sm:text-lg font-bold text-foreground line-clamp-2">
             {name}
           </h3>
 
@@ -201,7 +178,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {badges.slice(0, 3).map((badge, index) => (
                 <span
                   key={index}
-                  className="text-xs px-2.5 py-1 bg-secondary/50 text-foreground/80 rounded-full font-medium"
+                  className="text-xs px-2 py-0.5 border border-foreground/20 text-foreground/80"
                 >
                   {badge}
                 </span>
@@ -223,7 +200,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 )}
               </div>
               {savingsAmount !== '0' && (
-                <p className="text-xs text-green-600 font-medium">
+                <p className="font-mono text-xs text-green-700">
                   Save ₹{savingsAmount}
                 </p>
               )}
@@ -238,15 +215,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <button
               onClick={handleAddToCart}
               disabled={!inStock || isAddingToCart}
-              className={`shrink-0 whitespace-nowrap flex items-center justify-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full font-medium transition-all duration-300 ${
-                inStock
-                  ? isJustAdded
-                    ? 'bg-green-600 text-white'
-                    : isPreOrder
-                      ? 'bg-primary hover:bg-primary/90 text-white hover:shadow-lg hover:-translate-y-0.5 ring-2 ring-primary/30'
-                      : 'bg-primary hover:bg-primary/90 text-white hover:shadow-lg hover:-translate-y-0.5'
-                  : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
-              }`}
+              className={`shrink-0 whitespace-nowrap flex items-center justify-center gap-2 px-3 py-2 sm:px-5 sm:py-2.5 rounded font-medium ${
+ inStock
+ ? isJustAdded
+ ? 'bg-green-700 text-white'
+ : isPreOrder
+ ? 'bg-primary hover:bg-foreground text-white'
+ : 'bg-foreground hover:bg-primary text-background'
+ : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
+ }`}
               data-testid={`add-to-cart-${id}`}
             >
               {isJustAdded ? (

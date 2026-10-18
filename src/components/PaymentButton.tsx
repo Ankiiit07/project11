@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CreditCard, AlertCircle, CheckCircle } from "lucide-react";
+import { CreditCard, AlertCircle, CheckCircle } from "./icons";
 import { useRazorpay } from "../hooks/useRazorpay";
 import { LoadingSpinner, PaymentProcessing } from "./LoadingSystem";
 import { motion } from "framer-motion";
@@ -127,13 +127,13 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       <button
         onClick={handlePayment}
         disabled={disabled || isLoading}
-        className={`w-full bg-gradient-to-r from-primary to-primary-dark 
-          hover:from-primary-dark hover:to-primary 
-          disabled:from-gray-400 disabled:to-gray-500 
-          text-white py-4 px-6 rounded-lg font-semibold 
-          transition-all duration-300 flex items-center justify-center 
-          transform hover:scale-105 hover:shadow-lg 
-          disabled:transform-none disabled:shadow-none ${className}`}
+        className={`w-full bg-primary 
+ 
+ disabled: disabled: 
+ text-white py-4 px-6 rounded-lg font-semibold 
+ flex items-center justify-center 
+ transform 
+ disabled:transform-none disabled:shadow-none ${className}`}
         aria-label={
           isLoading ? "Processing payment..." : `Pay ₹${amount.toFixed(2)}`
         }

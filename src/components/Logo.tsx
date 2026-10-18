@@ -1,6 +1,4 @@
 import React from 'react';
-import { Coffee } from 'lucide-react';
-import SteamEffect from './SteamEffect';
 
 interface LogoProps {
   size?: 'small' | 'medium' | 'large';
@@ -9,35 +7,15 @@ interface LogoProps {
   compact?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '', variant = 'default', compact = false }) => {
-  const sizeClasses = {
-    small: 'text-sm',
-    medium: 'text-lg',
-    large: 'text-2xl'
-  };
-
-  const colorClass = variant === 'white' ? 'text-white' : 'text-[#8B7355]';
-
+// A typographic wordmark: no icon, no effects
+const Logo: React.FC<LogoProps> = ({ size = 'medium', className = '', variant = 'default' }) => {
+  const sizeClasses = { small: 'text-base', medium: 'text-xl', large: 'text-3xl' };
+  const colorClass = variant === 'white' ? 'text-white' : 'text-foreground';
   return (
-    <div className={`flex items-center space-x-2 font-bold ${sizeClasses[size]} ${colorClass} ${className}`}>
-      <div className="relative">
-        <Coffee className="h-6 w-6" />
-        {/* Steam effect for the coffee icon */}
-        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-          <SteamEffect 
-            intensity="light" 
-            size="small"
-            color="rgba(139, 115, 85, 0.6)"
-          />
-        </div>
-      </div>
-      {compact ? (
-        <span>Cafe at Once</span>
-      ) : (
-        <span>Cafe at Once</span>
-      )}
-    </div>
+    <span className={`font-heading font-extrabold uppercase tracking-tight leading-none [font-stretch:75%] ${sizeClasses[size]} ${colorClass} ${className}`}>
+      Cafe at Once
+    </span>
   );
 };
 
-export default Logo; 
+export default Logo;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Truck } from "lucide-react";
+import { ArrowLeft, Truck } from "../components/icons";
 import { useUser } from "../context/UserContext";
 import { accountApi, type Order } from "../services/accountApi";
 
@@ -67,7 +67,7 @@ const OrderDetailsPage: React.FC = () => {
                 {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
               </p>
             </div>
-            <span className="self-start px-3 py-1 text-sm font-medium rounded-full border border-border capitalize">
+            <span className="self-start px-3 py-1 text-sm font-medium rounded border border-border capitalize">
               {order.status}
             </span>
           </div>
@@ -101,7 +101,7 @@ const OrderDetailsPage: React.FC = () => {
 
           <Link
             to={`/track?orderId=${order.id}`}
-            className="h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded-full transition-all inline-flex items-center justify-center gap-2"
+            className="h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium rounded inline-flex items-center justify-center gap-2"
           >
             <Truck className="h-5 w-5" /> Track Order
           </Link>

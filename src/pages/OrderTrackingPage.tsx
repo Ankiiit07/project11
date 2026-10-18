@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Clock, ExternalLink, MapPin, Package, Search, Truck } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Clock, ExternalLink, MapPin, Package, Search, Truck } from '../components/icons';
 import SEO from '../components/SEO';
 import { trackOrder, trackShipment, type OrderTracking } from '../services/shiprocketService';
 

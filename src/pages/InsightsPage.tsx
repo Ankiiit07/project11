@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen } from 'lucide-react';
+import { BookOpen } from '../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -9,7 +9,7 @@ const InsightsPage: React.FC = () => {
     {
       id: 1,
       title: 'What Is Nitrogen-Preserved Coffee?',
-      excerpt: 'Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives.',
+      excerpt: 'Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives.',
       image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80',
       category: 'Science',
       readTime: '8 min read',
@@ -27,7 +27,7 @@ const InsightsPage: React.FC = () => {
     {
       id: 3,
       title: 'Instant vs Brewed Coffee: The Real Difference',
-      excerpt: "A deep dive into how instant coffee is made — and why real brewed coffee delivers a superior experience.",
+      excerpt: "A deep dive into how instant coffee is made, and why real brewed coffee delivers a superior experience.",
       image: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&q=80',
       category: 'Education',
       readTime: '7 min read',
@@ -66,7 +66,7 @@ const InsightsPage: React.FC = () => {
       />
       
       {/* Hero */}
-      <section className="bg-gradient-to-b from-secondary to-background py-12 sm:py-16">
+      <section className="bg-secondary py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
@@ -96,14 +96,14 @@ const InsightsPage: React.FC = () => {
               />
             </div>
             <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
-              <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full w-fit mb-4">
+              <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded w-fit mb-4">
                 Featured
               </span>
               <h2 className="font-heading text-2xl sm:text-3xl font-bold text-foreground mb-4">
                 What Is Nitrogen-Preserved Coffee?
               </h2>
               <p className="text-foreground/70 mb-6 leading-relaxed">
-                Learn how nitrogen washing locks in freshness, aroma, and flavour — without refrigeration or additives. 
+                Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. 
                 The science behind Cafe at Once explained.
               </p>
               <div className="flex items-center gap-4 text-sm text-foreground/60 mb-6">
@@ -116,7 +116,7 @@ const InsightsPage: React.FC = () => {
               </div>
               <Link 
                 to="/blog/what-is-nitrogen-preserved-coffee"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-all w-fit"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90 w-fit"
               >
                 Read Article
               </Link>
@@ -132,7 +132,7 @@ const InsightsPage: React.FC = () => {
             {insights.slice(1).map((insight, index) => (
               <motion.article
                 key={insight.id}
-                className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all group"
+                className="bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 group"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -142,23 +142,23 @@ const InsightsPage: React.FC = () => {
                   <img
                     src={insight.image}
                     alt={insight.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="text-xs font-medium px-2.5 py-1 bg-primary/10 text-primary rounded-full">
+                    <span className="text-xs font-medium px-2.5 py-1 bg-primary/10 text-primary rounded">
                       {insight.category}
                     </span>
                     <span className="text-xs text-foreground/60">{insight.readTime}</span>
                   </div>
-                  <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary">
                     {insight.title}
                   </h3>
                   <p className="text-sm text-foreground/70 mb-4">{insight.excerpt}</p>
                   <Link 
                     to={insight.link}
-                    className="text-primary hover:text-primary/80 font-medium text-sm transition-colors"
+                    className="text-primary hover:text-primary/80 font-medium text-sm"
                   >
                     Read More →
                   </Link>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, Users, Target, Heart, Zap, Coffee } from 'lucide-react';
+import { Award, Users, Target, Heart, Zap, Coffee } from '../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 
@@ -9,7 +9,7 @@ const AboutPage: React.FC = () => {
     <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="About Cafe at Once | India's First Nitrogen-Preserved Coffee"
-        description="The story behind Cafe at Once — India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."
+        description="The story behind Cafe at Once, India's first nitrogen-preserved brewed Arabica coffee. Real coffee for modern lives. No machine. No compromise."
         url="https://cafeatonce.com/about"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },
@@ -18,7 +18,7 @@ const AboutPage: React.FC = () => {
       />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-secondary to-background py-10 lg:py-16">
+      <section className="bg-secondary py-10 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center max-w-3xl mx-auto"
@@ -31,7 +31,7 @@ const AboutPage: React.FC = () => {
             </h1>
             <p className="text-lg sm:text-xl text-foreground/70 leading-relaxed">
               India's first <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preserved brewed Arabica coffee</Link> in a portable press tube. 
-              Real coffee for modern lives — no machine, no fridge, no compromise.
+              Real coffee for modern lives, no machine, no fridge, no compromise.
             </p>
           </motion.div>
         </div>
@@ -56,13 +56,13 @@ const AboutPage: React.FC = () => {
                   have to mean settling for instant powder or searching for a café?
                 </p>
                 <p>
-                  We developed India's first <strong>nitrogen-preservation technology for brewed coffee</strong> — 
+                  We developed India's first <strong>nitrogen-preservation technology for brewed coffee</strong>, 
                   the same process used in premium craft beers and wines, now applied to Arabica coffee. 
                   The result: real brewed coffee that stays fresh for 12 months without refrigeration.
                 </p>
                 <p>
                   Today, we serve premium frequent travellers, remote workers, and coffee purists who refuse 
-                  to compromise on quality — even when a coffee machine isn't available.
+                  to compromise on quality, even when a coffee machine isn't available.
                 </p>
                 <p className="pt-4">
                   <Link to="/faq" className="text-primary hover:underline font-medium">
@@ -131,7 +131,7 @@ const AboutPage: React.FC = () => {
               {
                 icon: Coffee,
                 title: 'Authenticity',
-                description: 'No sugar, no additives—just pure, natural coffee',
+                description: 'No sugar, no additives, just pure, natural coffee',
               },
             ].map((value, index) => {
               const Icon = value.icon;

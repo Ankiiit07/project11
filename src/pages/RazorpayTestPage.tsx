@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, AlertCircle, CheckCircle } from '../components/icons';
 import PaymentButton from '../components/PaymentButton';
 import { RazorpayResponse } from '../types/razorpay';
 import { razorpayService } from '../services/razorpay';
@@ -33,7 +33,7 @@ const RazorpayTestPage: React.FC = () => {
         <div className="mb-8">
           <Link
             to="/"
-            className="inline-flex items-center text-primary hover:text-primary-dark transition-colors mb-4 bg-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md"
+            className="inline-flex items-center text-primary hover:text-primary-dark mb-4 bg-white px-4 py-2 rounded-lg shadow-sm"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
@@ -149,7 +149,7 @@ const RazorpayTestPage: React.FC = () => {
                     addTestResult(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
                   }
                 }}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center"
               >
                 🚀 Razorpay Test ₹100 (No Order ID)
               </button>
@@ -204,7 +204,7 @@ const RazorpayTestPage: React.FC = () => {
                     addTestResult(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
                   }
                 }}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center"
               >
                 🎯 Simple Razorpay Test ₹500
               </button>
@@ -248,7 +248,7 @@ const RazorpayTestPage: React.FC = () => {
                   };
                   document.head.appendChild(script);
                 }}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center"
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center"
               >
                 🎯 Basic Razorpay Test ₹200
               </button>

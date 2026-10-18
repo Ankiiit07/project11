@@ -74,7 +74,7 @@ export default defineConfig({
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
           'router': ['react-router-dom'],
-          'ui-libs': ['lucide-react', 'framer-motion'],
+          'ui-libs': ['framer-motion'],
           'animation': ['gsap', 'gsap/ScrollTrigger', 'gsap/SplitText', '@gsap/react', 'lenis'],
         },
         // Optimize chunk naming
@@ -101,7 +101,6 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
-      'lucide-react',
       'framer-motion',
     ],
   },

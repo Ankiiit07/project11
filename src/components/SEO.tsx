@@ -47,7 +47,7 @@ interface SEOProps {
 
 const SEO: React.FC<SEOProps> = ({
   title = 'Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India',
-  description = "India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds — no machine, no fridge, no compromise. Just press and go.",
+  description = "India's first nitrogen-preserved brewed Arabica coffee. Real coffee in 5 seconds, no machine, no fridge, no compromise. Just press and go.",
   keywords = 'nitrogen preserved coffee, instant arabica coffee, coffee press tube, portable coffee India, travel coffee, nitro washed coffee, premium coffee concentrate',
   image = DEFAULT_SHARE_IMAGE,
   url = 'https://cafeatonce.com',

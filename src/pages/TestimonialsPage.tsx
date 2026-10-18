@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BadgeCheck, MessageSquare, Quote } from 'lucide-react';
+import { BadgeCheck, MessageSquare, Quote } from '../components/icons';
 import SEO from '../components/SEO';
 import { Stars } from '../components/ProductReviews';
 import { accountApi, type Review, type ReviewSummary } from '../services/accountApi';
@@ -37,7 +37,7 @@ const TestimonialsPage: React.FC = () => {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-b from-secondary to-background py-16 sm:py-20">
+      <section className="bg-secondary py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
@@ -89,10 +89,10 @@ const TestimonialsPage: React.FC = () => {
                 We only show reviews from verified buyers, so this page fills up as customers share their experience.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/orders" className="px-6 py-3 bg-primary text-white font-bold rounded-full">
+                <Link to="/orders" className="px-6 py-3 bg-primary text-white font-bold rounded">
                   Bought from us? Write a review
                 </Link>
-                <Link to="/products" className="px-6 py-3 border border-border rounded-full text-foreground">
+                <Link to="/products" className="px-6 py-3 border border-border rounded text-foreground">
                   Shop coffee
                 </Link>
               </div>
@@ -105,7 +105,7 @@ const TestimonialsPage: React.FC = () => {
                   return (
                     <motion.article
                       key={review.id}
-                      className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all flex flex-col"
+                      className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 flex flex-col"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}

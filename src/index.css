@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  /* Tech-Forward Design System - Global Styles */
+  /* Global styles */
   html {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
@@ -71,13 +71,13 @@
   *:focus {
     outline: 2px solid #8B7355;
     outline-offset: 3px;
-    border-radius: 4px;
   }
   
-  /* Headings use Space Grotesk font */
+  /* Headings: Bricolage Grotesque, slightly condensed (its width axis drives the kinetic type) */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-stretch: 85%;
+    letter-spacing: -0.015em;
     font-weight: 700;
     /* Inherit, so headings on dark sections (footer, insights) follow their text-white parent */
     color: inherit;
@@ -137,11 +137,6 @@
     }
   }
   
-  /* Dark mode transitions */
-  * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
-  
   body {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
@@ -186,9 +181,7 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: #F5F1EB;
       z-index: 50;
     }
     
@@ -300,16 +293,56 @@
   }
 }
 
-/* ShinyText (React Bits): a light band sweeping across the text */
-.shiny-text {
-  background: linear-gradient(110deg, currentColor 40%, #d9a96b 50%, currentColor 60%);
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shiny-sweep 4s linear infinite;
+/* Glitch: the text splits into offset slices in coffee brown and bottle green for a
+   fraction of a second. Triggered by adding .is-glitching (see components/Glitch.tsx). */
+.glitch { position: relative; display: inline-block; }
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  white-space: inherit;
 }
-@keyframes shiny-sweep {
-  from { background-position: 100% 0; }
-  to { background-position: -100% 0; }
+.glitch::before { color: #2F6E57; }
+.glitch::after { color: #A8733B; }
+.glitch.is-glitching { animation: glitch-jolt 0.55s steps(4, end) both; }
+.glitch.is-glitching::before { opacity: 1; animation: glitch-slice-a 0.55s steps(5, end) both; }
+.glitch.is-glitching::after { opacity: 1; animation: glitch-slice-b 0.55s steps(5, end) both; }
+@keyframes glitch-jolt {
+  0% { transform: translate(0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, 0); }
+  100% { transform: translate(0); }
+}
+@keyframes glitch-slice-a {
+  0% { clip-path: inset(8% 0 72% 0); transform: translate(-5px, 0); }
+  20% { clip-path: inset(62% 0 14% 0); transform: translate(4px, 0); }
+  40% { clip-path: inset(30% 0 48% 0); transform: translate(-3px, 0); }
+  60% { clip-path: inset(84% 0 2% 0); transform: translate(5px, 0); }
+  80% { clip-path: inset(4% 0 88% 0); transform: translate(-2px, 0); }
+  100% { clip-path: inset(50% 0 50% 0); transform: translate(0); opacity: 0; }
+}
+@keyframes glitch-slice-b {
+  0% { clip-path: inset(70% 0 10% 0); transform: translate(5px, 0); }
+  20% { clip-path: inset(12% 0 66% 0); transform: translate(-4px, 0); }
+  40% { clip-path: inset(46% 0 30% 0); transform: translate(3px, 0); }
+  60% { clip-path: inset(2% 0 86% 0); transform: translate(-5px, 0); }
+  80% { clip-path: inset(88% 0 4% 0); transform: translate(2px, 0); }
+  100% { clip-path: inset(50% 0 50% 0); transform: translate(0); opacity: 0; }
+}
+
+/* Outlined display type for the kinetic word band */
+.type-outline { color: transparent; -webkit-text-stroke: 1.5px currentColor; }
+
+/* Skeleton loaders: flat blocks with a slow tone change, no shimmer gradient */
+.skeleton { background: #E9E1D5; animation: skeleton-pulse 1.4s steps(2, jump-none) infinite alternate; }
+@keyframes skeleton-pulse { from { background: #E9E1D5; } to { background: #DDD2C3; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch.is-glitching, .glitch.is-glitching::before, .glitch.is-glitching::after { animation: none; opacity: 0; }
+  .glitch.is-glitching { opacity: 1; }
+  .skeleton { animation: none; }
 }

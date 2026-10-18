@@ -10,10 +10,8 @@ import {
   Info,
   Coffee,
   Calendar,
-  MapPin,
-  Phone,
-  Mail
-} from 'lucide-react';
+  MapPin
+} from '../components/icons';
 
 const TermsConditionsPage: React.FC = () => {
   const sections = [
@@ -154,26 +152,23 @@ const TermsConditionsPage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
-          className="bg-gradient-to-r from-primary/10 to-amber-100 rounded-2xl p-8 mt-12"
+          className="bg-primary/10 rounded-2xl p-8 mt-12"
         >
           <div className="text-center">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Questions About These Terms?</h3>
             <p className="text-gray-700 mb-6">
               If you have any questions about these Terms & Conditions, please contact us:
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col items-center">
-                <Phone className="h-8 w-8 text-primary mb-2" />
+            <div className="border-y border-foreground/20 divide-y divide-foreground/20">
+              <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
                 <span className="font-semibold text-gray-900">Phone</span>
                 <span className="text-gray-600">+91 7979837079</span>
               </div>
-              <div className="flex flex-col items-center">
-                <Mail className="h-8 w-8 text-primary mb-2" />
+              <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
                 <span className="font-semibold text-gray-900">Email</span>
                 <span className="text-gray-600">cafeatonce@gmail.com</span>
               </div>
-              <div className="flex flex-col items-center">
-                <MapPin className="h-8 w-8 text-primary mb-2" />
+              <div className="grid sm:grid-cols-[14rem_1fr] gap-x-6 gap-y-1 py-4 text-left">
                 <span className="font-semibold text-gray-900">Address</span>
                 <span className="text-gray-600">Mumbai, Maharashtra, India</span>
               </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CreditCard, Truck, Shield, CheckCircle, Banknote, Clock, Loader2 } from 'lucide-react';
+import { CreditCard, Truck, Shield, CheckCircle, Banknote, Clock, Loader2 } from './icons';
 import PaymentButton from './PaymentButton';
 import { RazorpayResponse } from '../types/razorpay';
 
@@ -67,21 +67,21 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
         <div className="grid grid-cols-1 gap-4">
           {/* Online Payment Option */}
           <div
-            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-300 ${
-              selectedPaymentMethod === 'online'
-                ? 'border-primary bg-primary-light/10'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
+            className={`border-2 rounded-lg p-4 cursor-pointer ${
+ selectedPaymentMethod === 'online'
+ ? 'border-primary bg-primary-light/10'
+ : 'border-gray-200 hover:border-gray-300'
+ }`}
             onClick={() => setSelectedPaymentMethod('online')}
           >
             <div className="flex items-center space-x-3">
               <div className={`w-4 h-4 rounded-full border-2 ${
-                selectedPaymentMethod === 'online'
-                  ? 'border-primary bg-primary'
-                  : 'border-gray-300'
-              }`}>
+ selectedPaymentMethod === 'online'
+ ? 'border-primary bg-primary'
+ : 'border-gray-300'
+ }`}>
                 {selectedPaymentMethod === 'online' && (
-                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                  <div className="w-full h-full rounded bg-white scale-50"></div>
                 )}
               </div>
               <div className="flex-1">
@@ -93,7 +93,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                   Credit/Debit Card, UPI, Net Banking
                 </p>
                 <p className="text-xs text-green-600 mt-1">
-                  ✅ Instant WhatsApp notification to merchant
+                  • Instant WhatsApp notification to merchant
                 </p>
               </div>
             </div>
@@ -101,21 +101,21 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
 
           {/* COD Option */}
           <div
-            className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-300 ${
-              selectedPaymentMethod === 'cod'
-                ? 'border-primary bg-primary-light/10'
-                : 'border-gray-200 hover:border-gray-300'
-            }`}
+            className={`border-2 rounded-lg p-4 cursor-pointer ${
+ selectedPaymentMethod === 'cod'
+ ? 'border-primary bg-primary-light/10'
+ : 'border-gray-200 hover:border-gray-300'
+ }`}
             onClick={() => setSelectedPaymentMethod('cod')}
           >
             <div className="flex items-center space-x-3">
               <div className={`w-4 h-4 rounded-full border-2 ${
-                selectedPaymentMethod === 'cod'
-                  ? 'border-primary bg-primary'
-                  : 'border-gray-300'
-              }`}>
+ selectedPaymentMethod === 'cod'
+ ? 'border-primary bg-primary'
+ : 'border-gray-300'
+ }`}>
                 {selectedPaymentMethod === 'cod' && (
-                  <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                  <div className="w-full h-full rounded bg-white scale-50"></div>
                 )}
               </div>
               <div className="flex-1">
@@ -127,7 +127,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                   Pay when your order arrives (₹25 extra charges)
                 </p>
                 <p className="text-xs text-green-600 mt-1">
-                  ✅ Instant WhatsApp notification to merchant
+                  • Instant WhatsApp notification to merchant
                 </p>
               </div>
             </div>
@@ -150,7 +150,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
           <button
             onClick={handleCODOrder}
             disabled={disabled || isProcessingCOD}
-            className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center"
+            className="w-full bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center"
           >
             {isProcessingCOD ? (
               <>
@@ -184,7 +184,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
 
       {/* Payment Security Notice */}
       <div className="text-center text-xs text-gray-500">
-        <p>🔒 Your payment and personal information are always secure</p>
+        <p> Your payment and personal information are always secure</p>
       </div>
       
       {/* WhatsApp Order Option */}

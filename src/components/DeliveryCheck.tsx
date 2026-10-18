@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, MapPin, Truck } from 'lucide-react';
+import { Calendar, MapPin, Truck } from './icons';
 import { DEFAULT_SHIPPING_RATES, getDeliveryEstimate, getDeliveryZone, isValidPincode } from '../utils/shippingCalculator';
 
 const PIN_KEY = 'cafe-at-once-pin';

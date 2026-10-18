@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, MapPin, Package, LogOut, AlertCircle, CheckCircle, ShoppingBag } from 'lucide-react';
+import { User, Mail, MapPin, Package, LogOut, AlertCircle, CheckCircle, ShoppingBag } from '../components/icons';
 import { useUser } from '../context/UserContext';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 
@@ -13,8 +13,8 @@ const Notice: React.FC<{ kind: 'error' | 'success'; children: React.ReactNode }>
   <div
     role={kind === 'error' ? 'alert' : 'status'}
     className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
-      kind === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
-    }`}
+ kind === 'error' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
+ }`}
   >
     {kind === 'error' ? <AlertCircle className="h-5 w-5 flex-shrink-0" /> : <CheckCircle className="h-5 w-5 flex-shrink-0" />}
     <span>{children}</span>
@@ -98,7 +98,7 @@ const ProfileForm: React.FC = () => {
       <button
         type="submit"
         disabled={saving}
-        className="h-12 px-8 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded-full transition-all"
+        className="h-12 px-8 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded"
       >
         {saving ? 'Saving…' : 'Save details'}
       </button>
@@ -201,13 +201,13 @@ const AccountPage: React.FC = () => {
                 </div>
 
                 <nav className="space-y-2">
-                  <Link to="/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary transition-colors">
+                  <Link to="/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary">
                     <Package className="h-5 w-5 text-foreground/60" />
                     <span className="text-foreground/80">My Orders</span>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 text-destructive transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 text-destructive"
                   >
                     <LogOut className="h-5 w-5" />
                     <span>Logout</span>
@@ -220,14 +220,14 @@ const AccountPage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               <ProfileForm />
               <div className="grid sm:grid-cols-2 gap-4">
-                <Link to="/orders" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all group">
+                <Link to="/orders" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 group">
                   <Package className="h-8 w-8 text-primary mb-3" />
-                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary transition-colors">View Orders</h3>
+                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary">View Orders</h3>
                   <p className="text-sm text-foreground/70">Track your orders</p>
                 </Link>
-                <Link to="/products" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 transition-all group">
+                <Link to="/products" className="bg-card border border-border rounded-xl p-6 hover:border-primary/50 group">
                   <ShoppingBag className="h-8 w-8 text-primary mb-3" />
-                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary transition-colors">Shop Now</h3>
+                  <h3 className="font-heading font-bold text-foreground mb-1 group-hover:text-primary">Shop Now</h3>
                   <p className="text-sm text-foreground/70">Explore our coffee collection</p>
                 </Link>
               </div>
@@ -269,7 +269,7 @@ const AccountPage: React.FC = () => {
                     type="button"
                     onClick={() => attempt(loginWithGoogle)}
                     disabled={loading}
-                    className="w-full h-12 flex items-center justify-center gap-3 bg-background border border-border hover:bg-secondary disabled:opacity-60 text-foreground font-medium rounded-full transition-all"
+                    className="w-full h-12 flex items-center justify-center gap-3 bg-background border border-border hover:bg-secondary disabled:opacity-60 text-foreground font-medium rounded"
                   >
                     <GoogleIcon />
                     Continue with Google
@@ -339,7 +339,7 @@ const AccountPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded-full transition-all"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 disabled:opacity-60 text-white font-heading font-bold rounded"
                 >
                   {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'}
                 </button>

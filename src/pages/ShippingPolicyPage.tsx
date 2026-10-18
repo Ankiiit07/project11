@@ -11,7 +11,7 @@ import {
   Info,
   
   Star
-} from 'lucide-react';
+} from '../components/icons';
 
 const ShippingPolicyPage: React.FC = () => {
   const shippingZones = [
@@ -99,7 +99,7 @@ const ShippingPolicyPage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-primary to-primary-dark text-white rounded-2xl p-8 mb-12 text-center"
+          className="bg-primary text-white rounded-2xl p-8 mb-12 text-center"
         >
           <div className="flex items-center justify-center mb-4">
             <Star className="h-8 w-8 mr-3" />
@@ -129,12 +129,12 @@ const ShippingPolicyPage: React.FC = () => {
                 initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
-                className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300"
+                className="bg-white rounded-xl shadow-lg p-6"
               >
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gray-900">{zone.zone}</h3>
                   {zone.expressAvailable && (
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">
                       Express Available
                     </span>
                   )}

@@ -44,7 +44,7 @@ export const latteMarkup = (offers: LatteOffer[], others: Product[]): string => 
 
 <nav aria-label="Main">
   <a class="brand" href="/" data-route aria-label="Cafe at Once shop home">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 24h28v14a12 12 0 0 1-12 12h-4a12 12 0 0 1-12-12z" fill="none" stroke="#6FD3A8" stroke-width="4"/><path d="M42 28h4a6 6 0 0 1 0 12h-4" fill="none" stroke="#6FD3A8" stroke-width="4"/><path d="M22 12v6M28 12v6M34 12v6" stroke="#6FD3A8" stroke-width="3" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 24h28v14a12 12 0 0 1-12 12h-4a12 12 0 0 1-12-12z" fill="none" stroke="#9CC4AE" stroke-width="4"/><path d="M42 28h4a6 6 0 0 1 0 12h-4" fill="none" stroke="#9CC4AE" stroke-width="4"/><path d="M22 12v6M28 12v6M34 12v6" stroke="#9CC4AE" stroke-width="3" stroke-linecap="round"/></svg>
     Cafe at Once
   </a>
   <ul class="navlinks">
@@ -116,14 +116,14 @@ export const latteMarkup = (offers: LatteOffer[], others: Product[]): string => 
       <article class="step rv" style="--i:2">
         <svg viewBox="0 0 200 200" aria-hidden="true">
           <g class="bob"><rect x="40" y="88" width="104" height="30" rx="12" fill="#1F5C4A"/><rect x="34" y="86" width="10" height="34" rx="2" fill="#123A2F"/></g>
-          <g class="bob" style="animation-delay:-2.4s"><rect x="150" y="70" width="22" height="30" rx="9" fill="#6FD3A8" transform="rotate(-24 161 85)"/></g>
-          <path class="draw" style="--len:90;--i:0" d="M150 118 C 172 118, 184 100, 176 74" fill="none" stroke="#6FD3A8" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 6"/>
+          <g class="bob" style="animation-delay:-2.4s"><rect x="150" y="70" width="22" height="30" rx="9" fill="#9CC4AE" transform="rotate(-24 161 85)"/></g>
+          <path class="draw" style="--len:90;--i:0" d="M150 118 C 172 118, 184 100, 176 74" fill="none" stroke="#9CC4AE" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 6"/>
         </svg>
         <div class="st"><span class="num">01</span><h3>Peel</h3><p>Open the tube.</p></div>
       </article>
       <article class="step rv" style="--i:3">
         <svg viewBox="0 0 200 200" aria-hidden="true">
-          <g transform="rotate(90 100 50)"><rect x="52" y="34" width="92" height="30" rx="12" fill="#1F5C4A"/><rect x="140" y="36" width="18" height="26" rx="8" fill="#6FD3A8"/></g>
+          <g transform="rotate(90 100 50)"><rect x="52" y="34" width="92" height="30" rx="12" fill="#1F5C4A"/><rect x="140" y="36" width="18" height="26" rx="8" fill="#9CC4AE"/></g>
           <path d="M86 40 l-8 -8 M114 40 l8 -8" stroke="#E9D9C0" stroke-width="2.5" stroke-linecap="round"/>
           <path class="draw" style="--len:60;--i:1" d="M100 112 V 150" stroke="#6B4428" stroke-width="7" stroke-linecap="round"/>
           <path d="M66 140 L134 140 L128 190 L72 190 Z" fill="rgba(244,236,223,.9)" stroke="rgba(233,217,192,.6)" stroke-width="2"/>
@@ -150,7 +150,7 @@ export const latteMarkup = (offers: LatteOffer[], others: Product[]): string => 
         <svg viewBox="0 0 400 500" aria-hidden="true">
           <defs><clipPath id="pg"><path d="M120 250 L280 250 L266 470 L134 470 Z"/></clipPath></defs>
           <rect x="164" y="40" width="72" height="150" rx="24" fill="#1F5C4A"/>
-          <rect x="178" y="186" width="44" height="30" rx="12" fill="#6FD3A8"/>
+          <rect x="178" y="186" width="44" height="30" rx="12" fill="#9CC4AE"/>
           <rect id="pStream" x="194" y="214" width="12" height="40" rx="6" fill="#5A3A22" style="transform-origin:200px 214px;transform:scaleY(0)"/>
           <g clip-path="url(#pg)">
             <rect x="110" y="250" width="180" height="230" fill="#F4ECDF"/>

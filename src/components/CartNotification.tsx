@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle, X, ShoppingBag, Sparkles } from 'lucide-react';
+import { CheckCircle, X, ShoppingBag } from './icons';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CartNotificationProps {
@@ -79,7 +79,7 @@ const CartNotification: React.FC<CartNotificationProps> = ({
               initial={{ backgroundColor: "#10B981" }}
               animate={{ backgroundColor: "#059669" }}
               transition={{ duration: 0.5 }}
-              className="bg-gradient-to-r from-green-500 to-green-600 p-4 relative overflow-hidden"
+              className="bg-green-500 p-4 relative overflow-hidden"
             >
               <motion.div
                 animate={{ 
@@ -105,26 +105,15 @@ const CartNotification: React.FC<CartNotificationProps> = ({
                   </div>
                 </div>
                 <motion.button
-                  whileHover={{ scale: 1.1, rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={onClose}
-                  className="text-white hover:text-green-100 transition-colors"
+                  className="text-white hover:text-green-100"
                 >
                   <X className="h-5 w-5" />
                 </motion.button>
               </motion.div>
               
               {/* Animated background elements */}
-              <motion.div
-                animate={{ 
-                  x: isAnimating ? [0, 100, 0] : 0,
-                  opacity: isAnimating ? [0, 1, 0] : 0
-                }}
-                transition={{ duration: 1, repeat: 2 }}
-                className="absolute top-0 right-0 w-20 h-20 opacity-20"
-              >
-                <Sparkles className="w-full h-full text-white" />
-              </motion.div>
             </motion.div>
 
             {/* Product Details */}
@@ -178,20 +167,18 @@ const CartNotification: React.FC<CartNotificationProps> = ({
                 className="flex space-x-2 mt-4"
               >
                 <motion.button
-                  whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onViewCart}
-                  className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium text-sm transition-colors flex items-center justify-center space-x-2"
+                  className="flex-1 bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-lg font-medium text-sm flex items-center justify-center space-x-2"
                 >
                   <ShoppingBag className="h-4 w-4" />
                   <span>View Cart</span>
                 </motion.button>
                 
                 <motion.button
-                  whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-50"
                 >
                   Continue
                 </motion.button>
@@ -203,7 +190,7 @@ const CartNotification: React.FC<CartNotificationProps> = ({
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 3, ease: "linear" }}
-              className="h-1 bg-gradient-to-r from-green-500 to-green-600 origin-left"
+              className="h-1 bg-green-500 origin-left"
             />
           </motion.div>
         </motion.div>

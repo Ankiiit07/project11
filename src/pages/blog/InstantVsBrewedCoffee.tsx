@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
 
@@ -9,7 +9,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
     <div className="min-h-screen bg-background pb-16">
       <SEO 
         title="Instant Coffee vs Brewed Coffee: What's Really in Your Cup? | Cafe at Once"
-        description="A deep dive into how instant coffee is made — and why real brewed coffee (even portable) delivers a superior experience."
+        description="A deep dive into how instant coffee is made, and why real brewed coffee (even portable) delivers a superior experience."
         url="https://cafeatonce.com/blog/instant-vs-brewed-coffee-difference"
         type="article"
         breadcrumbs={[
@@ -22,7 +22,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link 
           to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8 transition-colors"
+          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Insights
@@ -33,14 +33,14 @@ const InstantVsBrewedCoffee: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full mb-4">
+          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
             Coffee Education
           </span>
           <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
             Instant Coffee vs Brewed Coffee: What's Really in Your Cup?
           </h1>
           <p className="text-xl text-foreground/70 mb-6">
-            A deep dive into how instant coffee is made — and why real brewed coffee (even portable) 
+            A deep dive into how instant coffee is made, and why real brewed coffee (even portable) 
             delivers a superior experience.
           </p>
           <div className="flex items-center gap-6 text-sm text-foreground/60">
@@ -69,7 +69,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
               The Uncomfortable Truth About Instant Coffee
             </h2>
             <p className="text-foreground/80 leading-relaxed">
-              Instant coffee is everywhere — it's cheap, fast, and convenient. But have you ever wondered 
+              Instant coffee is everywhere, it's cheap, fast, and convenient. But have you ever wondered 
               what actually goes into that powder? The journey from coffee bean to instant granule involves 
               processes that strip away much of what makes coffee special.
             </p>
@@ -114,7 +114,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
 
         <div className="bg-secondary rounded-2xl p-8 mt-12">
           <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
-            Taste Real Brewed Coffee — Anywhere
+            Taste Real Brewed Coffee Anywhere
           </h3>
           <p className="text-foreground/70 mb-6">
             Cafe at Once is real brewed Arabica coffee, preserved at peak freshness. 
@@ -122,7 +122,7 @@ const InstantVsBrewedCoffee: React.FC = () => {
           </p>
           <Link 
             to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
           >
             Try Cafe at Once
           </Link>

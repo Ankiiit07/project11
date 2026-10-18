@@ -10,7 +10,7 @@ import {
   Mail,
   ArrowLeft,
   Home,
-} from "lucide-react";
+} from "../components/icons";
 import { accountApi, type Order } from "../services/accountApi";
 import { useUser } from "../context/UserContext";
 import { analytics } from "../utils/analytics";
@@ -112,7 +112,7 @@ const ThankYouPage: React.FC = () => {
           <p className="text-gray-600 mb-8">Please check your order details.</p>
           <button
             onClick={() => navigate("/")}
-            className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
+            className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark"
           >
             Go Home
           </button>
@@ -168,7 +168,7 @@ const ThankYouPage: React.FC = () => {
             </div>
             <Link
               to={`/account?signup=1&email=${encodeURIComponent(orderDetails.customerEmail)}`}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors text-center"
+              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark text-center"
             >
               Create account
             </Link>
@@ -382,7 +382,7 @@ const ThankYouPage: React.FC = () => {
         >
           <button
             onClick={() => navigate("/")}
-            className="flex items-center justify-center px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors"
+            className="flex items-center justify-center px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark"
           >
             <Home className="w-5 h-5 mr-2" />
             Continue Shopping
@@ -390,7 +390,7 @@ const ThankYouPage: React.FC = () => {
 
           <button
             onClick={() => navigate("/account?tab=orders")}
-            className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+            className="flex items-center justify-center px-8 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             View My Orders

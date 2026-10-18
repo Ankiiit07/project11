@@ -19,16 +19,34 @@ const OptimizedLoader: React.FC<LoaderProps> = memo(({
   };
 
   return (
-    <div className={`animate-spin rounded-full border-2 border-gray-200 ${color} ${sizeClasses[size]} ${className}`} />
+    <div className={`animate-spin rounded border-2 border-gray-200 ${color} ${sizeClasses[size]} ${className}`} />
   );
 });
 
 OptimizedLoader.displayName = 'OptimizedLoader';
 
 // Page loader component
+// Page skeleton: the outline of a page (heading, text lines, a row of product tiles)
+// so the layout does not jump when the real page arrives
 export const PageLoader: React.FC = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <OptimizedLoader size="lg" />
+  <div className="min-h-screen pt-28 pb-16" role="status" aria-label="Loading page">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="skeleton h-3 w-32" />
+      <div className="skeleton h-12 sm:h-16 w-3/4 max-w-2xl" />
+      <div className="space-y-3 max-w-xl">
+        <div className="skeleton h-4 w-full" />
+        <div className="skeleton h-4 w-5/6" />
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-6">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="space-y-3">
+            <div className="skeleton aspect-square w-full" />
+            <div className="skeleton h-4 w-3/4" />
+            <div className="skeleton h-4 w-1/3" />
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
 );
 
