@@ -204,7 +204,7 @@ const Header: React.FC = () => {
           aria-hidden="false"
           style={{ top: '80px' }}
         >
-          <div className="h-full overflow-y-auto px-6 py-8">
+          <div className="h-full overflow-y-auto px-6 py-8" data-lenis-prevent>
             <div className="space-y-1">
               {navItems.map((item) => (
                 <Link

@@ -7,6 +7,8 @@ export default {
       colors: {
         // Tech-Forward Design System - keeping coffee theme but modernized
         primary: '#8B7355', // Main coffee brown
+        // Latte Sale campaign: deep green and mint from the Latte packaging
+        campaign: { ink: '#0C110F', mint: '#6FD3A8' },
         'primary-foreground': '#FFFFFF',
         secondary: '#F0E4D3', // Cream
         'secondary-foreground': '#2A2118', // Dark roast

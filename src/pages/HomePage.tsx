@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Leaf, Award, Zap, Coffee, Package, Plane } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -6,7 +6,15 @@ import ProductCard from '../components/ProductCard';
 import { useFeaturedProducts } from '../hooks/useProducts';
 import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
-import { CountUp, Reveal, Stagger, StaggerItem, WordReveal } from '../components/motion';
+import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
+import VantaBackground from '../components/VantaBackground';
+import CampaignBanner from '../components/CampaignBanner';
+import SplitText from '../components/reactbits/SplitText';
+import ShinyText from '../components/reactbits/ShinyText';
+import ScrollFloat from '../components/reactbits/ScrollFloat';
+import SpotlightCard from '../components/reactbits/SpotlightCard';
+import Magnet from '../components/reactbits/Magnet';
+import { gsap, useGSAP } from '../lib/gsap';
 import { cld, cldSrcSet, cldVideo, cldVideoPoster } from '../utils/cloudinary';
 
 const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_codebase-updates/artifacts/lsivxbzw_Mask-group-70.png';
@@ -54,8 +62,69 @@ const SWIPE_ROW = 'flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-4
 
 const HomePage: React.FC = () => {
   const { products: featuredProducts } = useFeaturedProducts();
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  // Scroll-linked GSAP effects: the hero product drifts up slower than the page,
+  // the sale photo drifts inside its frame, "How it works" pins on desktop while
+  // Peel → Press → Enjoy light up in turn, and the insights video eases from
+  // slightly zoomed-out to full size.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.to('[data-hero-parallax]', {
+          yPercent: -18,
+          ease: 'none',
+          scrollTrigger: { trigger: '[data-hero]', start: 'top top', end: 'bottom top', scrub: true },
+        });
+        // The sale photo drifts slightly inside its frame
+        gsap.fromTo(
+          '[data-campaign-img]',
+          { yPercent: -5 },
+          { yPercent: 5, ease: 'none', scrollTrigger: { trigger: '[data-campaign]', start: 'top bottom', end: 'bottom top', scrub: true } }
+        );
+        gsap.fromTo(
+          '[data-insights-video]',
+          { scale: 0.88, borderRadius: '3rem' },
+          {
+            scale: 1,
+            borderRadius: '1.5rem',
+            ease: 'none',
+            scrollTrigger: { trigger: '[data-insights-video]', start: 'top bottom', end: 'center center', scrub: true },
+          }
+        );
+      });
+
+      // Desktop only: phones keep the swipeable row, which a pin would fight with
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const cards = gsap.utils.toArray<HTMLElement>('[data-step-card]');
+        gsap.set('[data-steps-track]', { autoAlpha: 1 });
+        gsap.set(cards, { opacity: 0.35, scale: 0.94 });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '#how-it-works',
+            start: 'center center+=40', // centred below the 80px fixed header
+            end: '+=1200',
+            pin: true,
+            scrub: 0.6,
+            refreshPriority: 1, // pinned before the triggers below it measure their positions
+          },
+        });
+        tl.fromTo('[data-steps-progress]', { scaleX: 0 }, { scaleX: 1, duration: cards.length, ease: 'none' }, 0);
+        cards.forEach((card, i) => {
+          tl.to(card, { opacity: 1, scale: 1.04, y: -12, duration: 0.6, ease: 'power2.out' }, i);
+          tl.fromTo(card.querySelector('[data-step-badge]'), { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1 }, i);
+          if (i > 0) tl.to(cards[i - 1], { scale: 1, y: 0, duration: 0.6, ease: 'power2.out' }, i);
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: pageRef }
+  );
 
   return (
+    <div ref={pageRef}>
     <PageWrapper padding="none">
       <SEO
         title="Cafe at Once | Nitrogen-Preserved Arabica Coffee in a Press Tube | India"
@@ -76,14 +145,23 @@ const HomePage: React.FC = () => {
       />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center">
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
-            backgroundSize: '40px 40px',
-          }}
+      <section
+        data-hero
+        className="relative bg-gradient-to-b from-background via-background to-white overflow-hidden lg:min-h-[85vh] flex items-center"
+      >
+        {/* Vanta fog on desktop; the dotted pattern everywhere else */}
+        <VantaBackground
+          fallback={
+            <div
+              className="absolute inset-0 opacity-5"
+              style={{
+                backgroundImage: 'radial-gradient(circle at 2px 2px, #8B7355 1px, transparent 0)',
+                backgroundSize: '40px 40px',
+              }}
+            />
+          }
         />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white pointer-events-none" aria-hidden="true" />
 
         {/* Phones: headline, then the product, then the details. Desktop: text left, product right. */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 lg:py-12 grid lg:grid-cols-2 gap-x-12 gap-y-6 items-center">
@@ -95,17 +173,18 @@ const HomePage: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <Zap className="h-4 w-4 text-primary" />
-              <span className="text-xs sm:text-sm font-medium text-primary">India's First Nitrogen-Preserved Coffee</span>
+              <ShinyText text="India's First Nitrogen-Preserved Coffee" className="text-xs sm:text-sm font-medium text-primary" />
             </motion.div>
 
             <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
-              <WordReveal text="Real Coffee." className="block" delay={0.1} />
-              <WordReveal text="No Machine. No Compromise." className="block text-primary mt-1 sm:mt-2" delay={0.35} />
+              <SplitText text="Real Coffee." className="block" delay={0.1} />
+              <SplitText text="No Machine. No Compromise." className="block text-primary mt-1 sm:mt-2" delay={0.45} stagger={0.02} />
             </h1>
           </div>
 
           {/* Product: gently floats, with soft steam */}
           <motion.div
+            data-hero-parallax
             className="relative flex justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -146,14 +225,16 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Magnet padding={40} strength={5} className="w-full sm:w-auto">
               <Link
                 to="/products"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-heading font-bold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 data-testid="hero-shop-now"
               >
                 Shop Cafe at Once
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
+              </Magnet>
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white border-2 border-border hover:border-primary text-foreground hover:text-primary font-heading font-bold rounded-full transition-all duration-300"
@@ -194,23 +275,33 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <CampaignBanner />
+
       {/* How it works */}
       <section id="how-it-works" className="bg-white py-12 lg:py-16 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-8 sm:mb-12">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
               Coffee in <span className="text-primary">5 Seconds</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
               Revolutionary coffee concentrate technology that delivers barista-quality coffee instantly
             </p>
           </Reveal>
 
+          {/* Progress line for the pinned desktop scene; shown by GSAP only when the scene runs */}
+          <div data-steps-track className="invisible hidden lg:block h-1 mb-10 rounded-full bg-border overflow-hidden" aria-hidden="true">
+            <div data-steps-progress className="h-full bg-primary origin-left" />
+          </div>
+
           <Stagger className={`${SWIPE_ROW} md:grid md:grid-cols-3 md:gap-8 lg:gap-12 md:mx-0 md:px-0 md:overflow-visible`}>
             {STEPS.map((item) => (
               <StaggerItem key={item.step} className="snap-center shrink-0 w-[78%] md:w-auto">
-                <div className="relative h-full bg-secondary border border-border rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-all duration-300 hover:shadow-hover">
-                  <div className="absolute top-4 right-4 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-heading font-bold shadow-lg">
+                <div
+                  data-step-card
+                  className="relative h-full bg-secondary border border-border rounded-2xl p-6 sm:p-8 hover:border-primary/50 transition-[border-color,box-shadow] duration-300 hover:shadow-hover"
+                >
+                  <div data-step-badge className="absolute top-4 right-4 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-heading font-bold shadow-lg">
                     {item.step}
                   </div>
                   <img
@@ -235,9 +326,9 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
             <div>
-              <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-2 sm:mb-4">
+              <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-2 sm:mb-4">
                 Featured <span className="text-primary">Products</span>
-              </h2>
+              </ScrollFloat>
               <p className="text-base sm:text-lg text-foreground/70">Discover our most popular coffee concentrates</p>
             </div>
             <Link
@@ -251,7 +342,7 @@ const HomePage: React.FC = () => {
 
           <Stagger className={`${SWIPE_ROW} sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:mx-0 sm:px-0 sm:overflow-visible`}>
             {featuredProducts.slice(0, 4).map((product) => (
-              <StaggerItem key={product.id} className="snap-start shrink-0 w-[75%] sm:w-auto">
+              <StaggerItem key={product.id} className="snap-start shrink-0 w-[44%] sm:w-auto">
                 <ProductCard {...product} />
               </StaggerItem>
             ))}
@@ -263,9 +354,9 @@ const HomePage: React.FC = () => {
       <section className="bg-background py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-8 sm:mb-12">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold text-foreground mb-3 sm:mb-4">
               Why Choose <span className="text-primary">Cafe at Once</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-foreground/70 max-w-2xl mx-auto">
               The only coffee that combines real brewed Arabica taste with true portability. No machine. No fridge. No
               compromise.
@@ -274,15 +365,14 @@ const HomePage: React.FC = () => {
 
           <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {FEATURES.map(({ icon: Icon, title, description, color, bgColor }) => (
-              <StaggerItem
-                key={title}
-                className="bg-white border border-border rounded-2xl p-4 sm:p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover"
-              >
+              <StaggerItem key={title}>
+                <SpotlightCard className="h-full bg-white border border-border rounded-2xl p-4 sm:p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-hover">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 ${bgColor} rounded-xl flex items-center justify-center mb-3 sm:mb-4`}>
                   <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${color}`} />
                 </div>
                 <h3 className="font-heading text-base sm:text-lg font-bold text-foreground mb-1 sm:mb-2">{title}</h3>
                 <p className="text-xs sm:text-sm text-foreground/70">{description}</p>
+                </SpotlightCard>
               </StaggerItem>
             ))}
           </Stagger>
@@ -300,9 +390,9 @@ const HomePage: React.FC = () => {
       <section className="bg-foreground text-white py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <Reveal className="space-y-5 sm:space-y-6">
-            <h2 className="font-heading text-3xl sm:text-5xl font-bold">
+            <ScrollFloat className="font-heading text-3xl sm:text-5xl font-bold">
               Discover Coffee <span className="text-primary">Insights</span>
-            </h2>
+            </ScrollFloat>
             <p className="text-base sm:text-lg text-white/80 leading-relaxed">
               Explore the fascinating world of coffee with our curated collection of brewing techniques, culture insights,
               and expert tips.
@@ -334,12 +424,14 @@ const HomePage: React.FC = () => {
               controls
               playsInline
               preload="none"
+              data-insights-video
               className="w-full rounded-3xl shadow-2xl bg-black/20 aspect-video"
             />
           </Reveal>
         </div>
       </section>
     </PageWrapper>
+    </div>
   );
 };
 

@@ -75,6 +75,7 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'router': ['react-router-dom'],
           'ui-libs': ['lucide-react', 'framer-motion'],
+          'animation': ['gsap', 'gsap/ScrollTrigger', 'gsap/SplitText', '@gsap/react', 'lenis'],
         },
         // Optimize chunk naming
         chunkFileNames: 'js/[name]-[hash].js',
