@@ -1,138 +1,141 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
+import {
+  GuideFAQ,
+  GuideHeader,
+  GuideSection,
+  GuideTable,
+  ProductCallout,
+  RelatedGuides,
+  SITE,
+  type FAQ,
+} from '../../components/GuidePage';
 
-const WhyArabicaCoffeeMatters: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-background pb-16">
-      <SEO 
-        title="Why Arabica Coffee Matters: A Guide to Coffee Quality | Cafe at Once"
-        description="Not all coffee beans are created equal. Learn why Arabica is the gold standard, and what to look for in your next cup."
-        url="https://cafeatonce.com/blog/why-arabica-coffee-matters"
-        type="article"
-        breadcrumbs={[
-          { name: "Home", url: "https://cafeatonce.com" },
-          { name: "Blog", url: "https://cafeatonce.com/insights" },
-          { name: "Why Arabica Coffee Matters", url: "https://cafeatonce.com/blog/why-arabica-coffee-matters" }
-        ]}
+const URL = `${SITE}/blog/why-arabica-coffee-matters`;
+
+const FAQS: FAQ[] = [
+  {
+    question: 'Is Arabica better than Robusta?',
+    answer:
+      'For flavour, most people prefer Arabica: it is sweeter, softer and more aromatic. Robusta is stronger, more bitter and has more caffeine, which is why it is used in many instant coffees and in some espresso blends for crema. Better depends on what you want from the cup.',
+  },
+  {
+    question: 'Does Arabica have less caffeine than Robusta?',
+    answer:
+      'Yes. Arabica beans typically contain a little over 1% caffeine and Robusta about twice that. That is one reason Robusta tastes more bitter.',
+  },
+  {
+    question: 'Is coffee grown in India Arabica?',
+    answer:
+      'India grows both. Arabica is grown at higher altitudes, mainly in the hills of Karnataka (Chikmagalur and Coorg), Kerala, Tamil Nadu (the Nilgiris) and Andhra Pradesh (Araku). Robusta is grown more widely at lower altitudes.',
+  },
+  {
+    question: 'Is Cafe at Once 100% Arabica?',
+    answer:
+      'Yes. Every Cafe at Once coffee is brewed from 100% Arabica coffee, with no sugar, preservatives or flavourings added.',
+  },
+];
+
+const WhyArabicaCoffeeMatters: React.FC = () => (
+  <div className="min-h-screen bg-background pt-28 pb-20">
+    <SEO
+      title="Arabica vs Robusta: Why Arabica Coffee Matters | Cafe at Once"
+      description="Arabica vs Robusta explained: taste, caffeine, where they grow, including India, and how to tell good Arabica coffee from the label."
+      keywords="arabica vs robusta, why arabica coffee, arabica coffee India, 100% arabica coffee, arabica caffeine"
+      url={URL}
+      type="article"
+      breadcrumbs={[
+        { name: 'Home', url: SITE },
+        { name: 'Blog', url: `${SITE}/insights` },
+        { name: 'Why Arabica Coffee Matters', url: URL },
+      ]}
+      faq={FAQS}
+    />
+
+    <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <GuideHeader
+        label="Coffee basics"
+        title={
+          <>
+            Why <span className="text-primary">Arabica</span> coffee matters
+          </>
+        }
+        intro="Almost all the coffee in the world comes from two species: Arabica and Robusta. They taste very different. Here is what sets them apart, where India fits in, and what to look for on a label."
+        updated="October 2026"
       />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link 
-          to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Insights
-        </Link>
+      <GuideSection title="Arabica vs Robusta at a glance">
+        <GuideTable
+          head={['', 'Arabica', 'Robusta']}
+          rows={[
+            ['Taste', 'Sweeter, softer, aromatic; fruity, floral or chocolatey notes', 'Stronger, harsher, more bitter; earthy, woody notes'],
+            ['Caffeine', 'A little over 1% of the bean', 'About twice as much'],
+            ['Where it grows', 'Higher altitudes, cooler climates', 'Lower altitudes, hotter climates'],
+            ['Growing', 'More delicate, more prone to pests and disease', 'Hardier, higher yields'],
+            ['Share of world coffee', 'Around 60%', 'Most of the rest'],
+            ['Common uses', 'Specialty coffee, filter, cafés', 'Instant coffee, some espresso blends'],
+          ]}
+        />
+      </GuideSection>
 
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
-            Coffee Knowledge
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
-            Why Arabica Coffee Matters: A Guide to Coffee Quality
-          </h1>
-          <p className="text-xl text-foreground/70 mb-6">
-            Not all coffee beans are created equal. Learn why Arabica is the gold standard, 
-            and what to look for in your next cup.
-          </p>
-          <div className="flex items-center gap-6 text-sm text-foreground/60">
-            <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              January 2026
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              5 min read
-            </span>
-          </div>
-        </motion.header>
+      <GuideSection title="Why Arabica tastes better">
+        <p>
+          Arabica beans carry more natural sugars and oils and less caffeine than Robusta. Caffeine itself is bitter, so
+          having less of it, plus more sugars to caramelise during roasting, is a big part of why Arabica tastes sweeter
+          and smoother. The aromatic oils are where the fruity, floral and chocolatey notes come from.
+        </p>
+        <p>
+          Robusta has its place: it is hardy, cheap to grow and adds punch and crema to some espresso blends. But for a
+          cup you drink black, or a cold brew you want smooth, Arabica is the one to choose.
+        </p>
+      </GuideSection>
 
-        <div className="aspect-video bg-secondary rounded-2xl overflow-hidden mb-12">
-          <img
-            src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&q=80"
-            alt="Arabica coffee beans"
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <GuideSection title="Why it costs more">
+        <p>
+          Arabica needs altitude, steady temperatures and careful growing. It yields less per plant and is more easily
+          hit by pests, disease and bad weather. Good Arabica is also often picked by hand, so only ripe cherries go in.
+          All of that costs more, and it is why cheaper coffees, especially many instant coffees, lean on Robusta.
+        </p>
+      </GuideSection>
 
-        <div className="prose prose-lg max-w-none">
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Arabica vs Robusta: The Two Main Species
-            </h2>
-            <p className="text-foreground/80 leading-relaxed">
-              When you buy coffee, you're typically getting one of two species: Arabica or Robusta. 
-              While Robusta is easier to grow and has higher caffeine content, Arabica accounts for 
-              about 60% of world coffee production, and for good reason.
-            </p>
-          </section>
+      <GuideSection title="Arabica in India">
+        <p>
+          India grows both species. Its Arabica comes from the hills: Chikmagalur and Coorg in Karnataka, Wayanad in
+          Kerala, the Nilgiris in Tamil Nadu and the Araku valley in Andhra Pradesh, usually grown in the shade of
+          taller trees alongside pepper and spices.
+        </p>
+      </GuideSection>
 
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              The Arabica Flavour Profile
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content describing Arabica's complex, nuanced flavours, fruity, floral, acidic notes vs Robusta's harsh, bitter profile]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Growing Conditions: Why Arabica Is Harder to Cultivate
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content about altitude requirements, climate sensitivity, hand-picking necessity]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Reading Coffee Labels: What to Look For
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Guide to identifying quality Arabica: single-origin, altitude information, roast dates]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Why Cafe at Once Uses 100% Arabica
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              At <Link to="/products" className="text-primary hover:underline">Cafe at Once</Link>, we use exclusively 100% Arabica beans. 
-              Our <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">nitrogen-preservation process</Link> is 
-              specifically designed to capture and maintain the delicate aromatics and complex flavour profile 
-              that makes Arabica special.
-            </p>
-          </section>
-        </div>
-
-        <div className="bg-secondary rounded-2xl p-8 mt-12">
-          <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
-            100% Arabica, Preserved at Peak Freshness
-          </h3>
-          <p className="text-foreground/70 mb-6">
-            Cafe at Once uses only premium Arabica beans, brewed and nitrogen-preserved to lock in 
-            the complex flavours that define great coffee.
-          </p>
-          <Link 
-            to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
-          >
-            Shop 100% Arabica Coffee
+      <GuideSection title="How to read a coffee label">
+        <p>A few things on a pack tell you most of what you need to know:</p>
+        <GuideTable
+          head={['Look for', 'Why']}
+          rows={[
+            ['"100% Arabica"', 'Without the "100%", it may be a blend with Robusta.'],
+            ['Origin or estate', 'A named region or estate means the roaster knows where it came from.'],
+            ['Roast or brew date', 'Coffee loses aroma with time; a recent date, or a sealed pack, matters.'],
+            ['Ingredients', 'For ready-made coffee, the shorter the list the better: ideally just coffee.'],
+          ]}
+        />
+        <p>
+          Freshness matters as much as the bean. Read how{' '}
+          <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary underline underline-offset-4">
+            nitrogen keeps brewed coffee fresh
           </Link>
-        </div>
-      </article>
-    </div>
-  );
-};
+          .
+        </p>
+      </GuideSection>
+
+      <ProductCallout
+        id="americano-concentrate"
+        pitch="100% Arabica, brewed and sealed with nitrogen. One ingredient, no sugar, ready in 5 seconds."
+      />
+
+      <GuideFAQ faqs={FAQS} />
+      <RelatedGuides current="" />
+    </article>
+  </div>
+);
 
 export default WhyArabicaCoffeeMatters;

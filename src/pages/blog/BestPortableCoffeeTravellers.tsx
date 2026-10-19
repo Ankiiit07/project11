@@ -1,136 +1,147 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
+import {
+  GuideFAQ,
+  GuideHeader,
+  GuideSection,
+  GuideTable,
+  ProductCallout,
+  RelatedGuides,
+  SITE,
+  type FAQ,
+} from '../../components/GuidePage';
 
-const BestPortableCoffeeTravellers: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-background pb-16">
-      <SEO 
-        title="Best Portable Coffee for Travellers in India (2025 Guide) | Cafe at Once"
-        description="Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for Indian travellers, from press tubes to pour-overs."
-        url="https://cafeatonce.com/blog/best-portable-coffee-travellers-india"
-        type="article"
-        breadcrumbs={[
-          { name: "Home", url: "https://cafeatonce.com" },
-          { name: "Blog", url: "https://cafeatonce.com/insights" },
-          { name: "Best Portable Coffee for Travellers", url: "https://cafeatonce.com/blog/best-portable-coffee-travellers-india" }
-        ]}
+const URL = `${SITE}/blog/best-portable-coffee-travellers-india`;
+
+const FAQS: FAQ[] = [
+  {
+    question: 'Can I carry coffee in my cabin bag on Indian flights?',
+    answer:
+      'Ground coffee, instant sachets and drip bags are fine. Liquids in cabin bags are generally limited to 100 ml per container, so a bottle of cold coffee usually is not. A Cafe at Once tube holds 16 g of concentrate, well under that limit.',
+  },
+  {
+    question: 'What is the best coffee for a hotel room?',
+    answer:
+      'Anything that only needs water. Most hotel rooms have a kettle, so drip bags and press tubes both work. If the kettle is missing or doubtful, a press tube works with cold or room-temperature water too.',
+  },
+  {
+    question: 'What coffee can I take trekking or camping?',
+    answer:
+      'Something light, sealed and spill-proof that needs no fridge. Press tubes work with cold stream or bottled water, so you do not have to boil water at altitude. Carry your empty tubes back out.',
+  },
+  {
+    question: 'How long does Cafe at Once last in a bag?',
+    answer:
+      'Twelve months from manufacture, unopened, with no refrigeration. Keep tubes out of direct sun, for example inside your bag rather than on a car dashboard.',
+  },
+];
+
+const BestPortableCoffeeTravellers: React.FC = () => (
+  <div className="min-h-screen bg-background pt-28 pb-20">
+    <SEO
+      title="Best Portable Coffee for Travellers in India (2026 Guide) | Cafe at Once"
+      description="Flights, trains, hotel rooms and treks: the best portable coffee options for Indian travellers compared, from instant sachets and drip bags to press tubes, plus practical tips."
+      keywords="portable coffee India, travel coffee, coffee for travel, best coffee for flights, coffee for trekking, hotel room coffee"
+      url={URL}
+      type="article"
+      breadcrumbs={[
+        { name: 'Home', url: SITE },
+        { name: 'Blog', url: `${SITE}/insights` },
+        { name: 'Best Portable Coffee for Travellers', url: URL },
+      ]}
+      faq={FAQS}
+    />
+
+    <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <GuideHeader
+        label="Travel guide"
+        title={
+          <>
+            The best portable coffee <span className="text-primary">for travellers in India</span>
+          </>
+        }
+        intro="A 6 am flight, an overnight train, a budget hotel or a trek in Himachal: good coffee on the road is hard to find. Here is every way to carry your own, compared honestly."
+        updated="October 2026"
       />
 
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link 
-          to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Insights
-        </Link>
+      <GuideSection title="What makes coffee good for travel">
+        <p>Before comparing options, here is what actually matters when you are away from your kitchen:</p>
+        <GuideTable
+          head={['Need', 'Why it matters']}
+          rows={[
+            ['Small and light', 'Bag space and baggage weight are limited'],
+            ['Sealed and spill-proof', 'Nothing leaks over your clothes'],
+            ['Cabin-friendly', 'Liquids in cabin bags are generally capped at 100 ml per container'],
+            ['No fridge needed', 'Hotel rooms, trains and tents rarely have one'],
+            ['Works with any water', 'Hot water is not always available, or safe'],
+            ['Tastes like real coffee', 'The reason you are carrying it at all'],
+          ]}
+        />
+      </GuideSection>
 
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
-            Travel Guide
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
-            Best Portable Coffee for Travellers in India (2025 Guide)
-          </h1>
-          <p className="text-xl text-foreground/70 mb-6">
-            Forget sachets and bad hotel coffee. Discover the best portable coffee solutions for 
-            Indian travellers, from press tubes to pour-overs.
-          </p>
-          <div className="flex items-center gap-6 text-sm text-foreground/60">
-            <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              January 2026
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              10 min read
-            </span>
-          </div>
-        </motion.header>
+      <GuideSection title="Your options, compared">
+        <GuideTable
+          head={['Option', 'Needs', 'Taste', 'Good for', 'Watch out for']}
+          rows={[
+            ['Instant sachets', 'Hot water', 'Flat, often bitter', 'Anywhere with a kettle', 'Many are pre-mixed with sugar and creamer'],
+            ['Drip bags (pour-over bags)', 'Hot water, a mug, 3 to 4 minutes', 'Good', 'Hotel rooms', 'Need properly hot water; bags go stale once opened'],
+            ['Travel French press or AeroPress', 'Ground coffee, hot water, washing up', 'Very good', 'Road trips, long stays', 'Bulky, and you carry the grounds out'],
+            ['Bottled or canned cold coffee', 'Nothing', 'Varies; often sweet', 'Train and road journeys', 'Heavy, best chilled, not allowed through cabin security'],
+            [
+              <Link key="t" to="/products" className="text-primary underline underline-offset-4">
+                Nitrogen-preserved press tube
+              </Link>,
+              'Any water or milk, hot or cold',
+              'Brewed taste',
+              'Flights, hotels, treks, office',
+              'Use a tube once it is opened',
+            ],
+          ]}
+        />
+      </GuideSection>
 
-        <div className="aspect-video bg-secondary rounded-2xl overflow-hidden mb-12">
-          <img
-            src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&q=80"
-            alt="Traveller enjoying portable coffee"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="prose prose-lg max-w-none">
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Introduction: The Traveller's Coffee Dilemma
-            </h2>
-            <p className="text-foreground/80 leading-relaxed">
-              Whether you're catching a 6 AM flight, checking into a budget hotel, or camping in Himachal, 
-              finding decent coffee on the road is a universal struggle. Most travellers settle for 
-              instant coffee sachets, thin, bitter, and nothing like the real thing. But it doesn't 
-              have to be this way.
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              What Makes Coffee "Travel-Friendly"?
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content covering: TSA compliance, no refrigeration needed, works with any water temp, lightweight, spill-proof]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Top Portable Coffee Options Compared
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Comparison of: instant sachets, pour-over bags, Aeropress, and nitrogen-preserved press tubes like <Link to="/products" className="text-primary hover:underline">Cafe at Once</Link>]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Why Press Tubes Are the Future
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content highlighting convenience, taste quality, and shelf stability]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Pro Tips for Coffee on the Go
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Practical tips: carrying hot water, hotel room hacks, airport lounge strategies]
-            </p>
-          </section>
-        </div>
-
-        <div className="bg-secondary rounded-2xl p-8 mt-12">
-          <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
-            Travel with Real Coffee
-          </h3>
-          <p className="text-foreground/70 mb-6">
-            Cafe at Once press tubes are TSA-compliant, need no refrigeration, and work with any water temperature. 
-            Real Arabica coffee, anywhere you go.
-          </p>
-          <Link 
-            to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
-          >
-            Shop Travel-Ready Coffee
+      <GuideSection title="Why press tubes win on the road">
+        <p>
+          A Cafe at Once tube is real brewed 100% Arabica coffee, sealed with nitrogen so it keeps for 12 months without a
+          fridge. It holds 16 g of concentrate, so it fits in a pocket and stays well under cabin liquid limits. Squeeze
+          it into 150 to 300 ml of water or milk, hot or cold, stir, and it is ready in about 5 seconds. There is nothing
+          to wash up and nothing to boil. Read{' '}
+          <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary underline underline-offset-4">
+            how nitrogen keeps it fresh
           </Link>
-        </div>
-      </article>
-    </div>
-  );
-};
+          .
+        </p>
+      </GuideSection>
+
+      <ProductCallout
+        id="latte-pack-6"
+        pitch="Six Latte tubes for the trip: real brewed Arabica, no fridge, cabin-bag friendly. Our best price per cup."
+      />
+
+      <GuideSection title="Practical tips, trip by trip">
+        <GuideTable
+          head={['Where', 'Tip']}
+          rows={[
+            ['Flights', 'Keep a tube in your pocket and ask the crew for hot water; a bottle of cold water works too.'],
+            ['Trains', 'Pantry cars and station stalls can usually give you hot water; a bottle of water at room temperature works just as well.'],
+            ['Hotel rooms', 'Rinse the kettle first. No kettle? Mix with the room\'s bottled water and some ice from the bar.'],
+            ['Treks and camping', 'Skip the stove: mix with cold water at camp. Pack empty tubes out with your rubbish.'],
+            ['Road trips', 'Keep tubes in your bag, not on the dashboard in direct sun.'],
+            ['Office and meetings', 'Keep a few in a drawer for the afternoon slump; no queue at the machine.'],
+          ]}
+        />
+        <p>
+          Prefer it iced? Our guide to{' '}
+          <Link to="/cold-brew-coffee" className="text-primary underline underline-offset-4">cold brew coffee</Link> shows how to
+          make a glass in 5 seconds.
+        </p>
+      </GuideSection>
+
+      <GuideFAQ faqs={FAQS} />
+      <RelatedGuides current="" />
+    </article>
+  </div>
+);
 
 export default BestPortableCoffeeTravellers;
