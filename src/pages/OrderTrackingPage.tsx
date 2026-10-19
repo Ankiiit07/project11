@@ -158,7 +158,7 @@ const OrderTrackingPage: React.FC = () => {
             {STEPS.map((step, i) => (
               <li key={step.key} className="text-center">
                 <div className={`h-1.5 rounded-full mb-2 ${i <= reached ? 'bg-primary' : 'bg-border'}`} />
-                <span className={`block text-[11px] sm:text-xs leading-tight ${i <= reached ? 'text-foreground font-medium' : 'text-foreground/50'}`}>
+                <span className={`block text-[11px] sm:text-xs leading-tight ${i <= reached ? 'text-foreground font-medium' : 'text-foreground/70'}`}>
                   {step.label}
                 </span>
               </li>
@@ -175,7 +175,7 @@ const OrderTrackingPage: React.FC = () => {
               <li key={i} className="ml-5">
                 <span className={`absolute -left-[5px] mt-1.5 w-2.5 h-2.5 rounded-full ${i === 0 ? 'bg-primary' : 'bg-border'}`} />
                 <p className={`text-sm ${i === 0 ? 'font-medium text-foreground' : 'text-foreground/80'}`}>{c.activity}</p>
-                <p className="text-xs text-foreground/60 flex flex-wrap items-center gap-x-2">
+                <p className="text-xs text-foreground/70 flex flex-wrap items-center gap-x-2">
                   {formatDate(c.date)}
                   {c.location && (
                     <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {c.location}</span>

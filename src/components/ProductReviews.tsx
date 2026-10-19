@@ -192,7 +192,7 @@ const ProductReviews: React.FC<{ productId: string; data: ProductReviewsResponse
         </div>
       )}
       {user && canReview === false && !mine && (
-        <p className="mb-6 text-sm text-foreground/60">You can review this product after you buy it.</p>
+        <p className="mb-6 text-sm text-foreground/70">You can review this product after you buy it.</p>
       )}
 
       {reviews.length > 0 && (
@@ -208,7 +208,7 @@ const ProductReviews: React.FC<{ productId: string; data: ProductReviewsResponse
                   <button
                     onClick={() => moderate(r, r.status === 'hidden' ? 'show' : 'hide')}
                     disabled={busy === r.id}
-                    className="inline-flex items-center gap-1 text-xs text-foreground/60 hover:text-primary"
+                    className="inline-flex items-center gap-1 text-xs text-foreground/70 hover:text-primary"
                   >
                     {r.status === 'hidden' ? (
                       <>
@@ -224,7 +224,7 @@ const ProductReviews: React.FC<{ productId: string; data: ProductReviewsResponse
                 )}
               </div>
               <p className="mt-2 text-foreground/80 whitespace-pre-line">{r.text}</p>
-              <p className="mt-3 text-xs text-foreground/60 flex items-center gap-1 flex-wrap">
+              <p className="mt-3 text-xs text-foreground/70 flex items-center gap-1 flex-wrap">
                 {r.name} ·{' '}
                 <span className="inline-flex items-center gap-0.5 text-green-700">
                   <BadgeCheck className="h-3.5 w-3.5" /> Verified purchase

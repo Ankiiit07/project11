@@ -1,13 +1,21 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L3JFF0Y1M8"></script>
+    <!-- Google tag (gtag.js). Events queue in dataLayer straight away; the 190 KB library is
+         fetched once the page has loaded, so it never competes with the page itself. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-L3JFF0Y1M8');
+      addEventListener('load', function () {
+        setTimeout(function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-L3JFF0Y1M8';
+          document.head.appendChild(s);
+        }, 1500);
+      });
     </script>
     
     <meta charset="UTF-8" />
@@ -72,17 +80,16 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Cafe at Once" />
     <meta name="application-name" content="Cafe at Once" />
-    <meta name="theme-color" content="#8B7355" />
-    <meta name="msapplication-TileColor" content="#8B7355" />
+    <meta name="theme-color" content="#765F45" />
+    <meta name="msapplication-TileColor" content="#765F45" />
     <meta name="msapplication-tap-highlight" content="no" />
     
-    <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
-    <!-- Font loading optimization - Tech-Forward Design System -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&amp;family=DM+Mono:wght@400;500&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&amp;family=DM+Mono:wght@400;500&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" /></noscript>
+    <!-- Product photos come from Cloudinary -->
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+
+    <!-- Fonts are self-hosted and subset (public/fonts, @font-face in src/index.css); the
+         headline font is preloaded so the kinetic type is ready as early as possible -->
+    <link rel="preload" href="/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin />
     
     <!-- Critical CSS inline for faster loading -->
     <style>

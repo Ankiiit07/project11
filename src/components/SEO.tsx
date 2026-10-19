@@ -254,18 +254,8 @@ const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:site" content="@cafeatonce" />
       
       {/* Additional SEO Meta Tags */}
-      <meta name="theme-color" content="#8B7355" />
-      <meta name="msapplication-TileColor" content="#8B7355" />
-      
-      {/* Preconnect to external domains */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://checkout.razorpay.com" />
-      
-      {/* DNS Prefetch */}
-      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-      <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-      <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+      <meta name="theme-color" content="#765F45" />
+      <meta name="msapplication-TileColor" content="#765F45" />
       
       {/* Structured Data */}
       {/* Helmet only renders a script's children (it ignores dangerouslySetInnerHTML) */}

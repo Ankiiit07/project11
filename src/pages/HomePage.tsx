@@ -200,7 +200,7 @@ const HomePage: React.FC = () => {
             </p>
 
             <h1
-              className="font-heading text-5xl sm:text-7xl lg:text-[4.75rem] font-extrabold uppercase text-foreground leading-[0.9] tracking-[-0.02em]"
+              className="font-heading text-5xl sm:text-6xl lg:text-[3.25rem] xl:text-[4.25rem] font-extrabold uppercase text-foreground leading-[0.9] tracking-[-0.02em]"
               style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}
             >
               <span data-k-line className="block" style={{ fontVariationSettings: "'wdth' var(--wdth, 100)" }}>
@@ -226,7 +226,8 @@ const HomePage: React.FC = () => {
                 aria-hidden="true"
                 width={720}
                 height={1134}
-                fetchPriority="high"
+                // React 18 doesn't know the camelCase prop yet; the lowercase attribute is the HTML one
+                {...{ fetchpriority: 'high' }}
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <video
@@ -237,12 +238,15 @@ const HomePage: React.FC = () => {
                 aria-hidden="true"
                 tabIndex={-1}
                 className="absolute inset-0 w-full h-full object-cover opacity-0 invisible [transform:translateZ(0)]"
-              />
+              >
+                {/* The footage is silent; the caption track says so */}
+                <track kind="captions" src="/hero/pour.vtt" srcLang="en" label="English" />
+              </video>
               <span className="absolute left-0 bottom-0 px-3 py-2 bg-foreground text-background font-mono text-[10px] sm:text-xs uppercase tracking-[0.14em]">
                 Real pour · Americano<span className="hidden sm:inline">, pressed into water</span>
               </span>
             </div>
-            <div data-pour-cue className="hidden lg:block mt-3 font-mono text-xs uppercase tracking-[0.2em] text-foreground/60" aria-hidden="true">
+            <div data-pour-cue className="hidden lg:block mt-3 font-mono text-xs uppercase tracking-[0.2em] text-foreground/70" aria-hidden="true">
               Scroll to pour
             </div>
           </div>
@@ -251,7 +255,7 @@ const HomePage: React.FC = () => {
             <div className="space-y-3">
               <p className="text-base sm:text-xl text-foreground/80 leading-relaxed max-w-xl">
                 India's first{' '}
-                <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary hover:underline">
+                <Link to="/blog/what-is-nitrogen-preserved-coffee" className="text-primary underline underline-offset-4">
                   nitrogen-preserved brewed Arabica coffee
                 </Link>{' '}
                 in a press tube. Squeeze it into water or milk and it is ready in 5 seconds. No machine, no fridge, nothing added.
@@ -291,7 +295,7 @@ const HomePage: React.FC = () => {
                     <CountUp to={stat.to} />
                     <span className="text-primary">{stat.unit}</span>
                   </div>
-                  <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.12em] text-foreground/60">{stat.label}</div>
+                  <div className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.12em] text-foreground/70">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -309,7 +313,7 @@ const HomePage: React.FC = () => {
       {/* How it works: three steps as stacked rows, each verb widening as it crosses the screen */}
       <section id="how-it-works" className="bg-background py-16 lg:py-24 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/60 mb-3">How it works</p>
+          <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/70 mb-3">How it works</p>
           <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase text-foreground leading-[0.95] mb-10 sm:mb-14">
             Three moves. <span className="text-primary">Five seconds.</span>
           </KineticHeading>
@@ -317,7 +321,7 @@ const HomePage: React.FC = () => {
           <ol className="border-b border-foreground">
             {STEPS.map((item) => (
               <li key={item.step} className="grid grid-cols-12 items-center gap-x-4 gap-y-2 border-t border-foreground py-6 sm:py-8">
-                <span className="col-span-2 sm:col-span-1 font-mono text-sm text-foreground/60">{item.step}</span>
+                <span className="col-span-2 sm:col-span-1 font-mono text-sm text-foreground/70">{item.step}</span>
                 <KineticWord
                   as="h3"
                   className="col-span-10 sm:col-span-6 font-heading font-extrabold uppercase leading-[0.85] text-[clamp(3.5rem,13vw,10rem)] text-foreground"
@@ -371,7 +375,7 @@ const HomePage: React.FC = () => {
       <section className="bg-secondary border-t border-foreground py-16 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-10">
           <div className="lg:col-span-5">
-            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/60 mb-3">Why people carry it</p>
+            <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/70 mb-3">Why people carry it</p>
             <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase text-foreground leading-[0.95]">
               Brewed first. <span className="text-primary">Sealed second.</span>
             </KineticHeading>
@@ -382,15 +386,15 @@ const HomePage: React.FC = () => {
               Read the FAQ
             </Link>
           </div>
-          <dl className="lg:col-span-7 border-b border-foreground">
+          <ol className="lg:col-span-7 border-b border-foreground">
             {REASONS.map((r, i) => (
-              <div key={r.title} className="grid grid-cols-12 gap-4 border-t border-foreground py-5 sm:py-6">
-                <span className="col-span-2 font-mono text-sm text-foreground/60">{String(i + 1).padStart(2, '0')}</span>
-                <dt className="col-span-10 sm:col-span-4 font-heading text-2xl sm:text-3xl font-extrabold uppercase leading-none">{r.title}</dt>
-                <dd className="col-span-10 col-start-3 sm:col-span-6 sm:col-start-auto text-base text-foreground/80">{r.description}</dd>
-              </div>
+              <li key={r.title} className="grid grid-cols-12 gap-4 border-t border-foreground py-5 sm:py-6">
+                <span className="col-span-2 font-mono text-sm text-foreground/70" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <h3 className="col-span-10 sm:col-span-4 font-heading text-2xl sm:text-3xl font-extrabold uppercase leading-none">{r.title}</h3>
+                <p className="col-span-10 col-start-3 sm:col-span-6 sm:col-start-auto text-base text-foreground/80">{r.description}</p>
+              </li>
             ))}
-          </dl>
+          </ol>
         </div>
       </section>
 
@@ -400,13 +404,13 @@ const HomePage: React.FC = () => {
           <Reveal className="space-y-5 sm:space-y-6">
             <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-white/60">Coffee notes</p>
             <KineticHeading className="font-heading text-4xl sm:text-6xl font-extrabold uppercase leading-[0.95]">
-              Read before <span className="text-primary">you press.</span>
+              Read before <span className="text-amber-300">you press.</span>
             </KineticHeading>
             <p className="text-base sm:text-lg text-white/80 leading-relaxed">Short reads on brewing, beans and taking good coffee with you.</p>
             <ul className="border-b border-white/30">
               {READS.map((r) => (
                 <li key={r.to} className="border-t border-white/30">
-                  <Link to={r.to} className="block py-3 text-white/90 hover:text-primary">
+                  <Link to={r.to} className="block py-3 text-white/90 hover:text-amber-300">
                     {r.label}
                   </Link>
                 </li>

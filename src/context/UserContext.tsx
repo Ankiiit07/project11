@@ -137,7 +137,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const loginWithGoogle = () =>
     run(async () => {
       const { auth, fb } = await requireAuth();
-      await fb.signInWithPopup(auth, new fb.GoogleAuthProvider());
+      await fb.signInWithPopup(auth, new fb.GoogleAuthProvider(), fb.browserPopupRedirectResolver);
     });
 
   const register = (name: string, email: string, password: string, phone?: string) =>

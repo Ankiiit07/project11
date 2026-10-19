@@ -55,7 +55,7 @@ const StickyBuyBar: React.FC<StickyBuyBarProps> = ({ targetRef, name, price, lab
         >
           <div className="flex items-center gap-3 px-4" style={{ height: BAR_HEIGHT }}>
             <div className="min-w-0 flex-1">
-              <p className="text-xs text-foreground/60 truncate">{name}</p>
+              <p className="text-xs text-foreground/70 truncate">{name}</p>
               <p className="font-heading text-xl font-bold text-foreground">₹{price}</p>
             </div>
             <button

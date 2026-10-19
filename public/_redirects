@@ -9,4 +9,8 @@
 /css/*      /app.html     404
 /assets/*   /app.html     404
 
+# Well-known files we don't publish (e.g. /.well-known/ai-catalog.json) are a real 404,
+# not the app's HTML, so crawlers and AI agents don't read HTML as their manifest.
+/.well-known/*   /app.html   404
+
 /*    /app.html   200

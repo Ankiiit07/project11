@@ -167,7 +167,7 @@ const CartPage: React.FC = () => {
                         <h3 className="font-heading font-bold text-foreground mb-1 truncate">
                           {item.name}
                         </h3>
-                        <p className="text-sm text-foreground/60 mb-2">
+                        <p className="text-sm text-foreground/70 mb-2">
                           {item.type === 'single' ? 'Single' : 'Subscription'}
                         </p>
                         <div className="flex items-center justify-between">
@@ -235,7 +235,7 @@ const CartPage: React.FC = () => {
                       >
                         {step}
                       </div>
-                      <span className="text-xs text-foreground/60 mt-1">
+                      <span className="text-xs text-foreground/70 mt-1">
                         {step === 1 ? 'Cart' : step === 2 ? 'Checkout' : step === 3 ? 'Payment' : 'Complete'}
                       </span>
                     </div>
@@ -303,7 +303,7 @@ const CartPage: React.FC = () => {
                 Proceed to Checkout
               </Link>
 
-              <p className="text-xs text-center text-foreground/60 mt-4">
+              <p className="text-xs text-center text-foreground/70 mt-4">
                 Secure checkout powered by Razorpay
               </p>
             </div>

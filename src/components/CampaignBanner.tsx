@@ -47,7 +47,7 @@ const OfferCard: React.FC<{ product: Product; label: string; tubes: number; best
       </Link>
       <div className="mt-2 flex items-baseline gap-2">
         <span className="font-heading text-4xl sm:text-5xl font-bold leading-none text-white">₹{price}</span>
-        <span className="text-base text-white/40 line-through">₹{originalPrice}</span>
+        <span className="text-base text-white/60 line-through">₹{originalPrice}</span>
       </div>
       <p className="mt-1 text-sm text-white/70">
         ₹{Math.round(price / tubes)} per tube · <span className="font-semibold text-campaign-mint">Save ₹{savings}</span>

@@ -16,12 +16,12 @@ export const GuideHeader: React.FC<{ label: string; title: React.ReactNode; intr
   updated,
 }) => (
   <header className="border-b border-foreground pb-10 mb-12">
-    <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/60 mb-4">{label}</p>
+    <p className="font-mono text-xs sm:text-sm uppercase tracking-[0.18em] text-foreground/70 mb-4">{label}</p>
     <KineticHeading as="h1" className="font-heading text-4xl sm:text-6xl font-extrabold uppercase leading-[0.95] text-foreground mb-6">
       {title}
     </KineticHeading>
     <p className="text-lg sm:text-xl text-foreground/80 leading-relaxed max-w-3xl">{intro}</p>
-    <p className="mt-6 font-mono text-xs uppercase tracking-[0.14em] text-foreground/60">Updated {updated}</p>
+    <p className="mt-6 font-mono text-xs uppercase tracking-[0.14em] text-foreground/70">Updated {updated}</p>
   </header>
 );
 
@@ -36,7 +36,7 @@ export const GuideSection: React.FC<{ id?: string; title: string; children: Reac
 export const GuideTable: React.FC<{ head: string[]; rows: React.ReactNode[][]; caption?: string }> = ({ head, rows, caption }) => (
   <div className="overflow-x-auto -mx-4 px-4">
     <table className="w-full min-w-[34rem] text-left text-sm sm:text-base border-y border-foreground">
-      {caption && <caption className="caption-bottom pt-3 text-left text-sm text-foreground/60">{caption}</caption>}
+      {caption && <caption className="caption-bottom pt-3 text-left text-sm text-foreground/70">{caption}</caption>}
       <thead>
         <tr className="border-b border-foreground">
           {head.map((h) => (
@@ -72,7 +72,7 @@ export const GuideSteps: React.FC<{ steps: string[] }> = ({ steps }) => (
   <ol className="border-y border-foreground divide-y divide-foreground/20 not-prose">
     {steps.map((step, i) => (
       <li key={step} className="grid grid-cols-[3rem_1fr] gap-2 py-4">
-        <span className="font-mono text-sm text-foreground/60">{String(i + 1).padStart(2, '0')}</span>
+        <span className="font-mono text-sm text-foreground/70">{String(i + 1).padStart(2, '0')}</span>
         <span className="text-foreground">{step}</span>
       </li>
     ))}
@@ -140,7 +140,7 @@ export const RelatedGuides: React.FC<{ current: string }> = ({ current }) => {
   ].filter((g) => g.to !== current);
   return (
     <nav aria-label="Related guides" className="border-t border-foreground pt-8">
-      <p className="font-mono text-xs uppercase tracking-[0.18em] text-foreground/60 mb-4">Keep reading</p>
+      <p className="font-mono text-xs uppercase tracking-[0.18em] text-foreground/70 mb-4">Keep reading</p>
       <ul className="space-y-3">
         {guides.map((g) => (
           <li key={g.to}>

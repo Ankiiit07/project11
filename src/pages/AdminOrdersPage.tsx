@@ -96,12 +96,12 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
             <span className={`px-2 py-0.5 text-xs font-medium rounded border capitalize ${STATUS_STYLES[order.status]}`}>
               {order.status}
             </span>
-            <span className="text-xs text-foreground/50">{when(order.createdAt)}</span>
+            <span className="text-xs text-foreground/70">{when(order.createdAt)}</span>
           </div>
           <p className="text-sm text-foreground/80 truncate">
             {c.firstName} {c.lastName} · {c.phone} · {c.city}
           </p>
-          <p className="text-xs text-foreground/60 truncate">
+          <p className="text-xs text-foreground/70 truncate">
             {order.items.map((i) => `${i.name} × ${i.quantity}`).join(', ')}
           </p>
         </button>
@@ -118,7 +118,7 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
-          <button type="button" onClick={() => setOpen(!open)} className="p-2 text-foreground/60" aria-label="Show details">
+          <button type="button" onClick={() => setOpen(!open)} className="p-2 text-foreground/70" aria-label="Show details">
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </button>
         </div>
@@ -174,7 +174,7 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
                 Save
               </button>
             </div>
-            <p className="mt-1 text-xs text-foreground/50">Saving an AWB by hand marks a new order as shipped.</p>
+            <p className="mt-1 text-xs text-foreground/70">Saving an AWB by hand marks a new order as shipped.</p>
             {order.awbCode ? (
               <p className="mt-3 text-foreground/70">
                 {order.courierName || 'Courier'} · <Link className="text-primary hover:underline" to={`/track/${order.awbCode}`}>track</Link>
@@ -199,7 +199,7 @@ const OrderRow: React.FC<{ order: AdminOrder; onChanged: (o: AdminOrder) => void
               </p>
             )}
             {!!order.statusHistory?.length && (
-              <ul className="mt-3 text-xs text-foreground/60 space-y-0.5">
+              <ul className="mt-3 text-xs text-foreground/70 space-y-0.5">
                 {order.statusHistory.map((h, idx) => (
                   <li key={idx}>{when(h.at)}: {h.status} by {h.by}</li>
                 ))}
@@ -317,7 +317,7 @@ const AdminOrdersPage: React.FC = () => {
               ['Revenue (excl. cancelled)', inr(s.revenue)],
             ].map(([label, value]) => (
               <div key={label} className="bg-card border border-border rounded-xl p-4">
-                <p className="text-xs text-foreground/60">{label}</p>
+                <p className="text-xs text-foreground/70">{label}</p>
                 <p className="font-heading text-xl font-bold text-foreground">{value}</p>
               </div>
             ))}
@@ -361,7 +361,7 @@ const AdminOrdersPage: React.FC = () => {
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" aria-label="Loading" />
           </div>
         ) : data && data.orders.length === 0 ? (
-          <p className="text-center text-foreground/60 py-16">
+          <p className="text-center text-foreground/70 py-16">
             {query || status ? 'No orders match these filters.' : 'No orders yet. New orders will appear here.'}
           </p>
         ) : (

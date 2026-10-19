@@ -62,7 +62,7 @@ const OrderDetailsPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h1 className="font-heading text-2xl font-bold text-foreground">Order #{order.id}</h1>
-              <p className="text-sm text-foreground/60">
+              <p className="text-sm text-foreground/70">
                 Placed on{" "}
                 {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
               </p>

@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
           <div className="max-w-2xl mx-auto text-center">
             <p className="font-mono text-xs uppercase tracking-[0.18em] text-white/60 mb-3">Newsletter</p>
             <h3 className="font-heading text-4xl sm:text-5xl font-extrabold uppercase leading-[0.95] mb-4">
-              New coffee, <span className="text-primary">first.</span>
+              New coffee, <span className="text-amber-300">first.</span>
             </h3>
             <p className="text-white/70 text-lg mb-8">
               One email when there is a new flavour or a sale. Nothing else.
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
               href="https://www.instagram.com/cafeatonce/?hl=en"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block font-mono text-xs uppercase tracking-[0.14em] text-white underline underline-offset-4 hover:text-primary"
+              className="inline-block font-mono text-xs uppercase tracking-[0.14em] text-white underline underline-offset-4 hover:text-amber-300"
               data-testid="social-instagram"
             >
               Instagram @cafeatonce
@@ -144,7 +144,7 @@ const Footer: React.FC = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-amber-300 text-sm inline-flex items-center group"
                     data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <span className="">
@@ -164,7 +164,7 @@ const Footer: React.FC = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-amber-300 text-sm inline-flex items-center group"
                     data-testid={`footer-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                   >
                     <span className="">
@@ -182,7 +182,7 @@ const Footer: React.FC = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-white/70 hover:text-primary text-sm inline-flex items-center group"
+                    className="text-white/70 hover:text-amber-300 text-sm inline-flex items-center group"
                   >
                     <span className="">
                       {link.label}
@@ -200,7 +200,7 @@ const Footer: React.FC = () => {
               <li>
                 <a 
                   href="mailto:cafeatonce@gmail.com" 
-                  className="flex items-start space-x-3 text-white/70 hover:text-primary group"
+                  className="flex items-start space-x-3 text-white/70 hover:text-amber-300 group"
                   data-testid="footer-email"
                 >
                   <Mail className="h-5 w-5 mt-0.5 flex-shrink-0" />
@@ -210,7 +210,7 @@ const Footer: React.FC = () => {
               <li>
                 <a 
                   href="tel:+917979837079" 
-                  className="flex items-start space-x-3 text-white/70 hover:text-primary group"
+                  className="flex items-start space-x-3 text-white/70 hover:text-amber-300 group"
                   data-testid="footer-phone"
                 >
                   <Phone className="h-5 w-5 mt-0.5 flex-shrink-0" />
@@ -235,7 +235,7 @@ const Footer: React.FC = () => {
             <p className="text-white/60 text-sm">
               &copy; {new Date().getFullYear()} Cafe at Once. All rights reserved.
             </p>
-            <p className="text-white/40 text-xs">
+            <p className="text-white/60 text-xs">
               Made in Mumbai
             </p>
           </div>

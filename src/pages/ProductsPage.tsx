@@ -165,7 +165,7 @@ const ProductsPage: React.FC = () => {
         {/* Products Grid */}
         {sortedProducts.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-foreground/60 text-lg mb-4">No products found</p>
+            <p className="text-foreground/70 text-lg mb-4">No products found</p>
             <button
               onClick={() => {
                 setSearchTerm('');

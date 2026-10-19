@@ -76,7 +76,7 @@ const HelpButton: React.FC = () => {
                 </span>
                 <span>
                   <span className="block text-sm font-medium text-foreground">WhatsApp us</span>
-                  <span className="block text-xs text-foreground/60">Talk to our team</span>
+                  <span className="block text-xs text-foreground/70">Talk to our team</span>
                 </span>
               </a>
               <button
@@ -94,7 +94,7 @@ const HelpButton: React.FC = () => {
                 </span>
                 <span>
                   <span className="block text-sm font-medium text-foreground">Quick answers</span>
-                  <span className="block text-xs text-foreground/60">Shipping, usage, offers</span>
+                  <span className="block text-xs text-foreground/70">Shipping, usage, offers</span>
                 </span>
               </button>
             </motion.div>
