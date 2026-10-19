@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { SameDayNotice, isBengaluruPincode } from "../components/SameDayBengaluru";
 import {
   ArrowLeft,
   Lock,
@@ -456,6 +457,7 @@ const CheckoutPage: React.FC = () => {
             <p className="text-gray-600 mt-2">
               Complete your order with our secure payment system
             </p>
+            <SameDayNotice pincode={formData.zipCode} className="mt-4" />
           </div>
 
           {/* Progress Indicator */}
@@ -618,7 +620,13 @@ const CheckoutPage: React.FC = () => {
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                         placeholder="400001"
                       />
-                      {formData.zipCode && isValidPincode(formData.zipCode) && deliveryEstimate && (
+                      {isBengaluruPincode(formData.zipCode) && (
+                        <p className="text-sm text-green-600 mt-1 flex items-center">
+                          <Truck className="h-3 w-3 mr-1" />
+                          Same-day delivery in Bengaluru
+                        </p>
+                      )}
+                      {formData.zipCode && isValidPincode(formData.zipCode) && deliveryEstimate && !isBengaluruPincode(formData.zipCode) && (
                         <p className="text-sm text-green-600 mt-1 flex items-center">
                           <Calendar className="h-3 w-3 mr-1" />
                           {deliveryEstimate}

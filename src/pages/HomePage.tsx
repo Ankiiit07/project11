@@ -8,6 +8,7 @@ import PageWrapper from '../components/PageWrapper';
 import SEO from '../components/SEO';
 import { CountUp, Reveal, Stagger, StaggerItem } from '../components/motion';
 import { Glitch, KineticHeading, KineticMarquee, KineticWord } from '../components/kinetic';
+import { SameDayStrip } from '../components/SameDayBengaluru';
 import CampaignBanner from '../components/CampaignBanner';
 import { gsap, useGSAP } from '../lib/gsap';
 import { createSeeker, loadVideoBlob, pickVideoSource } from '../utils/scrubVideo';
@@ -180,6 +181,8 @@ const HomePage: React.FC = () => {
           ],
         }}
       />
+
+      <SameDayStrip />
 
       {/* Hero */}
       <section
