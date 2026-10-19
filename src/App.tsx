@@ -53,6 +53,11 @@ const InstantVsBrewedCoffee = lazyPage(() => import('./pages/blog/InstantVsBrewe
 const HowToMakeCoffeeWithoutMachine = lazyPage(() => import('./pages/blog/HowToMakeCoffeeWithoutMachine'));
 const WhyArabicaCoffeeMatters = lazyPage(() => import('./pages/blog/WhyArabicaCoffeeMatters'));
 
+// Buying guides
+const ColdBrewCoffee = lazyPage(() => import('./pages/guides/ColdBrewCoffee'));
+const ColdBrewCoffeePrice = lazyPage(() => import('./pages/guides/ColdBrewCoffeePrice'));
+const ReadyToDrinkCoffee = lazyPage(() => import('./pages/guides/ReadyToDrinkCoffee'));
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   const lenis = useLenis();
@@ -117,6 +122,9 @@ function App() {
                   <Route path="/blog/instant-vs-brewed-coffee-difference" element={<InstantVsBrewedCoffee />} />
                   <Route path="/blog/how-to-make-coffee-without-machine" element={<HowToMakeCoffeeWithoutMachine />} />
                   <Route path="/blog/why-arabica-coffee-matters" element={<WhyArabicaCoffeeMatters />} />
+                  <Route path="/cold-brew-coffee" element={<ColdBrewCoffee />} />
+                  <Route path="/cold-brew-coffee-price" element={<ColdBrewCoffeePrice />} />
+                  <Route path="/ready-to-drink-coffee" element={<ReadyToDrinkCoffee />} />
                   <Route path="/orders/:id" element={<OrderDetailsPage />} />
                 </Routes>
                     </Suspense>

@@ -101,7 +101,7 @@ const CampaignBanner: React.FC = () => {
                 data-campaign-img
                 src="/campaign/latte-sale-800.webp"
                 srcSet="/campaign/latte-sale-800.webp 800w, /campaign/latte-sale-1200.webp 1200w"
-                sizes="(min-width: 1024px) 45vw, 100vw"
+                sizes="(min-width: 1024px) 45vw, (min-width: 640px) 100vw, 92vw"
                 alt="Cafe at Once Latte tubes and 6-pack boxes on roasted coffee beans"
                 loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover object-[50%_62%] lg:object-center scale-110"

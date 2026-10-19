@@ -34,6 +34,9 @@ ${preorders.map(productLine).join('\n')}
 
 ## Learn more
 
+- [Cold brew coffee: what it is and how to make it in 5 seconds](${SITE_URL}/cold-brew-coffee)
+- [Cold brew coffee price in India: café vs bottle vs tube](${SITE_URL}/cold-brew-coffee-price)
+- [Ready-to-drink coffee in India: bottle, can or press tube?](${SITE_URL}/ready-to-drink-coffee)
 - [How it works and FAQ](${SITE_URL}/faq)
 - [What is nitrogen-preserved coffee?](${SITE_URL}/blog/what-is-nitrogen-preserved-coffee)
 - [Instant vs brewed coffee](${SITE_URL}/blog/instant-vs-brewed-coffee-difference)

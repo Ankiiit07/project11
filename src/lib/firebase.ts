@@ -1,9 +1,11 @@
 // Firebase Auth setup. Values come from Netlify env vars (Firebase console →
 // Project settings → Your apps → Web app). They are public by design; access is
 // controlled by Firebase Auth and by our Netlify functions verifying ID tokens.
+//
+// The Firebase SDK is large (about 400 KB), so it is not part of the main bundle:
+// loadAuth() fetches it on first use and every caller shares the same instance.
 
-import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
 
 // On the live site, run the sign-in helper (/__/auth/handler) on our own domain;
 // public/_redirects proxies it to Firebase. Browsers that block third-party
@@ -20,14 +22,26 @@ const config = {
 
 export const isFirebaseConfigured = Boolean(config.apiKey && config.authDomain && config.projectId);
 
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-
-if (isFirebaseConfigured) {
-  app = initializeApp(config);
-  auth = getAuth(app);
-} else {
+if (!isFirebaseConfigured) {
   console.warn('Firebase is not configured: sign-in is disabled. Set the VITE_FIREBASE_* env vars.');
 }
 
-export { auth };
+export type FirebaseAuthModule = typeof import('firebase/auth');
+
+let loading: Promise<{ auth: Auth; fb: FirebaseAuthModule } | null> | null = null;
+
+/** The Firebase Auth instance and SDK functions, loaded on first call; null when not configured. */
+export const loadAuth = () => {
+  if (!loading) {
+    loading = isFirebaseConfigured
+      ? Promise.all([import('firebase/app'), import('firebase/auth')]).then(([app, fb]) => ({
+          auth: fb.getAuth(app.initializeApp(config)),
+          fb,
+        }))
+      : Promise.resolve(null);
+  }
+  return loading;
+};
+
+/** Auth once loading has begun (the app starts it shortly after each page loads); null before that. */
+export const authIfLoading = async () => (loading ? (await loading)?.auth ?? null : null);

@@ -54,8 +54,8 @@ const ProductsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pb-16">
       <SEO 
-        title="Shop Nitrogen-Preserved Coffee | Cafe at Once Collection"
-        description="Shop Cafe at Once nitrogen-preserved Arabica coffee press tubes. Americano, Latte, and Mocha variants. Real coffee in 5 seconds, no machine required."
+        title="Buy Ready-to-Drink Coffee & Cold Brew Online | Cafe at Once"
+        description="Shop ready-to-drink coffee in a press tube: Cold Brew, Latte, Americano, Mocha and more. Real brewed Arabica, ready in 5 seconds, no machine or fridge. Delivered across India."
         url="https://cafeatonce.com/products"
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },

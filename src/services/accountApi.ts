@@ -1,7 +1,7 @@
 // Calls to our Netlify functions for accounts and orders. Sends the Firebase ID
 // token when someone is signed in so the server knows who is asking.
 
-import { auth } from '../lib/firebase';
+import { authIfLoading } from '../lib/firebase';
 import type { User } from '../types/user';
 
 export interface OrderItem {
@@ -111,7 +111,9 @@ export interface NewOrderRequest {
 
 async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  const token = await auth?.currentUser?.getIdToken();
+  // Public calls (e.g. reviews) don't wait for, or pull in, the Firebase SDK; signed-in
+  // calls only happen after UserProvider has loaded it
+  const token = await (await authIfLoading())?.currentUser?.getIdToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetch(`/.netlify/functions/${path}`, { ...init, headers });

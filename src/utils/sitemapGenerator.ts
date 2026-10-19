@@ -21,6 +21,9 @@ const STATIC_PATHS = [
   '/privacy-policy',
 ];
 
+// Buying guides written for what people search ("cold brew coffee" and friends)
+const GUIDE_PATHS = ['/cold-brew-coffee', '/cold-brew-coffee-price', '/ready-to-drink-coffee'];
+
 const BLOG_PATHS = [
   '/blog/what-is-nitrogen-preserved-coffee',
   '/blog/best-portable-coffee-travellers-india',
@@ -36,6 +39,7 @@ export interface SitemapUrl {
 
 export const generateSitemap = (): SitemapUrl[] => [
   ...STATIC_PATHS.map((path) => ({ url: `${SITE_URL}${path}` })),
+  ...GUIDE_PATHS.map((path) => ({ url: `${SITE_URL}${path}` })),
   ...BLOG_PATHS.map((path) => ({ url: `${SITE_URL}${path}` })),
   ...products.map((product) => ({
     url: `${SITE_URL}/products/${encodeURIComponent(product.id)}`,

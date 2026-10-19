@@ -50,6 +50,9 @@ const Footer: React.FC = () => {
   ];
 
   const blogLinks = [
+    { to: '/cold-brew-coffee', label: 'Cold Brew Coffee' },
+    { to: '/cold-brew-coffee-price', label: 'Cold Brew Coffee Price in India' },
+    { to: '/ready-to-drink-coffee', label: 'Ready-to-Drink Coffee' },
     { to: '/blog/what-is-nitrogen-preserved-coffee', label: 'What Is Nitrogen-Preserved Coffee?' },
     { to: '/blog/best-portable-coffee-travellers-india', label: 'Best Portable Coffee for Travellers' },
     { to: '/blog/how-to-make-coffee-without-machine', label: 'Coffee Without a Machine' },
@@ -173,7 +176,7 @@ const Footer: React.FC = () => {
             </ul>
 
             {/* Blog Links */}
-            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60 pt-4">From the Blog</h4>
+            <h4 className="font-mono text-xs uppercase tracking-[0.16em] text-white/60 pt-4">Guides</h4>
             <ul className="space-y-3">
               {blogLinks.map((link) => (
                 <li key={link.to}>

@@ -65,8 +65,9 @@ export default defineConfig({
     // Optimize CSS
     cssCodeSplit: true,
     
-    // Target modern browsers
-    target: 'es2015',
+    // Modern browsers (Chrome 87+, Safari 14+, Firefox 78+): Vite's default. Compiling down to
+    // ES2015 made the bundle larger for no practical gain.
+    target: 'modules',
     
     // Optimize assets
     assetsInlineLimit: 4096,

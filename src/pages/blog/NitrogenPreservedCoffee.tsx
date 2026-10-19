@@ -1,144 +1,142 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, ArrowLeft } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import SEO from '../../components/SEO';
+import {
+  GuideFAQ,
+  GuideHeader,
+  GuideSection,
+  GuideTable,
+  ProductCallout,
+  RelatedGuides,
+  SITE,
+  type FAQ,
+} from '../../components/GuidePage';
 
-const NitrogenPreservedCoffee: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-background pb-16">
-      <SEO 
-        title="What Is Nitrogen-Preserved Coffee? | Cafe at Once Blog"
-        description="Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. The science behind Cafe at Once explained."
-        url="https://cafeatonce.com/blog/what-is-nitrogen-preserved-coffee"
-        type="article"
-        breadcrumbs={[
-          { name: "Home", url: "https://cafeatonce.com" },
-          { name: "Blog", url: "https://cafeatonce.com/insights" },
-          { name: "What Is Nitrogen-Preserved Coffee?", url: "https://cafeatonce.com/blog/what-is-nitrogen-preserved-coffee" }
-        ]}
+const URL = `${SITE}/blog/what-is-nitrogen-preserved-coffee`;
+
+const FAQS: FAQ[] = [
+  {
+    question: 'Is nitrogen safe in food?',
+    answer:
+      'Yes. Nitrogen makes up about 78% of the air we breathe. Food-grade nitrogen is widely used to pack snacks, wine, juices and coffee because it is inert: it does not react with the food, add flavour or leave anything behind.',
+  },
+  {
+    question: 'Does nitrogen change the taste of coffee?',
+    answer:
+      'No. Nitrogen has no taste or smell. Its job is to keep oxygen away from the coffee, so the coffee tastes the way it did when it was brewed.',
+  },
+  {
+    question: 'How long does nitrogen-preserved coffee last?',
+    answer:
+      'Cafe at Once tubes keep for 12 months from the date of manufacture, unopened, with no refrigeration. Store them somewhere cool and dry, out of direct sunlight, and use a tube once it is opened.',
+  },
+  {
+    question: 'Is nitrogen-preserved coffee the same as nitro cold brew?',
+    answer:
+      'No. Nitro cold brew is cold brew served with nitrogen gas bubbled through it for a creamy, foamy texture. Nitrogen-preserved coffee uses nitrogen to protect the coffee in its pack; you drink it like any other coffee.',
+  },
+];
+
+const NitrogenPreservedCoffee: React.FC = () => (
+  <div className="min-h-screen bg-background pt-28 pb-20">
+    <SEO
+      title="What Is Nitrogen-Preserved Coffee? How It Stays Fresh | Cafe at Once"
+      description="Why brewed coffee goes stale, how nitrogen keeps it fresh for 12 months without a fridge or preservatives, and what that means for the coffee in your cup."
+      keywords="nitrogen preserved coffee, nitrogen flushed coffee, how to keep coffee fresh, coffee oxidation, coffee without preservatives"
+      url={URL}
+      type="article"
+      breadcrumbs={[
+        { name: 'Home', url: SITE },
+        { name: 'Blog', url: `${SITE}/insights` },
+        { name: 'What Is Nitrogen-Preserved Coffee?', url: URL },
+      ]}
+      faq={FAQS}
+    />
+
+    <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <GuideHeader
+        label="The science"
+        title={
+          <>
+            What is <span className="text-primary">nitrogen-preserved</span> coffee?
+          </>
+        }
+        intro="Brewed coffee starts going stale within minutes. Here is why, and how sealing it with nitrogen instead of air keeps it fresh for a year without a fridge or a single preservative."
+        updated="October 2026"
       />
 
-      {/* Article Header */}
-      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link 
-          to="/insights" 
-          className="inline-flex items-center text-primary hover:text-primary/80 mb-8"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Insights
-        </Link>
+      <GuideSection title="Why coffee goes stale">
+        <p>
+          The flavour of coffee lives in hundreds of delicate aroma compounds and oils. The moment coffee is brewed and
+          meets the air, oxygen starts reacting with them. Bright, fruity and chocolatey notes fade first; flat, papery
+          and bitter ones take their place. That is why a pot of coffee left on a warmer tastes so different an hour
+          later, and why brewed coffee in a bottle usually needs a fridge, sugar or preservatives to stay drinkable.
+        </p>
+        <p>Heat and light speed this up. Oxygen is what drives it. Take the oxygen away, and the clock almost stops.</p>
+      </GuideSection>
 
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded mb-4">
-            Coffee Science
-          </span>
-          <h1 className="font-heading text-4xl sm:text-5xl font-bold text-foreground mb-6">
-            What Is Nitrogen-Preserved Coffee?
-          </h1>
-          <p className="text-xl text-foreground/70 mb-6">
-            Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. The science behind Cafe at Once explained.
-          </p>
-          <div className="flex items-center gap-6 text-sm text-foreground/60">
-            <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              January 2026
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              8 min read
-            </span>
-          </div>
-        </motion.header>
+      <GuideSection title="How nitrogen preservation works">
+        <p>
+          Nitrogen is the gas that makes up about 78% of the air around us. It is inert: it does not react with food,
+          has no taste and no smell. That makes it ideal for pushing oxygen out of a package without changing what is
+          inside.
+        </p>
+        <p>
+          Cafe at Once coffee is brewed first, from 100% Arabica coffee. It is then sealed into a press tube with
+          food-grade nitrogen in place of air, so there is next to no oxygen left touching the coffee. With nothing
+          to react with, the coffee keeps the taste it had when it was brewed, for 12 months, at room temperature.
+        </p>
+        <p>
+          The same idea keeps crisps crunchy in their packet and protects wine and specialty coffee beans. What is new
+          is using it for ready-brewed coffee in a tube small enough to carry.
+        </p>
+      </GuideSection>
 
-        {/* Featured Image */}
-        <div className="aspect-video bg-secondary rounded-2xl overflow-hidden mb-12">
-          <img
-            src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80"
-            alt="Nitrogen-preserved coffee being prepared"
-            className="w-full h-full object-cover"
-          />
-        </div>
+      <GuideSection title="Nitrogen vs other ways to keep coffee">
+        <GuideTable
+          head={['Method', 'How it works', 'The catch']}
+          rows={[
+            ['Refrigeration', 'Cold slows oxidation', 'Brewed coffee still fades within days, and you need a fridge'],
+            ['Preservatives and sugar', 'Stop spoilage and mask stale flavours', 'Not just coffee any more'],
+            ['Drying into powder', 'Instant coffee: water removed, shelf-stable', 'Much of the aroma is lost in drying'],
+            ['Nitrogen sealing', 'Oxygen replaced with inert nitrogen', 'Use the tube once it is opened'],
+          ]}
+        />
+      </GuideSection>
 
-        {/* Article Content */}
-        <div className="prose prose-lg max-w-none">
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Introduction: The Problem with Traditional Coffee
-            </h2>
-            <p className="text-foreground/80 leading-relaxed">
-              Coffee begins to lose its freshness the moment it's brewed. Oxygen exposure leads to oxidation, 
-              which degrades the delicate oils and aromatic compounds that give coffee its distinctive flavour. 
-              This is why freshly brewed coffee tastes so different from coffee that's been sitting for hours. 
-              But what if there was a way to pause time, to preserve that just-brewed freshness indefinitely?
-            </p>
-            <p className="text-foreground/80 leading-relaxed">
-              Enter <Link to="/products" className="text-primary hover:underline">nitrogen-preserved coffee</Link>, 
-              a revolutionary approach that's changing how we think about portable, premium coffee.
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              How Nitrogen Preservation Works
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Full body content to be written, explaining the nitrogen-washing process, 
-              how it differs from freeze-drying or spray-drying, and why it preserves flavour better than any other method.]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Why Nitrogen Instead of Other Gases?
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content explaining nitrogen's inert properties, food-grade safety, and why it's superior to vacuum sealing or other preservation methods.]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              The Difference You Can Taste
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content describing the taste profile of nitrogen-preserved coffee vs instant coffee, with specific tasting notes.]
-            </p>
-          </section>
-
-          <section className="mb-12">
-            <h2 className="font-heading text-2xl font-bold text-foreground mb-4">
-              Perfect for Travellers and Coffee Purists
-            </h2>
-            <p className="text-foreground/80 leading-relaxed mb-4">
-              [Content targeting the primary persona, frequent flyers, remote workers, hotel travellers who demand quality.]
-            </p>
-          </section>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-secondary rounded-2xl p-8 mt-12">
-          <h3 className="font-heading text-2xl font-bold text-foreground mb-4">
-            Experience Nitrogen-Preserved Coffee
-          </h3>
-          <p className="text-foreground/70 mb-6">
-            Ready to taste the difference? Try Cafe at Once, India's first nitrogen-preserved 
-            Arabica coffee in a portable press tube.
-          </p>
-          <Link 
-            to="/products"
-            className="inline-flex items-center px-6 py-3 bg-primary text-white font-medium rounded hover:bg-primary/90"
-          >
-            Shop Cafe at Once
+      <GuideSection title="What it means in your cup">
+        <p>
+          Because nothing has to be added to keep it fresh, a Cafe at Once tube has one ingredient: brewed Arabica
+          coffee. No sugar, no preservatives, no flavourings. You press it into 150 to 300 ml of water or milk, hot or
+          cold, and get a cup that tastes brewed, not reconstituted. For how that compares with a jar of instant, read{' '}
+          <Link to="/blog/instant-vs-brewed-coffee-difference" className="text-primary underline underline-offset-4">
+            instant vs brewed coffee
           </Link>
-        </div>
-      </article>
-    </div>
-  );
-};
+          .
+        </p>
+      </GuideSection>
+
+      <ProductCallout
+        id="americano-concentrate"
+        pitch="Brewed 100% Arabica, sealed with nitrogen. Twelve months on the shelf, five seconds to a real cup, hot or cold."
+      />
+
+      <GuideSection title="Who it is for">
+        <p>
+          Anyone who wants real coffee where there is no machine: on a flight or a train, in a hotel room, at the
+          office, on a trek. A 16 g tube is well under cabin liquid limits and needs no fridge, so it goes wherever you
+          go. See our guide to the{' '}
+          <Link to="/blog/best-portable-coffee-travellers-india" className="text-primary underline underline-offset-4">
+            best portable coffee for travellers
+          </Link>
+          .
+        </p>
+      </GuideSection>
+
+      <GuideFAQ faqs={FAQS} />
+      <RelatedGuides current="" />
+    </article>
+  </div>
+);
 
 export default NitrogenPreservedCoffee;

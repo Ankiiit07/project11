@@ -3,19 +3,8 @@
 // saved address) lives in MongoDB behind the `profile` Netlify function.
 
 import React, { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
-import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  onAuthStateChanged,
-  sendEmailVerification,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile as updateFirebaseProfile,
-  type User as FirebaseUser,
-} from "firebase/auth";
-import { auth, isFirebaseConfigured } from "../lib/firebase";
+import type { User as FirebaseUser } from "firebase/auth";
+import { isFirebaseConfigured, loadAuth } from "../lib/firebase";
 import { accountApi } from "../services/accountApi";
 import type { User } from "../types/user";
 
@@ -60,10 +49,22 @@ export function friendlyAuthError(err: unknown): Error {
   return err instanceof Error ? err : new Error("Something went wrong. Please try again.");
 }
 
-function requireAuth() {
-  if (!auth) throw new Error("Sign-in isn't available right now. Please try again later.");
-  return auth;
+async function requireAuth() {
+  const loaded = await loadAuth();
+  if (!loaded) throw new Error("Sign-in isn't available right now. Please try again later.");
+  return loaded;
 }
+
+// Runs once the page has finished loading and the browser is idle, so the Firebase SDK
+// never competes with the page's own content
+const whenIdle = (fn: () => void) => {
+  const idle = () => {
+    if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(fn, { timeout: 2000 });
+    else setTimeout(fn, 200); // Safari has no requestIdleCallback
+  };
+  if (document.readyState === "complete") idle();
+  else window.addEventListener("load", idle, { once: true });
+};
 
 // Used when the profile service can't be reached, so sign-in still works.
 const fallbackProfile = (fbUser: FirebaseUser): User => ({
@@ -90,13 +91,30 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   useEffect(() => {
-    if (!auth) return;
-    return onAuthStateChanged(auth, async (fbUser) => {
-      setFirebaseUser(fbUser);
-      if (fbUser) await loadProfile(fbUser);
-      else setUser(null);
-      setReady(true);
+    if (!isFirebaseConfigured) return;
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+    whenIdle(() => {
+      loadAuth()
+        .then((loaded) => {
+          if (!loaded || cancelled) return;
+          unsubscribe = loaded.fb.onAuthStateChanged(loaded.auth, async (fbUser) => {
+            setFirebaseUser(fbUser);
+            if (fbUser) await loadProfile(fbUser);
+            else setUser(null);
+            setReady(true);
+          });
+        })
+        .catch((error) => {
+          // Offline or blocked: the shop still works for guests
+          console.error("Could not load sign-in:", error);
+          setReady(true);
+        });
     });
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, [loadProfile]);
 
   const run = async (fn: () => Promise<unknown>) => {
@@ -111,27 +129,41 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const login = (email: string, password: string) =>
-    run(() => signInWithEmailAndPassword(requireAuth(), email.trim(), password));
+    run(async () => {
+      const { auth, fb } = await requireAuth();
+      await fb.signInWithEmailAndPassword(auth, email.trim(), password);
+    });
 
-  const loginWithGoogle = () => run(() => signInWithPopup(requireAuth(), new GoogleAuthProvider()));
+  const loginWithGoogle = () =>
+    run(async () => {
+      const { auth, fb } = await requireAuth();
+      await fb.signInWithPopup(auth, new fb.GoogleAuthProvider());
+    });
 
   const register = (name: string, email: string, password: string, phone?: string) =>
     run(async () => {
-      const { user: fbUser } = await createUserWithEmailAndPassword(requireAuth(), email.trim(), password);
-      await updateFirebaseProfile(fbUser, { displayName: name.trim() });
-      sendEmailVerification(fbUser).catch((e) => console.warn("Verification email failed:", e));
+      const { auth, fb } = await requireAuth();
+      const { user: fbUser } = await fb.createUserWithEmailAndPassword(auth, email.trim(), password);
+      await fb.updateProfile(fbUser, { displayName: name.trim() });
+      fb.sendEmailVerification(fbUser).catch((e) => console.warn("Verification email failed:", e));
       setUser(await accountApi.updateProfile({ name: name.trim(), phone: phone?.trim() || "" }));
     });
 
-  const resetPassword = (email: string) => run(() => sendPasswordResetEmail(requireAuth(), email.trim()));
+  const resetPassword = (email: string) =>
+    run(async () => {
+      const { auth, fb } = await requireAuth();
+      await fb.sendPasswordResetEmail(auth, email.trim());
+    });
 
   const resendVerification = () =>
     run(async () => {
-      if (auth?.currentUser) await sendEmailVerification(auth.currentUser);
+      const { auth, fb } = await requireAuth();
+      if (auth.currentUser) await fb.sendEmailVerification(auth.currentUser);
     });
 
   const logout = async () => {
-    if (auth) await signOut(auth);
+    const loaded = await loadAuth();
+    if (loaded) await loaded.fb.signOut(loaded.auth);
     setUser(null);
   };
 
@@ -143,10 +175,11 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const refreshUser = async () => {
-    if (!auth?.currentUser) return;
-    await auth.currentUser.reload();
-    setFirebaseUser(auth.currentUser);
-    await loadProfile(auth.currentUser);
+    const current = (await loadAuth())?.auth.currentUser;
+    if (!current) return;
+    await current.reload();
+    setFirebaseUser(current);
+    await loadProfile(current);
   };
 
   return (
