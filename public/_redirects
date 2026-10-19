@@ -5,8 +5,8 @@
 
 # Built files that don't exist (e.g. from an older deploy) are a real 404,
 # not the home page, so browsers never cache HTML as JavaScript.
-/js/*       /index.html   404
-/css/*      /index.html   404
-/assets/*   /index.html   404
+/js/*       /app.html     404
+/css/*      /app.html     404
+/assets/*   /app.html     404
 
-/*    /index.html   200
+/*    /app.html   200

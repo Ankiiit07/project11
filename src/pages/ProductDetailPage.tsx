@@ -118,13 +118,13 @@ const ProductDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pb-28 md:pb-16">
       <SEO 
-        title={`${product.name} | Nitrogen-Preserved Press Tube | Cafe at Once`}
+        title={`${product.name}, ₹${product.price} | Nitrogen-Preserved Coffee | Cafe at Once`}
         description={seoDescription}
-        url={`https://cafeatonce.com/products/${product.id}`}
+        url={`https://cafeatonce.com/products/${encodeURIComponent(product.id)}`}
         image={toShareImage(product.images?.[0] || product.image)}
         type="product"
         product={{
-          name: `Cafe at Once ${product.name}, Nitrogen-Preserved Press Tube`,
+          name: product.name,
           description: seoDescription,
           price: product.price,
           currency: "INR",
@@ -139,7 +139,7 @@ const ProductDetailPage: React.FC = () => {
         breadcrumbs={[
           { name: "Home", url: "https://cafeatonce.com" },
           { name: "Shop", url: "https://cafeatonce.com/products" },
-          { name: product.name, url: `https://cafeatonce.com/products/${product.id}` }
+          { name: product.name, url: `https://cafeatonce.com/products/${encodeURIComponent(product.id)}` }
         ]}
         howTo={{
           name: "How to Use Cafe at Once Press Tube",

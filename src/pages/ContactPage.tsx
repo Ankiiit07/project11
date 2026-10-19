@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from '../components/icons';
 import { sendContact } from '../services/contactApi';
 import { analytics } from '../utils/analytics';
+import SEO from '../components/SEO';
 
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -39,6 +40,11 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-16">
+      <SEO
+        title="Contact Cafe at Once | Coffee Orders, Bulk and Support"
+        description="Questions about an order, bulk or corporate coffee, or wholesale? Call +91 7979837079 or email cafeatonce@gmail.com."
+        url="https://cafeatonce.com/contact"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">

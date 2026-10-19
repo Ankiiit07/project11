@@ -11,6 +11,7 @@ import {
   
   Star
 } from '../components/icons';
+import SEO from '../components/SEO';
 
 const CustomerServicePage: React.FC = () => {
   const faqs = [
@@ -66,6 +67,11 @@ const CustomerServicePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-8">
+      <SEO
+        title="Customer Service | Cafe at Once"
+        description="Help with orders, delivery, returns and payments for Cafe at Once nitrogen-preserved coffee. Reach us by phone, email or WhatsApp."
+        url="https://cafeatonce.com/customer-service"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
