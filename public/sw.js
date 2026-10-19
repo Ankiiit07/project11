@@ -2,8 +2,9 @@
 // v8: clears v7 caches, which could hold the home page stored under a missing
 // /js/ file name after a deploy (that broke pages with "Failed to fetch
 // dynamically imported module").
-const CACHE_NAME = 'cafe-at-once-v8';
-const PRECACHE_URLS = ['/', '/index.html', '/manifest.json', '/favicon.svg'];
+// v9: pages are pre-rendered; the offline fallback is the empty app shell (/app.html).
+const CACHE_NAME = 'cafe-at-once-v9';
+const PRECACHE_URLS = ['/', '/app.html', '/manifest.json', '/favicon.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -51,7 +52,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() =>
           caches.match(request)
-            .then((cached) => cached || caches.match('/index.html'))
+            .then((cached) => cached || caches.match('/app.html'))
             .then((cached) => cached || Response.error())
         )
     );

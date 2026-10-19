@@ -38,7 +38,7 @@ export const generateSitemap = (): SitemapUrl[] => [
   ...STATIC_PATHS.map((path) => ({ url: `${SITE_URL}${path}` })),
   ...BLOG_PATHS.map((path) => ({ url: `${SITE_URL}${path}` })),
   ...products.map((product) => ({
-    url: `${SITE_URL}/products/${product.id}`,
+    url: `${SITE_URL}/products/${encodeURIComponent(product.id)}`,
     images: [...new Set([product.image, ...(product.images || [])])].filter(Boolean),
   })),
 ];

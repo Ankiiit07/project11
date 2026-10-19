@@ -12,6 +12,7 @@ import {
   Calendar,
   MapPin
 } from '../components/icons';
+import SEO from '../components/SEO';
 
 const TermsConditionsPage: React.FC = () => {
   const sections = [
@@ -79,6 +80,11 @@ const TermsConditionsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-8">
+      <SEO
+        title="Terms and Conditions | Cafe at Once"
+        description="The terms that apply when you browse cafeatonce.com and buy Cafe at Once coffee."
+        url="https://cafeatonce.com/terms-conditions"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

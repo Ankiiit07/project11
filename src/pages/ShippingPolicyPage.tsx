@@ -12,6 +12,7 @@ import {
   
   Star
 } from '../components/icons';
+import SEO from '../components/SEO';
 
 const ShippingPolicyPage: React.FC = () => {
   const shippingZones = [
@@ -70,6 +71,11 @@ const ShippingPolicyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-8">
+      <SEO
+        title="Shipping Policy | Delivery Times and Charges | Cafe at Once"
+        description="Delivery times and shipping charges across India, and free shipping on orders above Rs 1000."
+        url="https://cafeatonce.com/shipping-policy"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

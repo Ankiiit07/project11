@@ -33,10 +33,11 @@
   status = 200
   headers = {Content-Type = "application/xml"}
 
-# Handle client-side routing for everything else
+# Everything else gets the empty app shell. Public pages are pre-rendered into
+# their own folders at build time (scripts/prerender.mjs) and are served first.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/app.html"
   status = 200
 
 [build.environment]

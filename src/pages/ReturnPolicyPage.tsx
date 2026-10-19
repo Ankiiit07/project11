@@ -10,6 +10,7 @@ import {
   Coffee,
   Truck
 } from '../components/icons';
+import SEO from '../components/SEO';
 
 const ReturnPolicyPage: React.FC = () => {
   const returnConditions = [
@@ -68,6 +69,11 @@ const ReturnPolicyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-8">
+      <SEO
+        title="Return and Refund Policy | Cafe at Once"
+        description="How to return a Cafe at Once order within 7 days of delivery, and how refunds are processed."
+        url="https://cafeatonce.com/return-policy"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

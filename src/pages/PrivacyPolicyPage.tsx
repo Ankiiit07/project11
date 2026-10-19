@@ -13,6 +13,7 @@ import {
   MapPin,
   Database
 } from '../components/icons';
+import SEO from '../components/SEO';
 
 const PrivacyPolicyPage: React.FC = () => {
   const sections = [
@@ -94,6 +95,11 @@ const PrivacyPolicyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-cream pt-20 pb-8">
+      <SEO
+        title="Privacy Policy | Cafe at Once"
+        description="What personal data Cafe at Once collects, why, and how we protect it."
+        url="https://cafeatonce.com/privacy-policy"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

@@ -2,17 +2,20 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { generateSitemapXML } from './src/utils/sitemapGenerator';
+import { generateLlmsTxt } from './src/utils/llmsTxt';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    // Write dist/sitemap.xml from the page and product lists
+    // Write dist/sitemap.xml (search engines) and dist/llms.txt (AI assistants)
+    // from the page and product lists
     {
       name: 'sitemap',
       apply: 'build',
       generateBundle() {
         this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: generateSitemapXML() });
+        this.emitFile({ type: 'asset', fileName: 'llms.txt', source: generateLlmsTxt() });
       },
     },
     // Bundle analyzer for development

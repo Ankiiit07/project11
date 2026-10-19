@@ -133,11 +133,12 @@ const HomePage: React.FC = () => {
       mm.add('(prefers-reduced-motion: reduce)', () => reset('/hero/pour-last.webp'));
 
       mm.add('(prefers-reduced-motion: no-preference)', () => {
-        // Kinetic headline: each line widens from condensed to full width as the page opens
+        // Kinetic headline: each line widens from condensed to full width as the page opens.
+        // Width only, so the text served in the page's HTML never blinks out while this runs.
         gsap.fromTo(
           '[data-k-line]',
-          { '--wdth': 75, opacity: 0, yPercent: 30 },
-          { '--wdth': 100, opacity: 1, yPercent: 0, duration: 1.1, stagger: 0.18, ease: 'expo.out', delay: 0.1 }
+          { '--wdth': 75 },
+          { '--wdth': 100, duration: 1.1, stagger: 0.18, ease: 'expo.out', delay: 0.1 }
         );
         // The sale photo drifts slightly inside its frame
         gsap.fromTo(
