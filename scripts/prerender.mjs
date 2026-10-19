@@ -75,6 +75,10 @@ const capture = async (browser, origin, path) => {
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900 });
   await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+  // Lets the app tell a capture from a real visitor (window.__PRERENDER__)
+  await page.evaluateOnNewDocument(() => {
+    window.__PRERENDER__ = true;
+  });
   await page.setRequestInterception(true);
   // Only our own files: no analytics hits, service worker, payment or auth scripts
   page.on('request', (r) => {

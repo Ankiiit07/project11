@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from '../components/icons';
-import { motion } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
 import { useFeaturedProducts } from '../hooks/useProducts';
 import PageWrapper from '../components/PageWrapper';
@@ -129,8 +128,11 @@ const HomePage: React.FC = () => {
           });
         return () => ctrl.abort();
       });
-      // Reduced motion: the finished glass, no video downloaded
-      mm.add('(prefers-reduced-motion: reduce)', () => reset('/hero/pour-last.webp'));
+      // Reduced motion: the finished glass, no video downloaded. Skipped while the page is
+      // pre-rendered (captured with reduced motion), so the saved HTML keeps the first frame.
+      mm.add('(prefers-reduced-motion: reduce)', () => {
+        if (!(window as { __PRERENDER__?: boolean }).__PRERENDER__) reset('/hero/pour-last.webp');
+      });
 
       mm.add('(prefers-reduced-motion: no-preference)', () => {
         // Kinetic headline: each line widens from condensed to full width as the page opens.
@@ -213,13 +215,9 @@ const HomePage: React.FC = () => {
             </h1>
           </div>
 
-          {/* The pour: real footage of a tube pressed into water (decorative; the copy carries the message) */}
-          <motion.div
-            className="relative flex flex-col items-center lg:col-start-2 lg:row-start-1 lg:row-span-2"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          >
+          {/* The pour: real footage of a tube pressed into water (decorative; the copy carries the message).
+              No entrance fade: the still is the page's largest paint, so it shows as soon as the HTML does. */}
+          <div className="relative flex flex-col items-center lg:col-start-2 lg:row-start-1 lg:row-span-2">
             <div className="relative h-[46vh] sm:h-[52vh] lg:h-[min(70vh,660px)] aspect-[720/1134] max-w-full overflow-hidden bg-secondary border border-foreground">
               <img
                 ref={pourStillRef}
@@ -228,6 +226,7 @@ const HomePage: React.FC = () => {
                 aria-hidden="true"
                 width={720}
                 height={1134}
+                fetchPriority="high"
                 className="absolute inset-0 w-full h-full object-cover"
               />
               <video
@@ -246,14 +245,9 @@ const HomePage: React.FC = () => {
             <div data-pour-cue className="hidden lg:block mt-3 font-mono text-xs uppercase tracking-[0.2em] text-foreground/60" aria-hidden="true">
               Scroll to pour
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="space-y-6 lg:col-start-1"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          <div className="space-y-6 lg:col-start-1">
             <div className="space-y-3">
               <p className="text-base sm:text-xl text-foreground/80 leading-relaxed max-w-xl">
                 India's first{' '}
@@ -301,7 +295,7 @@ const HomePage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
