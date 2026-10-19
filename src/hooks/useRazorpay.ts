@@ -115,7 +115,7 @@ export const useRazorpay = ({ onSuccess, onError }: UseRazorpayProps = {}) => {
           },
         },
         theme: {
-          color: "#8B7355",
+          color: "#765F45",
         },
       });
     } catch (err) {

@@ -80,10 +80,6 @@ const LattePage: React.FC = () => {
       />
       <Helmet>
         <meta name="theme-color" content={CANVAS} />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75,600;12..96,75,800&family=DM+Mono&display=swap"
-        />
       </Helmet>
       <div ref={rootRef} className="lp" dangerouslySetInnerHTML={{ __html: html }} />
     </>

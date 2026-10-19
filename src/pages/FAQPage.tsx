@@ -109,7 +109,7 @@ const FAQPage: React.FC = () => {
                       </h2>
                     </div>
                     <ChevronDown 
-                      className={`h-5 w-5 text-foreground/60 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+                      className={`h-5 w-5 text-foreground/70 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </button>
                   

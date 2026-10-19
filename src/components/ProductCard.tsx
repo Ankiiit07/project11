@@ -147,7 +147,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {/* Category & Rating */}
           <div className="flex items-center justify-between">
             {category && (
-              <span className="font-mono text-[10px] sm:text-xs text-foreground/60 uppercase tracking-[0.12em]">
+              <span className="font-mono text-[10px] sm:text-xs text-foreground/70 uppercase tracking-[0.12em]">
                 {category.replace('-', ' ')}
               </span>
             )}
@@ -156,7 +156,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <div className="flex items-center gap-1" aria-label={`Rated ${reviewSummary.average} out of 5 from ${reviewSummary.count} reviews`}>
                 <Star className="h-4 w-4 fill-primary text-primary" />
                 <span className="text-sm font-medium text-foreground">{reviewSummary.average.toFixed(1)}</span>
-                <span className="text-xs text-foreground/60">({reviewSummary.count})</span>
+                <span className="text-xs text-foreground/70">({reviewSummary.count})</span>
               </div>
             ) : null}
           </div>
@@ -194,7 +194,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                   ₹{price}
                 </span>
                 {originalPrice > price && (
-                  <span className="text-xs sm:text-sm text-foreground/50 line-through">
+                  <span className="text-xs sm:text-sm text-foreground/70 line-through">
                     ₹{originalPrice}
                   </span>
                 )}
@@ -224,6 +224,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
  : 'bg-foreground hover:bg-primary text-background'
  : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
  }`}
+              aria-label={isJustAdded ? `${name} added to cart` : `${isPreOrder ? 'Pre-order' : 'Add'} ${name}${isPreOrder ? '' : ' to cart'}`}
               data-testid={`add-to-cart-${id}`}
             >
               {isJustAdded ? (

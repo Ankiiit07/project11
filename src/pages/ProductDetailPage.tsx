@@ -268,7 +268,7 @@ const ProductDetailPage: React.FC = () => {
               </span>
               {product.originalPrice > product.price && (
                 <>
-                  <span className="text-xl text-foreground/50 line-through">
+                  <span className="text-xl text-foreground/70 line-through">
                     ₹{product.originalPrice}
                   </span>
                   <span className="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded">
@@ -400,7 +400,7 @@ const ProductDetailPage: React.FC = () => {
                   className={`pb-4 px-2 font-medium capitalize relative ${
  activeTab === tab
  ? 'text-primary'
- : 'text-foreground/60 hover:text-foreground'
+ : 'text-foreground/70 hover:text-foreground'
  }`}
                 >
                   {tab}
@@ -415,14 +415,14 @@ const ProductDetailPage: React.FC = () => {
           <div className="bg-card border border-border rounded-xl p-6">
             {activeTab === 'description' && (
               <div className="prose max-w-none">
-                <h3 className="font-heading text-xl font-bold text-foreground mb-4">Product Description</h3>
+                <h2 className="font-heading text-xl font-bold text-foreground mb-4">Product Description</h2>
                 <p className="text-foreground/70 leading-relaxed">{product.description}</p>
               </div>
             )}
             {activeTab === 'how to use' && (
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="font-heading text-xl font-bold text-foreground mb-4">How to use</h3>
+                  <h2 className="font-heading text-xl font-bold text-foreground mb-4">How to use</h2>
                   <ol className="space-y-3">
                     {product.instructions.map((step, i) => (
                       <li key={i} className="flex gap-3 text-foreground/80">
@@ -433,7 +433,7 @@ const ProductDetailPage: React.FC = () => {
                   </ol>
                 </div>
                 <div>
-                  <h3 className="font-heading text-xl font-bold text-foreground mb-4">Ingredients</h3>
+                  <h2 className="font-heading text-xl font-bold text-foreground mb-4">Ingredients</h2>
                   <ul className="flex flex-wrap gap-2">
                     {product.ingredients.map((ing) => (
                       <li key={ing} className="px-3 py-1.5 bg-secondary rounded-lg text-sm text-foreground/80">{ing}</li>

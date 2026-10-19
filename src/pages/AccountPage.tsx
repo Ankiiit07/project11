@@ -196,13 +196,13 @@ const AccountPage: React.FC = () => {
                   </div>
                   <div className="min-w-0">
                     <h2 className="font-heading font-bold text-foreground truncate">{user.name || 'Welcome'}</h2>
-                    <p className="text-sm text-foreground/60 truncate">{user.email}</p>
+                    <p className="text-sm text-foreground/70 truncate">{user.email}</p>
                   </div>
                 </div>
 
                 <nav className="space-y-2">
                   <Link to="/orders" className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-secondary">
-                    <Package className="h-5 w-5 text-foreground/60" />
+                    <Package className="h-5 w-5 text-foreground/70" />
                     <span className="text-foreground/80">My Orders</span>
                   </Link>
                   <button
@@ -274,7 +274,7 @@ const AccountPage: React.FC = () => {
                     <GoogleIcon />
                     Continue with Google
                   </button>
-                  <div className="flex items-center gap-3 my-6 text-xs text-foreground/50">
+                  <div className="flex items-center gap-3 my-6 text-xs text-foreground/70">
                     <span className="flex-1 h-px bg-border" /> or <span className="flex-1 h-px bg-border" />
                   </div>
                 </>

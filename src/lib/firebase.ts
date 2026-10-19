@@ -35,7 +35,12 @@ export const loadAuth = () => {
   if (!loading) {
     loading = isFirebaseConfigured
       ? Promise.all([import('firebase/app'), import('firebase/auth')]).then(([app, fb]) => ({
-          auth: fb.getAuth(app.initializeApp(config)),
+          // Same persistence as getAuth() (so existing sign-ins carry over), but without the
+          // popup/redirect helper: that pulls Google's gapi iframe into every page, so it is
+          // passed to signInWithPopup only when someone actually signs in with Google.
+          auth: fb.initializeAuth(app.initializeApp(config), {
+            persistence: [fb.indexedDBLocalPersistence, fb.browserLocalPersistence, fb.browserSessionPersistence],
+          }),
           fb,
         }))
       : Promise.resolve(null);

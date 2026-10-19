@@ -136,7 +136,7 @@ const OrdersPage: React.FC = () => {
                           </span>
                         </span>
                       </div>
-                      <p className="text-sm text-foreground/60">
+                      <p className="text-sm text-foreground/70">
                         Placed on {new Date(order.createdAt).toLocaleDateString('en-IN', { 
                           day: 'numeric',
                           month: 'long',
@@ -148,7 +148,7 @@ const OrdersPage: React.FC = () => {
                       <div className="font-heading text-2xl font-bold text-foreground mb-1">
                         ₹{order.total?.toFixed(2) || '0.00'}
                       </div>
-                      <p className="text-sm text-foreground/60">
+                      <p className="text-sm text-foreground/70">
                         {order.items?.length || 0} items
                       </p>
                     </div>
@@ -169,7 +169,7 @@ const OrdersPage: React.FC = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-foreground truncate">{item.name}</h4>
-                          <p className="text-sm text-foreground/60">Qty: {item.quantity}</p>
+                          <p className="text-sm text-foreground/70">Qty: {item.quantity}</p>
                           {order.status !== 'cancelled' && item.id && (
                             <Link to={`/products/${item.id}?review=1`} className="text-sm text-primary font-medium hover:underline">
                               Write a review

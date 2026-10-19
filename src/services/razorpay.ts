@@ -205,7 +205,7 @@ export class RazorpayService {
         ...options,
         callback_url: "https://eneqd3r9zrjok.x.pipedream.net/",
         theme: {
-          color: "#8B7355",
+          color: "#765F45",
           ...options.theme,
         },
         modal: {

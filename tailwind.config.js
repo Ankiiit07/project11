@@ -11,7 +11,7 @@ export default {
     extend: {
       colors: {
         // Tech-Forward Design System - keeping coffee theme but modernized
-        primary: '#8B7355', // Main coffee brown
+        primary: '#765F45', // Main coffee brown (a shade deeper than #8B7355 so text on cream passes WCAG AA)
         // Paper, not pure white
         white: '#FBF8F3',
         // The stock rainbow (blue, purple, pink, orange...) is folded into three brand families:
@@ -43,18 +43,18 @@ export default {
         'destructive-foreground': '#FBF8F3',
         border: '#E6DCC9', // Subtle borders
         input: '#E6DCC9',
-        ring: '#8B7355',
+        ring: '#765F45',
         
         // Legacy support (gradually migrate away from these)
         'primary-light': '#D4C5B0',
         'primary-dark': '#2A2118',
         cream: '#F0E4D3',
         'cream-dark': '#D4C5B0',
-        coffee: '#8B7355',
+        coffee: '#765F45',
         'coffee-light': '#D4C5B0',
         'custom-cream': '#F0E4D3',
         brown: {
-          500: '#8B7355',
+          500: '#765F45',
           600: '#2A2118',
         },
       },

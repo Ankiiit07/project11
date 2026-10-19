@@ -106,7 +106,7 @@ const InsightsPage: React.FC = () => {
                 Learn how nitrogen washing locks in freshness, aroma, and flavour, without refrigeration or additives. 
                 The science behind Cafe at Once explained.
               </p>
-              <div className="flex items-center gap-4 text-sm text-foreground/60 mb-6">
+              <div className="flex items-center gap-4 text-sm text-foreground/70 mb-6">
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-4 w-4" />
                   8 min read
@@ -150,7 +150,7 @@ const InsightsPage: React.FC = () => {
                     <span className="text-xs font-medium px-2.5 py-1 bg-primary/10 text-primary rounded">
                       {insight.category}
                     </span>
-                    <span className="text-xs text-foreground/60">{insight.readTime}</span>
+                    <span className="text-xs text-foreground/70">{insight.readTime}</span>
                   </div>
                   <h3 className="font-heading text-lg font-bold text-foreground mb-2 group-hover:text-primary">
                     {insight.title}
